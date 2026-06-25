@@ -11,6 +11,7 @@ export default [
       'docs/javascripts/**',
       'scratch_*.js',
       'scratch/**',
+      '_changes_backup/**',
     ],
   },
   {
