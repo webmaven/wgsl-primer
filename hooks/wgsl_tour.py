@@ -13,6 +13,15 @@ def on_page_markdown(markdown, page, config, files):
     if visualizer.startswith('/'):
         visualizer = visualizer[1:]
         
+    import json
+    options_meta = meta.get('visualizerOptions', None)
+    if options_meta is None:
+        options_js = 'null'
+    elif isinstance(options_meta, str):
+        options_js = json.dumps(options_meta)
+    else:
+        options_js = json.dumps(json.dumps(options_meta))
+        
     from urllib.parse import urlparse
     site_url = config.get('site_url', '')
     if site_url:
@@ -46,7 +55,7 @@ def on_page_markdown(markdown, page, config, files):
   import VisualizationBuilder from '{visualizer}';
   customElements.whenDefined('wgsl-tour').then(() => {{
     let tour = document.getElementById('tour');
-    tour.setVisualizationBuilder(new VisualizationBuilder());
+    tour.setVisualizationBuilder(new VisualizationBuilder({options_js}));
   }});
 </script>
 """

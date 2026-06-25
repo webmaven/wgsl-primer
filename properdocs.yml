@@ -1,0 +1,152 @@
+site_name: Tour of WGSL
+site_url: https://webmaven.github.io/tour-of-wgsl/
+repo_url: https://github.com/webmaven/tour-of-wgsl
+repo_name: webmaven/tour-of-wgsl
+copyright: '&copy; 2023-2026 <a href="/tour-of-wgsl/copyright/">The Tour of WGSL Authors</a>'
+
+theme:
+  name: materialx
+  logo: images/logo.svg
+
+  favicon: images/favicon.svg
+  features:
+    - navigation.indexes
+    - navigation.footer
+  palette:
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+plugins:
+  - search
+
+hooks:
+  - hooks/wgsl_tour.py
+
+extra_css:
+  - assets/css/app.css
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+  - path: assets/js/app.js
+    type: module
+
+nav:
+  - Welcome: index.md
+  - Types:
+      - Overview: types/index.md
+      - Basic Scalars: types/basic-scalars.md
+      - Abstract Numerics: types/abstract-numerics.md
+      - Vectors:
+          - Overview: types/vectors/index.md
+          - Constructors: types/vectors/constructors.md
+      #          - Components & Swizzling: types/vectors/components.md
+      - Matrices:
+          - Overview: types/matrices/index.md
+          - Constructors: types/matrices/constructors.md
+          - Multiplication: types/matrices/multiplication.md
+      - Arrays:
+          - Overview: types/arrays/index.md
+          - Fixed-size Arrays: types/arrays/fixed-size-arrays.md
+          - Runtime-sized Arrays: types/arrays/runtime-sized-arrays.md
+      - Structures:
+          - Overview: types/structures/index.md
+      #          - Alignment: types/structures/alignment.md
+      - Pointers:
+          - Overview: types/pointers/index.md
+          - Specifying a Pointer: types/pointers/specifying.md
+          - Creating and Using Pointers: types/pointers/using.md
+          - Pointers as Function Parameters: types/pointers/passing_pointers.md
+          - Pointers as Short Names: types/pointers/pointers_as_short_names.md
+          - No Aliasing: types/pointers/no_aliasing.md
+          - No Aliasing in Nested Calls: types/pointers/no_aliasing_nested_calls.md
+      - Atomics:
+          - Overview: types/atomics/index.md
+          - The Coordination Problem: types/atomics/overview.md
+          - Atomic Types: types/atomics/atomic-types.md
+  #          - Atomics & Coordination: types/atomics/coordination.md
+  - Variables & Constants:
+      - Overview: variables/index.md
+      - Let Declaration: variables/let.md
+      - Const Declaration: variables/const.md
+      - Override Declaration: variables/override.md
+      - Function Variables: variables/var-function.md
+      - Private Variables: variables/var-private.md
+      - Workgroup Variables: variables/var-workgroup.md
+      - Uniform Variables: variables/var-uniform.md
+      - Storage Variables: variables/var-storage.md
+      - Handle Variables: variables/var-handle.md
+      #      - Thread Coordinates: variables/thread-coordinates.md
+      #      - Barriers & Memory Synchronization: variables/memory-barriers.md
+      - Shadowing: variables/shadowing.md
+  - Expressions:
+      - Overview: expressions/index.md
+      - Operators: expressions/operators/index.md
+      - Evaluation Stages:
+          - Overview: expressions/evaluation-stage/index.md
+          - Pipeline Stages: expressions/evaluation-stage/overview/index.md
+          - Constant Stage:
+              - Overview: expressions/evaluation-stage/constant/index.md
+              - Numeric Literals: expressions/evaluation-stage/constant/numeric-literals.md
+              - Boolean Literals: expressions/evaluation-stage/constant/bool-literals.md
+              - Built-in Functions: expressions/evaluation-stage/constant/builtins.md
+              - Uses of Constants: expressions/evaluation-stage/constant/uses.md
+          - Override Stage: expressions/evaluation-stage/override/index.md
+          - Runtime Stage: expressions/evaluation-stage/runtime/index.md
+  - Control Flow:
+      - Overview: control-flow/index.md
+      - If Statements: control-flow/if-statements.md
+      - Switch Statements: control-flow/switch-statements.md
+      - The loop Statement: control-flow/loop-statements.md
+      - While Statements: control-flow/while-statements.md
+      - For Statements: control-flow/for-statements.md
+  - Functions:
+      - Overview: functions/index.md
+      - Syntax: functions/syntax.md
+      - Calls: functions/calls.md
+      - Must Use Attributes: functions/must-use.md
+      - Entry Points: functions/entry-points.md
+  - Binding Points:
+      - Overview: binding-points/index.md
+      - Attributes: binding-points/attributes.md
+      - Uniform Buffers: binding-points/uniform-buffers.md
+      - Storage Buffers: binding-points/storage-buffers.md
+      - Textures: binding-points/textures.md
+  - Uniformity Analysis:
+      - Overview: uniformity-analysis/index.md
+      - Invocations: uniformity-analysis/invocations.md
+      - Fragment Derivative Builtins: uniformity-analysis/fragment-derivative-builtins.md
+#      - Subgroups & Register Shuffling: uniformity-analysis/subgroups.md
+#  - Colophon: colophon.md
+#  - Changelog: changelog.md
+#  - Copyright & License: copyright.md

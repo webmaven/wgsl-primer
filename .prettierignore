@@ -9,3 +9,6 @@ site/
 
 # Ignore compiled/bundled assets
 docs/assets/
+
+# Ignore documentation markdown files to prevent Prettier from flattening ProperDocs admonitions
+docs/**/*.md

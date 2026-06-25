@@ -7,8 +7,8 @@
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
-    "build": "vite build && mkdocs build",
-    "serve": "vite build && mkdocs serve",
+    "build": "vite build && venv/bin/properdocs build",
+    "serve": "vite build && venv/bin/properdocs serve",
     "docs": "typedoc",
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -44,6 +44,7 @@
     "sass-embedded": "^1.100.0",
     "typedoc": "^0.28.19",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16"
+    "vite": "^8.0.16",
+    "playwright": "^1.49.0"
   }
 }

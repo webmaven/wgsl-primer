@@ -2,7 +2,16 @@ import tsParser from '@typescript-eslint/parser';
 
 export default [
   {
-    ignores: ['venv/**', 'node_modules/**', 'docs/assets/**', 'site/**', 'vite.config.ts'],
+    ignores: [
+      'venv/**',
+      'node_modules/**',
+      'docs/assets/**',
+      'site/**',
+      'vite.config.ts',
+      'docs/javascripts/**',
+      'scratch_*.js',
+      'scratch/**',
+    ],
   },
   {
     files: ['**/*.ts', '**/*.js'],
