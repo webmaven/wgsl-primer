@@ -18,6 +18,7 @@ wgsl-tour {
   border: 1px solid var(--md-default-fg-color--lightest);
   border-radius: 4px;
   background-color: var(--md-default-bg-color);
+  box-sizing: border-box;
 }
 
 .wgsl-tooltip {
@@ -35,10 +36,24 @@ wgsl-tour {
 }
 
 /* Template Highlights for specific docs */
+code:not(pre code) {
+  font-family: var(--md-code-font-family), monospace;
+  background-color: var(--md-code-bg-color);
+  border-radius: 0.15rem;
+  padding: 1px 4px;
+  font-size: 0.85em;
+  display: inline;
+}
+
 .template {
   border-radius: 3px;
   border: 1px solid;
-  padding: 1px;
+  padding: 0 2px;
+  display: inline;
+}
+
+code .template {
+  margin: 0 1px;
 }
 .template-vec-n,
 .template-array-n {
@@ -69,4 +84,718 @@ wgsl-tour {
 .template-mat-t {
   background-color: #ff818149;
   border-color: #ff8181ab;
+}
+
+/* Wide Display Two-Column Layout and Anchored Footer for Tour of WGSL */
+@media (min-width: 1200px) {
+  /* Increase max-width of the grid to utilize wide screens fully */
+  :has(#tour-wrapper) .md-main__inner {
+    max-width: 95% !important;
+  }
+
+  /* Convert the main article container into a dual-column grid */
+  article.md-content__inner:has(#tour-wrapper) {
+    display: grid !important;
+    grid-template-columns: minmax(400px, 1fr) minmax(580px, 1.2fr) !important;
+    grid-template-rows: auto 1fr !important;
+    column-gap: 1rem !important;
+    row-gap: 0 !important;
+    max-width: none !important;
+    padding-top: 0.1rem !important;
+    padding-bottom: 0 !important; /* Reset bottom padding to let playground stay sticky to the bottom */
+    box-sizing: border-box !important;
+
+    /* Span h1 title across both columns for a cleaner header design */
+    > h1 {
+      grid-column: 1 / span 2;
+      grid-row: 1;
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 0 !important;
+    }
+
+    /* Left column - naturally flowing lesson explanation text */
+    > .tour-left-column {
+      grid-column: 1;
+      grid-row: 2;
+      padding-right: 1.5rem;
+      padding-bottom: 3.5rem !important; /* Move bottom padding here so text clears fixed footer */
+      box-sizing: border-box !important;
+    }
+
+    /* Right column (#tour-wrapper - sticky code editor + running demo) */
+    > #tour-wrapper {
+      grid-column: 2;
+      grid-row: 2;
+      position: sticky !important;
+      top: calc(
+        2.4rem + 10px
+      ) !important; /* Floating directly below sticky header with 10px spacing */
+      height: calc(
+        100vh - 4.6rem - 20px
+      ) !important; /* Viewport height minus header & footer with cushions */
+      overflow: hidden !important;
+      margin-top: 0;
+      z-index: 10;
+      box-sizing: border-box !important;
+    }
+  }
+
+  wgsl-tour {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* Hide the right-side ToC sidebar on medium widescreen views to prevent layout clutter */
+@media (min-width: 1200px) and (max-width: 1679px) {
+  :has(#tour-wrapper) .md-sidebar--secondary {
+    display: none !important;
+  }
+}
+
+/* Lock root font-size to standard desktop size to prevent auto-scaling on huge screens */
+@media (min-width: 1600px) {
+  html {
+    font-size: 20px !important;
+  }
+}
+
+/* Global Fixed, Condensed Slate-Grey Footer and Navigation */
+footer.md-footer {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  height: 2.2rem !important; /* Extremely thin layout */
+  padding: 0 1rem !important; /* Fluid margins */
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  background-color: #1e293b !important; /* Elegant slate-800 grey */
+  border-top: 1px solid #334155 !important; /* slate-700 border */
+  z-index: 100 !important;
+  box-sizing: border-box !important;
+  color: #f8fafc !important; /* Off-white for high readability */
+
+  @media (min-width: 768px) {
+    padding: 0 2rem !important;
+  }
+}
+
+/* Re-style footer pagination links to render as inline elements */
+nav.md-footer__inner {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.md-footer__link {
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  max-width: 30% !important; /* Strictly limit link expansion to prevent centered overlaps */
+  overflow: hidden !important;
+  color: #f1f5f9 !important; /* slate-100 text */
+  text-decoration: none !important;
+  transition: color 0.15s ease !important;
+
+  &:hover {
+    color: #38bdf8 !important; /* Elegant sky blue hover */
+  }
+}
+
+.md-footer__link--next {
+  margin-left: auto !important;
+}
+
+.md-footer__link--prev {
+  margin-right: auto !important;
+}
+
+/* Hide direction line breaks */
+.md-footer__direction {
+  display: none !important;
+}
+
+.md-footer__title {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 0.72rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  font-weight: 500 !important;
+  color: inherit !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+
+  .md-ellipsis {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Inline arrows and prefixes for links */
+.md-footer__link--prev .md-footer__title::before {
+  content: '← Prev: ' !important;
+  font-weight: 600 !important;
+  color: #38bdf8 !important; /* Sky-400 brand highlight */
+  margin-right: 0.25rem !important;
+  white-space: nowrap !important;
+}
+
+.md-footer__link--next .md-footer__title::after {
+  content: ' :Next →' !important;
+  font-weight: 600 !important;
+  color: #38bdf8 !important; /* Sky-400 brand highlight */
+  margin-left: 0.25rem !important;
+  white-space: nowrap !important;
+}
+
+/* Hide the large built-in icon button */
+.md-footer__button.md-icon {
+  display: none !important;
+}
+
+/* Centered Copyright & License Block */
+.md-footer-meta {
+  position: absolute !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: none !important;
+  pointer-events: none !important;
+  max-width: 38% !important; /* Restricts width so it is centered and safe from navigation elements */
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+}
+
+.md-footer-meta__inner {
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+  overflow: hidden !important;
+}
+
+.md-copyright {
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 0 !important; /* Completely hide 'Made with Material' text */
+  pointer-events: auto !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.md-copyright__highlight {
+  font-size: 0.72rem !important; /* Restore perfect sizing for copyright text */
+  color: #cbd5e1 !important; /* slate-300 silver text */
+  display: inline !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+
+  a {
+    color: #38bdf8 !important; /* Sky-400 links */
+    font-weight: 500 !important;
+    text-decoration: none !important;
+    font-size: 0.72rem !important;
+
+    &:hover {
+      text-decoration: underline !important;
+    }
+  }
+}
+
+/* Ensure body has standard bottom padding so text doesn't get covered by fixed footer */
+article.md-content__inner {
+  padding-bottom: 3.5rem !important;
+}
+
+/* Hide the site title inside the primary drawer below 960px to keep mobile layout minimal */
+@media screen and (max-width: 959.98px) {
+  .md-nav .md-nav__title[for='__drawer'] {
+    display: none !important;
+  }
+}
+
+/* Hide GitHub widget inside the navigation drawer when it is visible in the header (960px to 1309.98px) */
+@media screen and (min-width: 960px) and (max-width: 1309.98px) {
+  .md-nav__source {
+    display: none !important;
+  }
+
+  /* Add floating drawer top/bottom margins with separation from header & footer */
+  .md-sidebar--primary {
+    top: calc(2.4rem + 0.4rem) !important;
+    bottom: calc(2.2rem + 0.4rem) !important;
+    height: calc(100vh - 4.6rem - 0.8rem) !important;
+    border-radius: 0.8rem !important;
+  }
+}
+
+/* Adjust primary and secondary sidebar heights, alignments, and scrolling cushions for fixed footer compatibility */
+@media (min-width: 960px) {
+  .md-sidebar--primary,
+  .md-sidebar--secondary {
+    top: 2.4rem !important; /* Position right below header with ultra-tight spacing */
+    height: calc(100vh - 4.6rem) !important; /* Lock to remaining viewport space */
+    padding-top: 0 !important;
+  }
+
+  .md-sidebar--primary .md-sidebar__scrollwrap,
+  .md-sidebar--secondary .md-sidebar__scrollwrap {
+    height: 100% !important;
+    overflow-y: auto !important;
+    padding-top: 34px !important; /* Align starting baseline with page H1 heading to the pixel now that breadcrumbs are removed */
+    padding-bottom: 4rem !important; /* Scrolling cushion so bottom links are completely visible */
+    box-sizing: border-box !important;
+  }
+}
+
+/* Custom Theme Color Palette Overrides (Sophisticated Blue-Teal) */
+[data-md-color-primary] {
+  --md-primary-fg-color: #267d97; /* Sophisticated Blue-Teal */
+  --md-primary-fg-color--light: #4ea3be;
+  --md-primary-fg-color--dark: #1b5e73;
+}
+[data-md-color-accent] {
+  --md-accent-fg-color: #3096b1;
+  --md-accent-fg-color--transparent: rgba(48, 150, 177, 0.1);
+}
+
+/* Explicitly style the header bar in light mode to avoid white/glass overrides in MaterialX */
+body[data-md-color-scheme='default'] {
+  .md-header {
+    background-color: var(--md-primary-fg-color) !important;
+    color: #ffffff !important;
+  }
+
+  .md-header__title {
+    color: #ffffff !important;
+  }
+
+  .md-header__button {
+    color: #ffffff !important;
+
+    svg {
+      fill: currentColor !important;
+    }
+  }
+
+  /* Style search box to be light-on-dark with a darker hairline border */
+  .md-search__form {
+    background-color: rgba(0, 0, 0, 0.12) !important;
+    border: 1px solid rgba(0, 0, 0, 0.28) !important;
+    box-shadow: none !important;
+    transition:
+      background-color 0.25s,
+      border-color 0.25s,
+      box-shadow 0.25s !important;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.18) !important;
+      border-color: rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .md-search__input {
+      color: #ffffff !important;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.72) !important;
+      }
+    }
+
+    .md-search__icon {
+      color: rgba(255, 255, 255, 0.8) !important;
+
+      svg {
+        fill: currentColor !important;
+      }
+    }
+
+    /* Transition back to highly readable dark-on-light when focused/active */
+    &:has(.md-search__input:focus) {
+      background-color: var(--md-default-bg-color) !important;
+      border-color: var(--md-default-fg-color--lightest) !important;
+
+      .md-search__input {
+        color: var(--md-default-fg-color) !important;
+
+        &::placeholder {
+          color: var(--md-default-fg-color--light) !important;
+        }
+      }
+
+      .md-search__icon {
+        color: var(--md-default-fg-color--light) !important;
+      }
+    }
+  }
+
+  /* Style active searchbox/modal when search toggle is checked */
+  [data-md-toggle='search']:checked ~ .md-header .md-search__form {
+    background-color: var(--md-default-bg-color) !important;
+    border-color: var(--md-default-fg-color--lightest) !important;
+
+    .md-search__input {
+      color: var(--md-default-fg-color) !important;
+
+      &::placeholder {
+        color: var(--md-default-fg-color--light) !important;
+      }
+    }
+
+    .md-search__icon {
+      color: var(--md-default-fg-color--light) !important;
+    }
+  }
+}
+
+/* Reduce top margins/paddings globally to tighten layout space below header */
+.md-main {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+.md-main__inner {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.md-content {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+article.md-content__inner {
+  padding-top: 0.1rem !important;
+  margin-top: 0 !important;
+
+  &::before {
+    display: none !important;
+  }
+
+  .md-content:not(:has(.md-path)) & {
+    padding-top: calc(0.1rem + 30px) !important;
+  }
+
+  .md-content:not(:has(.md-path)) &:has(#tour-wrapper) {
+    padding-top: calc(0.1rem + 30px) !important;
+  }
+}
+
+article.md-content__inner h1,
+article.md-content__inner > h1 {
+  margin-top: 0.2rem !important;
+}
+
+.md-breadcrumbs {
+  margin-top: 0 !important;
+  margin-bottom: 0.1rem !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.md-breadcrumbs__list {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+nav.md-path {
+  padding-top: 0.3rem !important;
+}
+
+/* Bold top-level sidebar navigation links/folders by default */
+.md-sidebar--primary .md-nav--primary > .md-nav__list > .md-nav__item {
+  > .md-nav__link,
+  > .md-nav__container > .md-nav__link,
+  > .md-nav__container > label {
+    font-weight: 700 !important;
+  }
+}
+
+/* Elevated Z-Index and Elegant Vertical Bottom Gradient for Sticky Header */
+.md-header {
+  z-index: 110 !important;
+  position: sticky !important;
+
+  &::after {
+    content: '' !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: -10px !important;
+    height: 10px !important;
+    background: linear-gradient(to bottom, var(--md-default-bg-color), transparent) !important;
+    pointer-events: none !important;
+  }
+}
+
+/* Breakpoint shift: keep primary sidebar in drawer/mobile state between 1220px and 1309.98px */
+@media screen and (min-width: 1220px) and (max-width: 1309.98px) {
+  /* Show hamburger menu toggle in header and hide logo to prevent crowding/doubling */
+  .md-header__button[for='__drawer'] {
+    display: inline-flex !important;
+  }
+  .md-header__button.md-logo {
+    display: none !important;
+  }
+
+  /* Force the site title inside the primary navigation drawer to be visible */
+  .md-nav .md-nav__title[for='__drawer'] {
+    display: flex !important;
+    align-items: center !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    padding: 0.8rem !important;
+
+    /* Display the logo inside the site title drawer header */
+    .md-logo {
+      display: block !important;
+    }
+  }
+
+  /* Hide primary sidebar by default (off-screen) */
+  [dir='ltr'] .md-sidebar--primary {
+    left: calc(var(--md-sidebar-primary-width) * -1) !important;
+    right: auto !important;
+  }
+  [dir='rtl'] .md-sidebar--primary {
+    right: calc(var(--md-sidebar-primary-width) * -1) !important;
+    left: auto !important;
+  }
+
+  /* Primary sidebar drawer base styling */
+  .md-sidebar--primary {
+    -webkit-backdrop-filter: blur(0.4rem) !important;
+    backdrop-filter: blur(0.4rem) !important;
+    background-color: var(--md-default-bg-color--light) !important;
+    border-radius: 0.8rem !important;
+    display: block !important;
+    height: calc(100vh - 4.6rem - 0.8rem) !important;
+    overflow: hidden !important;
+    position: fixed !important;
+    top: calc(2.4rem + 0.4rem) !important;
+    bottom: calc(2.2rem + 0.4rem) !important;
+    transform: translateX(0) !important;
+    transition:
+      transform 0.15s cubic-bezier(0.5, 0, 0.5, 0),
+      box-shadow 0.15s !important;
+    width: var(--md-sidebar-primary-width) !important;
+    z-index: 120 !important; /* High z-index to overlay header (110) and content */
+    box-shadow: none !important;
+    padding-top: 0 !important;
+    padding-bottom: 22px !important;
+  }
+
+  /* Slide-in transition when checked */
+  [data-md-toggle='drawer']:checked ~ .md-container .md-sidebar--primary {
+    box-shadow: var(--md-shadow-z3) !important;
+    transform: translateX(
+      calc(var(--md-sidebar-primary-width) + var(--md-sidebar-drawer-offset))
+    ) !important;
+    transition:
+      transform 0.2s cubic-bezier(0.7, 0.7, 0.1, 1),
+      box-shadow 0.2s !important;
+  }
+
+  [dir='rtl'] [data-md-toggle='drawer']:checked ~ .md-container .md-sidebar--primary {
+    transform: translateX(
+      calc((var(--md-sidebar-primary-width) + var(--md-sidebar-drawer-offset)) * -1)
+    ) !important;
+  }
+
+  /* Ensure input checked rules also apply if toggle attribute is matching, scoped strictly to __drawer overlay */
+  input#__drawer:checked {
+    ~ .md-container .md-sidebar--primary {
+      box-shadow: var(--md-shadow-z3) !important;
+      transform: translateX(
+        calc(var(--md-sidebar-primary-width) + var(--md-sidebar-drawer-offset))
+      ) !important;
+      transition:
+        transform 0.2s cubic-bezier(0.7, 0.7, 0.1, 1),
+        box-shadow 0.2s !important;
+    }
+    ~ .md-overlay[for='__drawer'] {
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+  }
+
+  /* Scrollwrap inside primary sidebar */
+  .md-sidebar--primary .md-sidebar__scrollwrap {
+    bottom: 0 !important;
+    left: 0 !important;
+    margin: 0 !important;
+    position: absolute !important;
+    right: 0 !important;
+    top: 0 !important;
+    height: auto !important;
+    padding-top: 34px !important;
+    padding-bottom: 80px !important;
+    overflow-y: auto !important;
+  }
+
+  /* Primary sidebar inner */
+  .md-sidebar--primary .md-sidebar__inner {
+    height: auto !important;
+  }
+
+  /* Primary nav element inside scrollwrap */
+  .md-nav--primary {
+    margin: 0 4px 8px !important;
+  }
+
+  /* Ensure main content column spans full-width when sidebar is a drawer */
+  .md-content {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Force-show the sidebar drawer toggle button, which is natively hidden in Zone 4 */
+  .md-top__side--nav {
+    display: flex !important;
+  }
+}
+
+/* Mobile footer pagination and copyright spacing overrides */
+@media screen and (max-width: 767.98px) {
+  /* Hide the page title .md-ellipsis in footer links on mobile */
+  .md-footer__title .md-ellipsis {
+    display: none !important;
+  }
+
+  /* Simplify the prefix text to just ← Prev / Next → */
+  .md-footer__link--prev .md-footer__title::before {
+    content: '← Prev' !important;
+    margin-right: 0 !important;
+  }
+
+  .md-footer__link--next .md-footer__title::after {
+    content: 'Next →' !important;
+    margin-left: 0 !important;
+  }
+
+  /* Narrow pagination links and expand copyright room */
+  .md-footer__link {
+    max-width: 20% !important;
+  }
+
+  .md-footer-meta {
+    max-width: 58% !important;
+  }
+
+  .md-copyright__highlight {
+    font-size: 0.62rem !important;
+
+    a {
+      font-size: 0.62rem !important;
+    }
+  }
+}
+
+/* Premium Highlights on Left Sidebar Navigation after Breadcrumbs Removal */
+
+/* 1. Active 2nd-Level Navigation Category Container */
+.md-sidebar--primary
+  .md-nav--primary
+  > .md-nav__list
+  > .md-nav__item
+  > .md-nav
+  > .md-nav__list
+  > .md-nav__item.md-nav__item--active.md-nav__item--nested {
+  background-color: rgba(48, 150, 177, 0.04) !important; /* Pale 4% opacity shade of accent color */
+  border-radius: 6px;
+  padding-top: 0.15rem !important;
+  padding-bottom: 0.15rem !important;
+  margin-top: 0.15rem;
+  margin-bottom: 0.15rem;
+  transition: background-color 0.2s ease;
+}
+
+/* 2. Polish Current Location Leaf Node Navigation Item */
+.md-sidebar--primary .md-nav--primary .md-nav__link--active {
+  border-radius: 4px;
+  /* Retain default padding of 16px to prevent layout shifts/text jumps between active/inactive states */
+}
+
+/* Content overlay background gradient fade for dual-column drawer views (Zones 3 and 4) */
+@media screen and (min-width: 1200px) and (max-width: 1309.98px) {
+  .md-overlay {
+    -webkit-backdrop-filter: blur(0.2rem) !important;
+    backdrop-filter: blur(0.2rem) !important;
+    background-color: transparent !important;
+    background-image: linear-gradient(
+      to right,
+      var(--md-default-bg-color--light) 35%,
+      transparent 55%
+    ) !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    position: fixed !important;
+    right: 0 !important;
+    top: 0 !important;
+    transition: opacity 0.2s !important;
+    z-index: 5 !important; /* Stacked below header (110), footer (100) and playground (10) */
+    display: block !important;
+  }
+
+  [data-md-toggle='drawer']:checked ~ .md-overlay[for='__drawer'] {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* Keep floating scroll buttons centered over the left column in all two-column playground layouts (>= 1200px) */
+:has(#tour-wrapper) {
+  @media screen and (min-width: 1200px) {
+    .md-top {
+      left: var(--tour-left-col-midpoint, 25%) !important;
+      right: auto !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      transform: translateX(-50%) !important;
+      z-index: 4 !important; /* Bring buttons above normal content, but keep below overlay (5) and playground (10) */
+    }
+  }
+}
+
+/* Maintain constant link colors on hover within typeset content */
+.md-typeset a {
+  color: var(--md-primary-fg-color) !important;
+  transition: text-decoration 0.15s ease !important;
+
+  &:hover {
+    color: var(--md-primary-fg-color) !important;
+    text-decoration: underline !important;
+  }
+}
+
+/* Maintain constant accent link color in dark mode (slate scheme) to prevent native teal override */
+body[data-md-color-scheme='slate'] {
+  .md-typeset a {
+    color: var(--md-accent-fg-color) !important;
+
+    &:hover {
+      color: var(--md-accent-fg-color) !important;
+      text-decoration: underline !important;
+    }
+  }
 }
