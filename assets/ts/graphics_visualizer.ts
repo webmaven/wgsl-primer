@@ -35,6 +35,22 @@ export class GraphicsVisualizer implements Visualizer {
   }
 
   execute(frame_number: number) {
+    const canvas = this.context.canvas as HTMLCanvasElement;
+    const devicePixelRatio = window.devicePixelRatio || 1;
+    const targetWidth = Math.max(1, Math.floor((canvas.clientWidth || 640) * devicePixelRatio));
+    const targetHeight = Math.max(1, Math.floor((canvas.clientHeight || 480) * devicePixelRatio));
+
+    if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      const presentationFormat = navigator.gpu.getPreferredCanvasFormat();
+      this.context.configure({
+        device: this.device,
+        format: presentationFormat,
+        alphaMode: 'premultiplied',
+      });
+    }
+
     const uniformData = new Uint32Array([frame_number]);
 
     this.device.queue.writeBuffer(
@@ -85,8 +101,8 @@ export default class GraphicsVisualizerBuilder implements VisualizerBuilder {
     output.appendChild(div);
 
     const devicePixelRatio = window.devicePixelRatio || 1;
-    canvas.width = canvas.clientWidth * devicePixelRatio;
-    canvas.height = canvas.clientHeight * devicePixelRatio;
+    canvas.width = (canvas.clientWidth || 640) * devicePixelRatio;
+    canvas.height = (canvas.clientHeight || 480) * devicePixelRatio;
 
     const adapter = await navigator.gpu.requestAdapter();
     if (adapter === null) {
