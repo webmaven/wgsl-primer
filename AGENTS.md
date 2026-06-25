@@ -62,3 +62,14 @@ The site uses automated GitHub Actions workflows for deployment:
    - Use Standalone Template Chips (`<span class="template">`) outside signatures only when describing parameters.
    - Use inline math `\( ... \)` **strictly** for mathematical formulas, algebra, and geometric coordinates or indices. Single dollar signs are prohibited.
 6. **Virtual Environment Usage**: When invoking Python scripts, running audit tools, or executing `properdocs` commands, always utilize the local Python virtual environment (`venv/bin/python` or `venv/bin/properdocs`) or activate the virtual environment (`source venv/bin/activate`) to ensure the correct package versions (including ProperDocs and Markdown extensions) are resolved. Do not install or run packages globally.
+
+## Future Content & Pedagogical Expansion
+
+When expanding or refining the tour content, prioritize implementing the following structural and interactive upgrades:
+
+### 1. Expressions & Operators Upgrades
+
+- **Bitwise Operator Data-Packing Masterclass**: Revamp the bitwise operator section to focus on a real-world graphics use case: how to compress and pack/unpack float normal vectors and specular values into a single `u32` to save GPU memory bandwidth.
+- **Strict Typing Safety Frame**: Explain WGSL's "no implicit coercion" rules (e.g., compile errors for `1.0 + 2`) as a deliberate, zero-overhead safety feature to prevent silent performance drops or vendor-specific GPU driver compiler issues.
+- **Interactive Vector/Matrix Operator Playpen**: Build an interactive TS component where users can input simple WGSL math operations (e.g., scaling or adding vectors) in a live CodeMirror field and see a 3D or 2D vector coordinate grid animate the results in real-time.
+- **Forward-Linking Matrix/Vector Math**: Add descriptive callout blocks in the general Operators section highlighting WGSL's native linear algebra operator overloading, linking directly to the comprehensive Matrix/Vector chapters.

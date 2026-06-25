@@ -63,6 +63,12 @@ extra_javascript:
 
 nav:
   - Welcome: index.md
+  - Functions:
+      - Overview: functions/index.md
+      - Syntax: functions/syntax.md
+      - Calls: functions/calls.md
+      - Entry Points: functions/entry-points.md
+      - Must Use Attributes: functions/must-use.md
   - Types:
       - Overview: types/index.md
       - Basic Scalars: types/basic-scalars.md
@@ -95,20 +101,6 @@ nav:
           - The Coordination Problem: types/atomics/overview.md
           - Atomic Types: types/atomics/atomic-types.md
   #          - Atomics & Coordination: types/atomics/coordination.md
-  - Variables & Constants:
-      - Overview: variables/index.md
-      - Let Declaration: variables/let.md
-      - Const Declaration: variables/const.md
-      - Override Declaration: variables/override.md
-      - Function Variables: variables/var-function.md
-      - Private Variables: variables/var-private.md
-      - Workgroup Variables: variables/var-workgroup.md
-      - Uniform Variables: variables/var-uniform.md
-      - Storage Variables: variables/var-storage.md
-      - Handle Variables: variables/var-handle.md
-      #      - Thread Coordinates: variables/thread-coordinates.md
-      #      - Barriers & Memory Synchronization: variables/memory-barriers.md
-      - Shadowing: variables/shadowing.md
   - Expressions:
       - Overview: expressions/index.md
       - Operators: expressions/operators/index.md
@@ -123,19 +115,27 @@ nav:
               - Uses of Constants: expressions/evaluation-stage/constant/uses.md
           - Override Stage: expressions/evaluation-stage/override/index.md
           - Runtime Stage: expressions/evaluation-stage/runtime/index.md
+  - Variables & Constants:
+      - Overview: variables/index.md
+      - Let Declaration: variables/let.md
+      - Const Declaration: variables/const.md
+      - Override Declaration: variables/override.md
+      - Function Variables: variables/var-function.md
+      - Private Variables: variables/var-private.md
+      - Workgroup Variables: variables/var-workgroup.md
+      - Uniform Variables: variables/var-uniform.md
+      - Storage Variables: variables/var-storage.md
+      - Handle Variables: variables/var-handle.md
+      #      - Thread Coordinates: variables/thread-coordinates.md
+      #      - Barriers & Memory Synchronization: variables/memory-barriers.md
+      - Shadowing: variables/shadowing.md
   - Control Flow:
       - Overview: control-flow/index.md
       - If Statements: control-flow/if-statements.md
       - Switch Statements: control-flow/switch-statements.md
-      - The loop Statement: control-flow/loop-statements.md
       - While Statements: control-flow/while-statements.md
       - For Statements: control-flow/for-statements.md
-  - Functions:
-      - Overview: functions/index.md
-      - Syntax: functions/syntax.md
-      - Calls: functions/calls.md
-      - Must Use Attributes: functions/must-use.md
-      - Entry Points: functions/entry-points.md
+      - The loop Statement: control-flow/loop-statements.md
   - Binding Points:
       - Overview: binding-points/index.md
       - Attributes: binding-points/attributes.md
