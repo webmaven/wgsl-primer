@@ -1,5 +1,5 @@
 ---
-title: "Vector constructors"
+title: "Vector Constructors"
 shader: ./constructors.wgsl
 visualizer: /ts/value_visualizer.ts
 visualizerOptions: '{"fields": [
@@ -13,67 +13,77 @@ visualizerOptions: '{"fields": [
 ]}'
 ---
 
-Vectors have three kinds of constructors:
+# Vector Constructors
 
-1. Zero-value constructor: <span class="template">vec(N)(S)()</span> or <span class="template">vec(N)&lt;(T)&gt;()</span>
+In WGSL, vectors can be constructed or converted using several built-in constructor forms. There are three primary constructor styles, alongside type inference and element-wise conversion syntax.
 
-   This constructs a vector with the zero-value for all elements.
+| Style                                              | Syntax Pattern                | Description                                                       |
+| :------------------------------------------------- | :---------------------------- | :---------------------------------------------------------------- |
+| **[Zero-Value](#zero-value-constructors)**         | <code>vec<span class="template template-vec-n">N</span>&lt;<span class="template template-vec-t">T</span>&gt;()</code> / <code>vec<span class="template template-vec-n">N</span>f()</code> | Initializes all components to their default zero value.           |
+| **[Splat](#splat-constructors)**                   | <code>vec<span class="template template-vec-n">N</span>&lt;<span class="template template-vec-t">T</span>&gt;(val)</code> / <code>vec<span class="template template-vec-n">N</span>f(val)</code> | Replicates a single scalar value across all components.           |
+| **[Element-Wise](#element-wise-constructors)**     | <code>vec<span class="template template-vec-n">N</span>&lt;<span class="template template-vec-t">T</span>&gt;(x, y, ...)</code> | Initializes components from individual scalars or nested vectors. |
+| **[Type-Inferring](#type-inferring-constructors)** | <code>vec<span class="template template-vec-n">N</span>(x, y, ...)</code> | Infers the component type from the supplied arguments.            |
+| **[Type-Converting](#vector-type-conversions)**    | <code>vec<span class="template template-vec-n">N</span>&lt;<span class="template template-vec-t">T</span>&gt;(vector)</code> | Converts a vector of one element type to another element type.    |
 
-   <details class='example'>
-     <summary>Example</summary>
+---
 
-   `vec2f()` constructs a `vec2f` with zero-values for each of the elements.
+## Zero-Value Constructors
 
-   `vec3<bool>()` constructs a `vec3<bool>` with `false` for each of the elements.
+Constructs a vector with each component initialized to its default/zero value (e.g., `0.0` for float, `0` for integer, or `false` for boolean).
 
-   </details>
+```wgsl
+let z_float = vec2f();       // Equivalent to vec2f(0.0, 0.0)
+let z_bool  = vec3<bool>();  // Equivalent to vec3<bool>(false, false, false)
+```
 
-1. 'Splat' constructor: <span class="template">vec(N)(S)(value)</span> or <span class="template">vec(N)&lt;(T)&gt;(value)</span>
+---
 
-   This constructs a vector with the same value for all elements.
+## Splat Constructors
 
-   <details class='example'>
-     <summary>Example</summary>
+Constructs a vector by replicating (or "splatting") a single scalar value across all of its components.
 
-   `vec4i(5)` constructs a `vec4<i32>` with `5` replicated in all 4 elements of the vector.
+```wgsl
+let s_int  = vec4i(5);         // Equivalent to vec4i(5, 5, 5, 5)
+let s_bool = vec2<bool>(true); // Equivalent to vec2<bool>(true, true)
+```
 
-   `vec2<bool>(true)` constructs a `vec2<bool>` with `true` for both of the elements.
+---
 
-   </details>
+## Element-Wise Constructors
 
-1. Element-wise constructor: <span class="template">vec(N)(S)(x, y, ...)</span> or <span class="template">vec(N)&lt;(T)&gt;(x, y, ...)</span>
+Constructs a vector by specifying the exact value of each component. The arguments can be individual scalars, or a mix of scalars and smaller vectors.
 
-   This constructs a vector with the elements assigned the respective argument value.
+If a constructor argument is a vector, WGSL automatically **unpacks** its components in order. This allows you to easily build larger vectors from smaller ones.
 
-   <details class='example'>
-     <summary>Example</summary>
+```wgsl
+// Constructing from individual scalar values
+let coord = vec3u(1, 2, 3);
 
-   `vec3u(1, 2, 3)` constructs a `vec3<u32>` with the `.x`, `.y`, and `.z` elements initialized with `1`, `2`, and `3`, respectively.
+// Constructing by mixing scalars and a vec2 (automatic unpacking)
+let color = vec4f(1.0, vec2f(2.0, 3.0), 4.0); // Equivalent to vec4f(1.0, 2.0, 3.0, 4.0)
+```
 
-   `vec2<bool>(true, false)` constructs a `vec2<bool>` with `.x`, and `.y` elements initialized with `true` and `false`, respectively.
+---
 
-   </details>
+## Type-Inferring Constructors
 
-   If a constructor argument is a vector, then the elements of that vector are used as if they were passed separately.
+If you omit the element type suffix or generic parameter (using just the bare `vec2`, `vec3`, or `vec4` form), the compiler automatically infers the element type from the supplied arguments.
 
-   <details class='example'>
-     <summary>Example</summary>
+```wgsl
+let v_u32    = vec4(1u);       // Infers vec4<u32> because '1u' is a u32
+let v_aint   = vec2(1, 2);     // Infers vec2 of abstract-int (1, 2)
+let v_afloat = vec2(1, 2.5);   // Infers vec2 of abstract-float (1.0, 2.5)
+```
 
-   `vec4f(1, vec2(2, 3), 4)` constructs a `vec4<f32>` with the `.x`, `.y`, `.z` and `.w` elements initialized with `1`, `2`, `3`, and `4`, respectively.
+---
 
-   </details>
+## Vector Type Conversions
 
-The short-hand vector constructors <span class="template">vec(N)(value)</span> and <span class="template">vec(N)(x, y, ...)</span> infer the element type from the arguments:
+You can convert a vector from one component type to another (e.g., from `f32` to `u32`) by passing the original vector as the sole argument to a constructor with the target type. This performs an element-wise cast of each component.
 
-<details class='example'>
-<summary>Example</summary>
+```wgsl
+let v_float = vec3f(5.0, 7.5, 10.0);
+let v_uint  = vec3u(v_float); // Truncates components: vec3u(5u, 7u, 10u)
+```
 
-`vec4(1i)` constructs a `vec4<i32>` with `1` replicated in all four elements of the vector.
-
-`vec2(1, 2)` constructs a two-element vector of type `abstract-int`, with `.x` and `.y` elements initialized with `1`, `2`, respectively.
-
-`vec2(1, 2.5)` constructs a two-element vector of type `abstract-float`, with `.x` and `.y` elements initialized with `1.0`, `2.5`, respectively.
-
-</details>
-
-Vectors with a different element type but the same number of elements can be element-wise converted, with <span class="template">vec(N)&lt;(T)&gt;(vector_expr)</span>.
+---

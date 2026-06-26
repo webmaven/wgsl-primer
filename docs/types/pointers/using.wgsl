@@ -13,8 +13,14 @@ fn happy_birthday() {
   *age_ptr = *age_ptr + 1;  // Updates 'age'
 }
 
-fn main() {
+fn run_main() {
   age = 18.0;
   happy_birthday();
   // Now age is 19.0
 }
+
+fn run_test_age() -> f32 {
+  run_main();
+  return age;
+}
+

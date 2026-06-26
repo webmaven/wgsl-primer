@@ -9,7 +9,10 @@ to create a short name for something in a larger structure, as in the example.
 You may have to use parentheses around the dereference, because
 member access and array indexing bind more tightly.
 
-```rust
+<details class='example'>
+<summary>Example</summary>
+
+```wgsl
 struct Particle {
   pos: vec3f
 }
@@ -26,3 +29,5 @@ fn f(i: i32) {
   *p.pos = vec3f();
 }
 ```
+
+</details>

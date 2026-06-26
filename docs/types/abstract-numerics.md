@@ -1,6 +1,8 @@
 ---
 title: 'Abstract-numerics'
 shader: ./abstract-numerics.wgsl
+visualizer: /ts/value_visualizer.ts
+visualizerOptions: '{"fields": [{"expr": "pi", "type": "f32"}, {"expr": "two", "type": "i32"}, {"expr": "two_pi", "type": "f32"}, {"expr": "implicitly_convert_abstract_int_to_i32", "type": "i32"}, {"expr": "implicitly_convert_abstract_int_to_u32", "type": "u32"}, {"expr": "implicitly_convert_abstract_int_to_f32", "type": "f32"}, {"expr": "implicitly_convert_abstract_float_to_f32", "type": "f32"}]}'
 ---
 
 An abstract-numeric type is one of:

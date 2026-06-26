@@ -1,8 +1,8 @@
 ---
-title: 'Overview'
+title: 'The Coordination Problem'
 ---
 
-### The coordination problem
+# The Coordination Problem
 
 Shaders execute with a high degree of parallelism (and concurrency).
 Many invocations collectively do the work of a single shader, with
@@ -18,13 +18,13 @@ one invocation accesses a particular memory word in relation
 to when another invocation accesses that word.
 Accesses _conflict_ if at least one of them is a write.
 
-### Data races
+## Data races
 
 Ordinarily, conflicting concurrent accesses to the same memory word cause a _data race_.
 
 **Data races are bad.** Data races can have **unpredictable results with non-local effects.**
 
-### Avoiding data races with atomic types
+## Avoiding data races with atomic types
 
 To avoid data races:
 
@@ -39,5 +39,5 @@ However, the system guarantees that, from the perspective of all invocations,
 atomic accesses to a single memory word will occur as if they happened in _some_
 order, one after the other.
 
-> **Beware:** The ordering is only consistent with respect to a single word.
-> When comparing the orderings for _different_ words, it may appear that causality is violated.
+!!! warning "Beware: Weak Ordering"
+    The ordering is only consistent with respect to a single word. When comparing the orderings for _different_ words, it may appear that causality is violated.

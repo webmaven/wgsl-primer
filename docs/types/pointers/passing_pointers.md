@@ -1,6 +1,8 @@
 ---
 title: 'Pointers As Function Parameters'
 shader: ./passing_pointers.wgsl
+visualizer: /ts/value_visualizer.ts
+visualizerOptions: '{"fields": [{"expr": "run_test()", "type": "vec2u"}]}'
 ---
 
 Pointers can be passed into functions.
@@ -20,8 +22,8 @@ Without the [`unrestricted_pointer_parameters`](https://www.w3.org/TR/WGSL/#lang
 2. Only pointers to whole variables can be used.
    - You can't pass the address of only part of a composite variable.
 
-> These constraints make it safe to translate WGSL pointer parameters as `inout` parameters
-> in HLSL and GLSL.
+!!! info
+    These constraints make it safe to translate WGSL pointer parameters as `inout` parameters in HLSL and GLSL.
 
 The rules for passing pointers into builtin functions are less strict,
 and are not covered by this tour.

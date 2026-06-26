@@ -1,6 +1,8 @@
 ---
 title: 'Creating and Using Pointers'
 shader: ./using.wgsl
+visualizer: /ts/value_visualizer.ts
+visualizerOptions: '{"fields": [{"expr": "run_test_age()", "type": "f32"}]}'
 ---
 
 Get a pointer from a variable with the `&` operator:

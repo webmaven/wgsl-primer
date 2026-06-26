@@ -11,6 +11,8 @@ visualizerOptions: '{"fields": [
 ]}'
 ---
 
+# Structures Overview
+
 A structure type is a named grouping of member values.
 Each member has a name and a data type.
 
@@ -27,3 +29,11 @@ Use a functional form to create a structure value:
   The expressions must match the member types.
 - `MyStruct()` creates a `MyStruct` value with all zero members.
   This works if `MyStruct` is [constructible](http://w3.org/TR/WGSL#constructible).
+
+---
+
+## Next Steps
+
+Custom layout and alignment:
+
+- **[Memory Alignment](alignment.md)**: Structure layouts, byte alignments, `@align` and `@size` attributes, and Vulkan `std430` rules.

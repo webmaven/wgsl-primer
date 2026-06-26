@@ -76,7 +76,7 @@ nav:
       - Vectors:
           - Overview: types/vectors/index.md
           - Constructors: types/vectors/constructors.md
-      #          - Components & Swizzling: types/vectors/components.md
+          - Components & Swizzling: types/vectors/components.md
       - Matrices:
           - Overview: types/matrices/index.md
           - Constructors: types/matrices/constructors.md
@@ -87,7 +87,7 @@ nav:
           - Runtime-sized Arrays: types/arrays/runtime-sized-arrays.md
       - Structures:
           - Overview: types/structures/index.md
-      #          - Alignment: types/structures/alignment.md
+          - Alignment: types/structures/alignment.md
       - Pointers:
           - Overview: types/pointers/index.md
           - Specifying a Pointer: types/pointers/specifying.md
@@ -100,7 +100,7 @@ nav:
           - Overview: types/atomics/index.md
           - The Coordination Problem: types/atomics/overview.md
           - Atomic Types: types/atomics/atomic-types.md
-  #          - Atomics & Coordination: types/atomics/coordination.md
+          - Atomics & Coordination: types/atomics/coordination.md
   - Expressions:
       - Overview: expressions/index.md
       - Operators: expressions/operators/index.md

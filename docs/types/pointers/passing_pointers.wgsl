@@ -21,3 +21,11 @@ var<private> cursor: Cursor;
 fn bad_pass_ptr_to_part_of_composite() {
   //reset_counter(&cursor.read_at); // Error: Can't pass pointer to part of composite
 }
+
+fn run_test() -> vec2u {
+  first_count = 10u;
+  second_count = 20u;
+  init_counters();
+  return vec2u(first_count, second_count);
+}
+

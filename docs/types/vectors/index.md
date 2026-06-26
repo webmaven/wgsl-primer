@@ -1,36 +1,43 @@
 ---
 title: 'Vectors'
 shader: ./index.wgsl
+visualizer: /ts/value_visualizer.ts
+visualizerOptions: '{"fields": [
+    {"expr": "test_vec2f()", "type": "vec2f"},
+    {"expr": "test_vec3u()", "type": "vec3u"},
+    {"expr": "test_vec4i()", "type": "vec4i"}
+]}'
 ---
+
+# Vectors Overview
 
 WGSL supports 2-element, 3-element and 4-element vectors of scalar types.
 
-Vectors are declared with the form <span class="template">vec(N)&lt;(T)&gt;</span>, where <span class="template">(N)</span> is the number of elements in the vector, and <span class="template">(T)</span> is the element type.
+Vectors are declared with the form <code>vec<span class="template template-vec-n">N</span>&lt;<span class="template template-vec-t">T</span>&gt;</code>, where <span class="template template-vec-n">N</span> is the number of elements in the vector, and <span class="template template-vec-t">T</span> is the element type.
 
-<details class='example'>
-<summary>Example</summary>
-
-|              |                                  |
-| ------------ | -------------------------------- |
+| Vector Type  | Description                      |
+| :----------- | :------------------------------- |
 | `vec2<f32>`  | A two-element vector of `f32`.   |
 | `vec3<u32>`  | A three-element vector of `u32`. |
 | `vec4<bool>` | A four-element vector of `bool`. |
 
-</details>
+WGSL also predeclares the aliases <code>vec<span class="template template-vec-n">N</span><span class="template template-vec-s">S</span></code>, where <span class="template template-vec-s">S</span> is one of `i`, `u` or `f`:
 
-WGSL also predeclares the aliases <span class="template">vec(N)(S)</span>, where <span class="template">(S)</span> is one of `i`, `u` or `f`:
+- <code>vec<span class="template template-vec-n">N</span>i</code> is an alias to <code>vec<span class="template template-vec-n">N</span>&lt;i32&gt;</code>
+- <code>vec<span class="template template-vec-n">N</span>u</code> is an alias to <code>vec<span class="template template-vec-n">N</span>&lt;u32&gt;</code>
+- <code>vec<span class="template template-vec-n">N</span>f</code> is an alias to <code>vec<span class="template template-vec-n">N</span>&lt;f32&gt;</code>
 
-- <span class="template">vec(N)i</span> is an alias to <span class="template">vec(N)&lt;i32&gt;</span>
-- <span class="template">vec(N)u</span> is an alias to <span class="template">vec(N)&lt;u32&gt;</span>
-- <span class="template">vec(N)f</span> is an alias to <span class="template">vec(N)&lt;f32&gt;</span>
+| Alias   | Full Representation                           |
+| :------ | :-------------------------------------------- |
+| `vec2f` | `vec2<f32>` (a two-element vector of `f32`)   |
+| `vec3u` | `vec3<u32>` (a three-element vector of `u32`) |
+| `vec4i` | `vec4<i32>` (a four-element vector of `i32`)  |
 
-<details class='example'>
-<summary>Example</summary>
+---
 
-|         |                             |
-| ------- | --------------------------- |
-| `vec2f` | is an alias to `vec2<f32>`. |
-| `vec3u` | is an alias to `vec3<u32>`. |
-| `vec4i` | is an alias to `vec4<i32>`. |
+## Next Steps
 
-</details>
+Vector operations and usage:
+
+- **[Vector Constructors](constructors.md)**: Initialization forms including splat, element-wise, and type-inferring constructors.
+- **[Components & Swizzling](components.md)**: Individual component access, spatial/color naming styles, and swizzling rules.

@@ -1,5 +1,5 @@
 ---
-title: 'No Aliasing Allowed With Pointer Paramters'
+title: 'No Aliasing Allowed With Pointer Parameters'
 shader: ./no_aliasing.wgsl
 ---
 

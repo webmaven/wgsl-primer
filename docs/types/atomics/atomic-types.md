@@ -1,11 +1,13 @@
 ---
 title: 'Atomic types'
 shader: ./atomic-types.wgsl
+visualizer: /ts/value_visualizer.ts
+visualizerOptions: '{"fields": [{"expr": "run_atomic_test()", "type": "i32"}]}'
 ---
 
 Atomic operations only work on 32-bit integers.
 
-An atomic type is specified as <span class="template">atomic&lt;(T)&gt;</span>, where <span class="template">(T)</span> is i32 or u32.
+An atomic type is specified as <code>atomic&lt;<span class="template template-atomic-t">T</span>&gt;</code>, where <span class="template template-atomic-t">T</span> is i32 or u32.
 
 An atomic type can only appear in the store type for a variable in the
 `workgroup` or `storage` address space.
