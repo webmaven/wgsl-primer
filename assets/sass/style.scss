@@ -85,6 +85,22 @@ code .template {
   background-color: #ff818149;
   border-color: #ff8181ab;
 }
+.template-fn-name {
+  background-color: #d381ff3b;
+  border-color: #d381ff85;
+}
+.template-fn-params {
+  background-color: #ffb8813b;
+  border-color: #ffb88185;
+}
+.template-fn-ret {
+  background-color: #ff81813b;
+  border-color: #ff818185;
+}
+.template-fn-body {
+  background-color: #a0a0a02b;
+  border-color: #a0a0a06c;
+}
 
 /* Wide Display Two-Column Layout and Anchored Footer for Tour of WGSL */
 @media (min-width: 1200px) {

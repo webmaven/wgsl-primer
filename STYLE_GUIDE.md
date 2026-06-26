@@ -99,5 +99,5 @@ Use inline math **strictly** for mathematical and geometrical concepts. Do not m
 ## 4. Enforcement Guidelines for the Agent
 
 1.  **Strict SASS Scoping**: Group rules under `code:not(pre code)` and avoid custom wrappers. Let the browser handle standard inline flow (`display: inline`) to guarantee that multi-line wrapping does not cause vertical height fluctuations.
-2.  **Audit on Edits**: When editing any `.md` chapter inside `docs/`, check if inline backticks contain parameterized symbols (like `<T>`). If they do, refactor them to use semantic `<code>` with nested colored parameter spans.
+2.  **Audit on Edits**: When editing any `.md` page inside `docs/`, check if inline backticks contain parameterized symbols (like `<T>`). If they do, refactor them to use semantic `<code>` with nested colored parameter spans.
 3.  **Standardize MathJax Delimiters**: Scan and replace any remaining single-dollar mathematical indicators (`$ ... $`) with standard LaTeX delimiters `\(` and `\)`.
