@@ -88,6 +88,7 @@ const result: vec3f = m2x3 * vec2f(9.0, 8.0); // vec3f(41.0, 58.0, 75.0)
 Multiplying two matrices `A * B` performs standard mathematical matrix multiplication.
 
 To multiply matrix `A` by matrix `B`:
+
 - The number of **columns of A** must equal the number of **rows of B**.
 - If `A` is a `matCxR` (\(C\) columns, \(R\) rows) and `B` is a `matKxC` (\(K\) columns, \(C\) rows), the result is a `matKxR` (\(K\) columns, \(R\) rows).
 

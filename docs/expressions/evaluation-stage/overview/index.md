@@ -1,6 +1,8 @@
 ---
-title: 'Overview'
+title: 'Pipeline Stages'
 ---
+
+# Pipeline Evaluation Stages
 
 There are three key phases in a shader's lifetime (shown in context <a href="#in-context">below</a>):
 

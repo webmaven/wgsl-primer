@@ -19,3 +19,19 @@ fn add_cargo(v: Vehicle, cargo_mass: f32) -> Vehicle {
 }
 
 const all_zeros_vehicle = Vehicle();
+
+struct Material {
+  color: vec3<f32>,
+  shininess: f32,
+}
+
+struct PointLight {
+  position: vec3<f32>,
+  intensity: f32,
+  material: Material,
+}
+
+const default_material = Material(vec3<f32>(1.0, 0.5, 0.0), 32.0);
+const light = PointLight(vec3<f32>(0.0, 5.0, -2.0), 1.5, default_material);
+const light_shininess = light.material.shininess;
+

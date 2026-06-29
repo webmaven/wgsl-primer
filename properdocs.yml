@@ -100,19 +100,18 @@ nav:
           - Overview: types/atomics/index.md
           - The Coordination Problem: types/atomics/overview.md
           - Atomic Types: types/atomics/atomic-types.md
-          - Atomics & Coordination: types/atomics/coordination.md
+          - Atomic Operations: types/atomics/atomic-operations.md
   - Expressions:
       - Overview: expressions/index.md
-      - Operators: expressions/operators/index.md
+      - Strict Typing: expressions/strict-typing.md
+      - Operators Reference: expressions/operators/index.md
+      - Bitwise & Data Packing: expressions/operators/bitwise-packing.md
       - Evaluation Stages:
           - Overview: expressions/evaluation-stage/index.md
           - Pipeline Stages: expressions/evaluation-stage/overview/index.md
           - Constant Stage:
               - Overview: expressions/evaluation-stage/constant/index.md
               - Numeric Literals: expressions/evaluation-stage/constant/numeric-literals.md
-              - Boolean Literals: expressions/evaluation-stage/constant/bool-literals.md
-              - Built-in Functions: expressions/evaluation-stage/constant/builtins.md
-              - Uses of Constants: expressions/evaluation-stage/constant/uses.md
           - Override Stage: expressions/evaluation-stage/override/index.md
           - Runtime Stage: expressions/evaluation-stage/runtime/index.md
   - Variables & Constants:

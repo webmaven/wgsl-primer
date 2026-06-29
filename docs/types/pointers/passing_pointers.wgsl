@@ -18,8 +18,9 @@ struct Cursor {
   write_at: u32,
 }
 var<private> cursor: Cursor;
-fn bad_pass_ptr_to_part_of_composite() {
-  //reset_counter(&cursor.read_at); // Error: Can't pass pointer to part of composite
+fn bad_pass_ptr_to_let() {
+  let temp: u32 = 12u;
+  //reset_counter(&temp); // Error: Can't take address of a let-bound value
 }
 
 fn run_test() -> vec2u {

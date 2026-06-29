@@ -43,7 +43,7 @@ export interface OutputField {
 export type OutputFields = OutputField[];
 
 function align(value: number, multiple: number) {
-  return Math.round(value / multiple) * multiple;
+  return Math.ceil(value / multiple) * multiple;
 }
 
 function range<T>(n: number, f: (i: number) => T): T[] {
