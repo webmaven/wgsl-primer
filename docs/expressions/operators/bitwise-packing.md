@@ -166,6 +166,63 @@ let specular = f32(s_u32) / 31.0;
 
 ---
 
+## Advanced Masterclass: SIMD-Friendly Vectorized Packing (96-Bit Interleaved Layout)
+
+Your intuition is spot on! In professional AAA game engines (such as Unreal Engine 5 or Frostbite), programmers don't just pack single vectors into single integers; they pack groups of related vector attributes across multiple integers.
+
+Suppose we need to pack **two sets of 3D coordinates** (for example, a surface position vector \(\vec{P} = (x_P, y_P, z_P)\) and a normal vector \(\vec{N} = (x_N, y_N, z_N)\), totaling 6 floating-point values) into **three 32-bit integers** (\(3 \times \text{u32} = 96\) bits).
+
+Uncompressed, these 6 floats require **24 bytes**. By packing them into three `u32` integers, we reduce the footprint to **12 bytes** (a \(50\%\) memory savings) while allocating a highly-precise **16 bits per coordinate** (\(2^{16} = 65,536\) steps, allowing sub-millimeter precision).
+
+### The Standard (Naive) Approach
+A naive implementation would pack \(\vec{P}\) into 1.5 integers, and \(\vec{N}\) into the remaining 1.5 integers. Unpacking this in a shader is slow and tedious because it requires complex scalar shifts and bitmasking for individual coordinates, causing branch instruction overhead on the GPU's execution units.
+
+### The Vectorized (Interleaved) Approach
+To optimize for the GPU's vectorized architecture, we use an **interleaved layout** where corresponding coordinates are packed together into the same integer container:
+- **`integer_0`** stores the $x$-coordinates: \(x_P\) in bits \(0\text{–}15\), and \(x_N\) in bits \(16\text{–}31\).
+- **`integer_1`** stores the $y$-coordinates: \(y_P\) in bits \(0\text{–}15\), and \(y_N\) in bits \(16\text{–}31\).
+- **`integer_2`** stores the $z$-coordinates: \(z_P\) in bits \(0\text{–}15\), and \(z_N\) in bits \(16\text{–}31\).
+
+```
+                      32-Bit Unsigned Integer Layout
+            Bit 31                    Bit 16 | Bit 15                    Bit 0
+ integer_0: [    Vector B's X-Coordinate    ] | [    Vector A's X-Coordinate    ]
+ integer_1: [    Vector B's Y-Coordinate    ] | [    Vector A's Y-Coordinate    ]
+ integer_2: [    Vector B's Z-Coordinate    ] | [    Vector A's Z-Coordinate    ]
+```
+
+### Why GPUs Love Interleaved Vectorization
+By layouting the bits this way, we can construct a single `vec3<u32>` and perform **SIMD (Single Instruction, Multiple Data)** operations on all three coordinates in parallel! 
+
+Unpacking *both* full 3D vectors takes just a few lines of highly optimized, vectorized WGSL:
+
+```wgsl
+struct UnpackedPairs {
+    position: vec3f,
+    normal: vec3f,
+};
+
+fn unpack_coordinate_pairs(packed_xyz: vec3<u32>) -> UnpackedPairs {
+    // 1. Isolate lower 16 bits (Vector A) and upper 16 bits (Vector B) for all 3 axes in parallel!
+    let a_u16 = packed_xyz & vec3<u32>(0xFFFFu);
+    let b_u16 = packed_xyz >> vec3<u32>(16u);
+
+    // 2. Reconstruct both 3D floating-point vectors in parallel using vector arithmetic
+    var unpacked: UnpackedPairs;
+    
+    // Scale 16-bit unsigned ints [0, 65535] to normalized range [0.0, 1.0] (or map to [-1.0, 1.0])
+    unpacked.position = vec3f(a_u16) / 65535.0;
+    unpacked.normal   = (vec3f(b_u16) / 65535.0) * 2.0 - 1.0;
+
+    return unpacked;
+}
+```
+
+### The Performance Payoff
+Because graphics cards are hardware-optimized for 3D vector arithmetic, the vectorized bitwise operations `& vec3<u32>` and `>> vec3<u32>` compile down to a single instruction cycle on the GPU's execution registers. We eliminate scalar register bottlenecks, allowing the graphics pipeline to unpack surface positions and normal channels at lightning speed.
+
+---
+
 ## Interactive Visualizer
 
 In the interactive editor on the right, you can see this exact system executing on your GPU. 
