@@ -49,6 +49,44 @@ A `u32` has \(32\) bits. We allocate:
 - **\(10\) bits** for \(z\) (value range \(0\) to \(1023\))
 - **\(2\) bits** for specular \(s\) (value range \(0\) to \(3\))
 
+### Precision, Quantization, & Bit Allocation Trade-offs
+
+When packing floating-point data into integers, we must perform **quantization** (mapping continuous float ranges to discrete integer steps). Because we are fitting multiple fields into a single \(32\)-bit `u32`, bit allocation is a zero-sum game: allocating more bits to one attribute means taking them away from another.
+
+Let's look at how the **10-10-10-2 layout** affects precision, and compare it with a contrasting **8-8-8-8 layout** to understand this trade-off.
+
+#### Layout A: 10-10-10-2 (High-Precision Normals, Low-Precision Specular)
+
+* **Normal Coordinates (\(x, y, z\))**: \(10\) bits each.
+  * \(2^{10} = 1024\) discrete steps.
+  * Step size: \(\frac{2.0}{1023} \approx 0.00195\).
+  * **Precision**: The maximum reconstruction error is less than \(0.001\). For 3D surface normals, an angular direction error of less than \(0.1\%\) is imperceptible to the human eye under real-world lighting ("zero visible loss in precision").
+  * **Result**: An input of \(-0.577\) unpacks to \(\approx -0.577712\) (error \(\approx 0.0007\)).
+* **Specular (\(s\))**: \(2\) bits.
+  * \(2^2 = 4\) discrete steps.
+  * Possible unpacked values: \(0.0\), \(\approx 0.333\), \(\approx 0.667\), and \(1.0\).
+  * **Precision**: Extremely coarse. Specular shininess is highly quantized.
+  * **Result**: An input of \(0.75\) maps to step \(2\) (\(0.75 \times 3.0 = 2.25\), rounded to \(2.0\)), which unpacks back to \(\frac{2}{3} \approx 0.6667\). The error is \(0.0833\) (\(8.3\%\)).
+
+#### Layout B: 8-8-8-8 (Balanced Normals & Specular)
+
+If your graphics engine needs higher specular precision and can tolerate slightly rougher normals, you might choose an alternative **8-8-8-8 layout**:
+
+* **Normal Coordinates (\(x, y, z\))**: \(8\) bits each.
+  * \(2^8 = 256\) discrete steps.
+  * Step size: \(\frac{2.0}{255} \approx 0.00784\).
+  * **Precision**: Coarser normals. The reconstruction error can be up to \(0.004\). Under sharp specular lighting, this can occasionally cause subtle lighting banding (mach banding) on smooth curved surfaces.
+  * **Result**: An input of \(-0.577\) maps to step \(54\) (\((-0.577 \times 0.5 + 0.5) \times 255.0 = 53.93\), rounded to \(54\)), which unpacks to \(\frac{54}{255} \times 2.0 - 1.0 \approx -0.57647\) (error \(\approx 0.0005\)). However, an input of \(-0.570\) maps to step \(55\), which unpacks to \(\frac{55}{255} \times 2.0 - 1.0 \approx -0.5686\) (error \(\approx 0.0014\)).
+* **Specular (\(s\))**: \(8\) bits.
+  * \(2^8 = 256\) discrete steps.
+  * Step size: \(\frac{1.0}{255} \approx 0.00392\).
+  * **Precision**: High-precision specular.
+  * **Result**: An input of \(0.75\) maps to step \(191\) (\(0.75 \times 255.0 = 191.25\), rounded to \(191\)), which unpacks to \(\frac{191}{255} \approx 0.74902\). The error is only \(0.00098\) (\(0.1\%\)), preserving the specular value almost perfectly!
+
+> [!NOTE]
+> **Single-Precision Floating-Point Limits (`f32`)**:
+> Even before data packing, you will notice that the input normal `vec3f(-0.577, ...)` is displayed in the visualizer as `vec3f(-0.5770000219345093, ...)`. This is because standard 32-bit floating-point numbers store values in binary (base-2), and numbers like `0.577` cannot be represented exactly in binary fractional form (much like \(\frac{1}{3}\) in decimal). The browser and GPU instantly approximate it to the closest representable binary float.
+
 ---
 
 ## Implementing the Packer in WGSL
