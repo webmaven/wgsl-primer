@@ -5,3 +5,17 @@ site/
 resources
 jsconfig.json
 public
+
+# Python Virtual Environment
+venv/
+
+# Python compiled bytecode
+__pycache__/
+*.pyc
+
+# Local backup and utility folders
+_changes_backup/
+utils/__pycache__/
+
+# OS-specific files
+.DS_Store

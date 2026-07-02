@@ -20,6 +20,8 @@ export class WGSLTour extends HTMLElement {
   bootstrap: string = '';
   editor!: EditorView;
   output!: HTMLElement;
+  innerOutput!: HTMLElement;
+  errorOutput!: HTMLElement;
   statusIndicator!: HTMLElement;
   frame_number: number = 0;
   key_timer: ReturnType<typeof setTimeout> | undefined = undefined;
@@ -65,6 +67,7 @@ export class WGSLTour extends HTMLElement {
         width: 100%;
         max-width: 640px;
         margin-top: 10px;
+        margin-bottom: 0;
         display: block;
         font-size: var(--md-code-font-size, 0.85em);
       }
@@ -204,23 +207,37 @@ export class WGSLTour extends HTMLElement {
 
       #output::-webkit-scrollbar,
       #wgsl-tour-output-text::-webkit-scrollbar,
-      .array-visualizer-wrapper::-webkit-scrollbar,
+      .buffer-viewer-wrapper::-webkit-scrollbar,
       .workgroup-visualizer-wrapper::-webkit-scrollbar {
         width: 6px;
         height: 6px;
       }
       #output::-webkit-scrollbar-track,
       #wgsl-tour-output-text::-webkit-scrollbar-track,
-      .array-visualizer-wrapper::-webkit-scrollbar-track,
+      .buffer-viewer-wrapper::-webkit-scrollbar-track,
       .workgroup-visualizer-wrapper::-webkit-scrollbar-track {
         background: transparent;
       }
       #output::-webkit-scrollbar-thumb,
       #wgsl-tour-output-text::-webkit-scrollbar-thumb,
-      .array-visualizer-wrapper::-webkit-scrollbar-thumb,
+      .buffer-viewer-wrapper::-webkit-scrollbar-thumb,
       .workgroup-visualizer-wrapper::-webkit-scrollbar-thumb {
         background-color: var(--md-default-fg-color--lightest, #cbd5e1);
         border-radius: 3px;
+      }
+
+      #inner-output,
+      #error-output {
+        width: 100%;
+        box-sizing: border-box;
+      }
+      #inner-output {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: start;
+        flex: 1 1 0%;
+        min-height: 0;
       }
 
       .expando-button {
@@ -252,6 +269,10 @@ export class WGSLTour extends HTMLElement {
           min-height: 50% !important;
           max-height: calc(100% - 180px) !important;
         }
+        :host(.has-output) .editor-container.collapsed {
+          flex: 0 0 auto !important;
+          height: 110px !important;
+        }
         :host(.has-output) .editor-container.short-code {
           flex: 0 0 auto !important;
           height: auto !important;
@@ -268,6 +289,9 @@ export class WGSLTour extends HTMLElement {
           min-height: 0;
         }
         :host(.has-output) .editor-container.expanded .cm-editor {
+          height: 100% !important;
+        }
+        :host(.has-output) .editor-container.collapsed .cm-editor {
           height: 100% !important;
         }
         .controls-container {
@@ -321,8 +345,9 @@ export class WGSLTour extends HTMLElement {
           overflow: auto;
           box-sizing: border-box;
         }
-        .array-visualizer-wrapper,
-        .workgroup-visualizer-wrapper {
+        .buffer-viewer-wrapper,
+        .workgroup-visualizer-wrapper,
+        .pointer-vis-wrapper {
           width: 100%;
           box-sizing: border-box;
           margin-top: 0 !important;
@@ -377,13 +402,29 @@ export class WGSLTour extends HTMLElement {
     editorContainer.appendChild(expandoButton);
 
     expandoButton.addEventListener('click', () => {
-      const isExpanded = editorContainer.classList.toggle('expanded');
-      expandoButton.textContent = isExpanded ? '▴' : '▾';
-      const tooltip = isExpanded
-        ? 'Collapse editor to split height'
-        : 'Expand editor to full height';
-      expandoButton.setAttribute('title', tooltip);
-      expandoButton.setAttribute('aria-label', tooltip);
+      if (editorContainer.classList.contains('expanded')) {
+        // From Expanded -> Collapsed
+        editorContainer.classList.remove('expanded');
+        editorContainer.classList.add('collapsed');
+        expandoButton.textContent = '▾';
+        const tooltip = 'Show editor split view';
+        expandoButton.setAttribute('title', tooltip);
+        expandoButton.setAttribute('aria-label', tooltip);
+      } else if (editorContainer.classList.contains('collapsed')) {
+        // From Collapsed -> Split
+        editorContainer.classList.remove('collapsed');
+        expandoButton.textContent = '▾';
+        const tooltip = 'Expand editor to full height';
+        expandoButton.setAttribute('title', tooltip);
+        expandoButton.setAttribute('aria-label', tooltip);
+      } else {
+        // From Split -> Expanded
+        editorContainer.classList.add('expanded');
+        expandoButton.textContent = '▴';
+        const tooltip = 'Collapse editor to compact height';
+        expandoButton.setAttribute('title', tooltip);
+        expandoButton.setAttribute('aria-label', tooltip);
+      }
       this.editor.requestMeasure();
     });
 
@@ -431,6 +472,16 @@ export class WGSLTour extends HTMLElement {
     this.output = document.createElement('div');
     this.output.setAttribute('id', 'output');
     shadow.appendChild(this.output);
+
+    this.innerOutput = document.createElement('div');
+    this.innerOutput.setAttribute('id', 'inner-output');
+    this.innerOutput.style.display = 'block';
+    this.output.appendChild(this.innerOutput);
+
+    this.errorOutput = document.createElement('div');
+    this.errorOutput.setAttribute('id', 'error-output');
+    this.errorOutput.style.display = 'none';
+    this.output.appendChild(this.errorOutput);
 
     const pre = this.querySelector('#tour-content');
     const code = (pre ? pre.textContent : this.textContent) || '';
@@ -540,13 +591,14 @@ export class WGSLTour extends HTMLElement {
       if (!navigator.gpu) {
         throw new VisualizerError('WebGPU is not supported in this browser');
       }
-      await this.visualizationBuilder.configure(this.output);
+      this.innerOutput.innerHTML = '';
+      await this.visualizationBuilder.configure(this.innerOutput);
     } catch (e: any) {
       this.onPipelineFailure({ message: e.message || e.toString() } as VisualizerError);
       return false;
     }
 
-    if (this.output.children.length > 0) {
+    if (this.innerOutput.children.length > 0) {
       this.classList.add('has-output');
     } else {
       this.classList.remove('has-output');
@@ -582,17 +634,46 @@ export class WGSLTour extends HTMLElement {
         } else {
           this.updateStatus('paused', 'Paused');
         }
+
+        // Clean error outputs and restore inner output
+        this.errorOutput.style.display = 'none';
+        this.errorOutput.innerHTML = '';
+        this.innerOutput.style.display = '';
+
+        if (this.innerOutput.children.length > 0) {
+          this.classList.add('has-output');
+        } else {
+          this.classList.remove('has-output');
+        }
+
         requestAnimationFrame(() => this.frame());
       })
       .catch((err: any) => {
+        // Hide inner visualization output and expose error diagnostics container
+        this.innerOutput.style.display = 'none';
+        this.errorOutput.style.display = '';
+        this.classList.add('has-output');
+
         if (err.hasOwnProperty('diagnostics')) {
           this.updateStatus('error', 'Compilation Error');
           this.onCompilationFailure(err as CompilationFailure);
+          const rendered = this.renderAliasingCollisionDiagram(err as CompilationFailure);
+          if (!rendered) {
+            this.renderGenericCompilationError(err as CompilationFailure);
+          }
         } else if (err.hasOwnProperty('visualizer_error') || err.message) {
           this.updateStatus('error', 'Pipeline Error');
-          this.onPipelineFailure(err as VisualizerError);
+          const visualizerErr = err.hasOwnProperty('visualizer_error')
+            ? (err as VisualizerError)
+            : ({ message: err.message || err.toString() } as VisualizerError);
+          this.onPipelineFailure(visualizerErr);
+          this.renderPipelineError(visualizerErr);
         } else {
           this.updateStatus('error', 'Error');
+          const msg = err && err.message ? err.message : String(err);
+          const fallbackErr = { message: msg } as VisualizerError;
+          this.onPipelineFailure(fallbackErr);
+          this.renderPipelineError(fallbackErr);
           console.log(err);
         }
       });
@@ -632,6 +713,189 @@ export class WGSLTour extends HTMLElement {
       message: failure.message,
     };
     this.editor.dispatch(setDiagnostics(this.editor.state, [diag]));
+  }
+
+  renderAliasingCollisionDiagram(failure: CompilationFailure): boolean {
+    // 1. Scan for aliasing errors
+    const aliasingDiag = failure.diagnostics.find((d) =>
+      /alias|aliasing|overlapping|two views|same root|conflicting access/i.test(d.msg)
+    );
+
+    if (!aliasingDiag) return false;
+
+    // 2. Try to extract variable name or function name
+    let rootVar = 'root_variable';
+    const varMatch = aliasingDiag.msg.match(
+      /view[s]? of '([^']+)'|view[s]? of ([a-zA-Z_][a-zA-Z0-9_]*)|root identifier '([^']+)'|root ([a-zA-Z_][a-zA-Z0-9_]*)/i
+    );
+    if (varMatch) {
+      rootVar = varMatch[1] || varMatch[2] || varMatch[3] || varMatch[4];
+    }
+
+    // 3. Render the card to this.errorOutput
+    this.errorOutput.innerHTML = `
+      <div style="background: rgba(239, 68, 68, 0.03); border: 1.5px solid rgba(239, 68, 68, 0.25); border-radius: 12px; padding: 24px; font-family: var(--md-text-font-family, sans-serif); color: #cbd5e1; margin-top: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); max-width: 640px; margin-left: auto; margin-right: auto; box-sizing: border-box; overflow: hidden; position: relative;">
+        <!-- Glowing Red background effect -->
+        <div style="position: absolute; top: -100px; left: -100px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0) 70%); pointer-events: none; border-radius: 50%;"></div>
+        
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; border-bottom: 1px solid rgba(239, 68, 68, 0.15); padding-bottom: 12px;">
+          <svg style="width: 24px; height: 24px; fill: #ef4444; flex-shrink: 0;" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+          <h3 style="color: #ef4444; font-weight: 700; font-size: 16px; margin: 0; letter-spacing: 0.5px; text-transform: uppercase;">
+            Compile-Time Aliasing Hazard Detected
+          </h3>
+        </div>
+
+        <p style="font-size: 13.5px; line-height: 1.6; color: #94a3b8; margin: 0; margin-bottom: 20px;">
+          The GPU compiler blocked shader creation because multiple overlapping views were passed to a function call where at least one view is used for a potential write.
+        </p>
+
+        <!-- Overlapping Path Diagram -->
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-around; width: 100%; font-size: 11px; font-family: monospace;">
+            <div style="color: #ef4444; border: 1.5px solid rgba(239, 68, 68, 0.4); padding: 5px 10px; border-radius: 6px; background: rgba(239, 68, 68, 0.08); font-weight: 700; box-shadow: 0 0 10px rgba(239, 68, 68, 0.1);">
+              View 1: Pointer (Write)
+            </div>
+            <div style="color: #38bdf8; border: 1.5px solid rgba(56, 189, 248, 0.4); padding: 5px 10px; border-radius: 6px; background: rgba(56, 189, 248, 0.08); font-weight: 700;">
+              View 2: Pointer/Ref (Read)
+            </div>
+          </div>
+
+          <div style="height: 60px; display: flex; justify-content: center; align-items: center; position: relative; width: 100%;">
+            <svg style="width: 100%; height: 100%;" viewBox="0 0 300 60">
+              <defs>
+                <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ef4444" />
+                  <stop offset="100%" stop-color="#7f1d1d" />
+                </linearGradient>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              <path d="M 75,5 L 150,55" stroke="#ef4444" stroke-width="2" stroke-dasharray="3 3" />
+              <path d="M 225,5 L 150,55" stroke="#38bdf8" stroke-width="2" stroke-dasharray="3 3" />
+              
+              <circle cx="150" cy="30" r="16" fill="url(#redGrad)" opacity="0.6" filter="url(#glow)">
+                <animate attributeName="r" values="8;20;8" dur="1.5s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.8;0.2;0.8" dur="1.5s" repeatCount="indefinite" />
+              </circle>
+              
+              <circle cx="150" cy="30" r="8" fill="#ef4444" />
+              <text x="150" y="34" fill="#ffffff" font-size="12px" font-weight="900" text-anchor="middle">!</text>
+            </svg>
+          </div>
+
+          <div style="border: 2px solid #ef4444; border-radius: 6px; background: rgba(239, 68, 68, 0.15); padding: 8px 16px; font-family: monospace; font-size: 13px; font-weight: 700; color: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); text-align: center;">
+            Shared Root Memory: ${rootVar}
+          </div>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 16px; font-size: 12.5px; line-height: 1.6;">
+          <strong style="color: #38bdf8; display: block; margin-bottom: 8px;">💡 Compiler Diagnostic:</strong>
+          <div style="font-family: monospace; color: #ef4444; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); padding: 10px; border-radius: 4px; overflow-x: auto; margin-bottom: 12px; white-space: pre-wrap; word-break: break-all;">${aliasingDiag.msg}</div>
+          <strong style="color: #10b981; display: block; margin-top: 12px; margin-bottom: 8px;">🛠️ Resolving the Hazard:</strong>
+          <ul style="margin: 0; padding-left: 20px; color: #94a3b8; display: flex; flex-direction: column; gap: 6px;">
+            <li>Pass completely disjoint variables (separate allocations) as arguments.</li>
+            <li>If modifying a single module-scope variable, do not pass its pointer parameter as an argument.</li>
+            <li>Store the read value in a local thread register variable first, then perform the write operation.</li>
+          </ul>
+        </div>
+      </div>
+    `;
+    return true;
+  }
+
+  renderGenericCompilationError(failure: CompilationFailure): void {
+    const errorCount = failure.diagnostics.filter((d) => d.kind === 'error').length;
+    const warningCount = failure.diagnostics.filter((d) => d.kind === 'warning').length;
+
+    let statsText = '';
+    if (errorCount > 0 && warningCount > 0) {
+      statsText = `${errorCount} error${errorCount > 1 ? 's' : ''}, ${warningCount} warning${warningCount > 1 ? 's' : ''}`;
+    } else if (errorCount > 0) {
+      statsText = `${errorCount} error${errorCount > 1 ? 's' : ''}`;
+    } else if (warningCount > 0) {
+      statsText = `${warningCount} warning${warningCount > 1 ? 's' : ''}`;
+    } else {
+      statsText = 'Compilation issue';
+    }
+
+    const diagnosticsHtml = failure.diagnostics
+      .map((diag) => {
+        const isError = diag.kind === 'error';
+        const color = isError ? '#ef4444' : '#f59e0b';
+        const bg = isError ? 'rgba(239, 68, 68, 0.05)' : 'rgba(245, 158, 11, 0.05)';
+        const border = isError ? 'rgba(239, 68, 68, 0.15)' : 'rgba(245, 158, 11, 0.15)';
+        const badgeText = diag.kind.toUpperCase();
+
+        return `
+        <div style="background: ${bg}; border: 1px solid ${border}; border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid ${border}; padding-bottom: 8px; margin-bottom: 4px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="background: ${color}; color: #ffffff; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;">
+                ${badgeText}
+              </span>
+              <span style="font-family: monospace; font-size: 12px; color: #94a3b8;">
+                Line ${diag.line}, Column ${diag.column}
+              </span>
+            </div>
+          </div>
+          <div style="font-family: monospace; font-size: 13px; line-height: 1.5; color: ${color}; white-space: pre-wrap; word-break: break-all;">${diag.msg}</div>
+        </div>
+      `;
+      })
+      .join('');
+
+    this.errorOutput.innerHTML = `
+      <div style="background: rgba(239, 68, 68, 0.03); border: 1.5px solid rgba(239, 68, 68, 0.25); border-radius: 12px; padding: 24px; font-family: var(--md-text-font-family, sans-serif); color: #cbd5e1; margin-top: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); max-width: 640px; margin-left: auto; margin-right: auto; box-sizing: border-box; overflow: hidden; position: relative;">
+        <!-- Glowing Red background effect -->
+        <div style="position: absolute; top: -100px; left: -100px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0) 70%); pointer-events: none; border-radius: 50%;"></div>
+        
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; border-bottom: 1px solid rgba(239, 68, 68, 0.15); padding-bottom: 12px;">
+          <svg style="width: 24px; height: 24px; fill: #ef4444; flex-shrink: 0;" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+          <h3 style="color: #ef4444; font-weight: 700; font-size: 16px; margin: 0; letter-spacing: 0.5px; text-transform: uppercase;">
+            Shader Compilation Failed
+          </h3>
+          <span style="margin-left: auto; font-size: 12px; color: #94a3b8; background: rgba(255, 255, 255, 0.05); padding: 2px 8px; border-radius: 10px; font-weight: 500;">
+            ${statsText}
+          </span>
+        </div>
+
+        <div style="margin-top: 16px; display: flex; flex-direction: column;">
+          ${diagnosticsHtml}
+        </div>
+      </div>
+    `;
+  }
+
+  renderPipelineError(failure: VisualizerError): void {
+    this.errorOutput.innerHTML = `
+      <div style="background: rgba(239, 68, 68, 0.03); border: 1.5px solid rgba(239, 68, 68, 0.25); border-radius: 12px; padding: 24px; font-family: var(--md-text-font-family, sans-serif); color: #cbd5e1; margin-top: 15px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); max-width: 640px; margin-left: auto; margin-right: auto; box-sizing: border-box; overflow: hidden; position: relative;">
+        <!-- Glowing Red background effect -->
+        <div style="position: absolute; top: -100px; left: -100px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0) 70%); pointer-events: none; border-radius: 50%;"></div>
+        
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; border-bottom: 1px solid rgba(239, 68, 68, 0.15); padding-bottom: 12px;">
+          <svg style="width: 24px; height: 24px; fill: #ef4444; flex-shrink: 0;" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+          <h3 style="color: #ef4444; font-weight: 700; font-size: 16px; margin: 0; letter-spacing: 0.5px; text-transform: uppercase;">
+            WebGPU Pipeline Error
+          </h3>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 16px; font-size: 12.5px; line-height: 1.6;">
+          <strong style="color: #38bdf8; display: block; margin-bottom: 8px;">💡 Pipeline Diagnostic:</strong>
+          <div style="font-family: monospace; color: #ef4444; background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.15); padding: 10px; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; word-break: break-all;">${failure.message}</div>
+        </div>
+      </div>
+    `;
   }
 }
 customElements.define('wgsl-tour', WGSLTour);

@@ -16,8 +16,9 @@ export default defineConfig({
         graphics_visualizer: resolve(__dirname, 'assets/ts/graphics_visualizer.ts'),
         noop_visualizer: resolve(__dirname, 'assets/ts/noop_visualizer.ts'),
         value_visualizer: resolve(__dirname, 'assets/ts/value_visualizer.ts'),
-        array_visualizer: resolve(__dirname, 'assets/ts/array_visualizer.ts'),
+        buffer_viewer: resolve(__dirname, 'assets/ts/buffer_viewer.ts'),
         workgroup_visualizer: resolve(__dirname, 'assets/ts/workgroup_visualizer.ts'),
+        pointer_visualizer: resolve(__dirname, 'assets/ts/pointer_visualizer.ts'),
       },
       output: {
         entryFileNames: 'js/[name].js',

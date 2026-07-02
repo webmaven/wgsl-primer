@@ -10,7 +10,7 @@ export default [
       'vite.config.ts',
       'docs/javascripts/**',
       'scratch_*.js',
-      'scratch/**',
+      'utils/**',
       '_changes_backup/**',
     ],
   },

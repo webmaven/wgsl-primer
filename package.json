@@ -10,7 +10,7 @@
     "build": "vite build && venv/bin/properdocs build",
     "serve": "vite build && venv/bin/properdocs serve",
     "docs": "typedoc",
-    "lint": "eslint .",
+    "lint": "eslint . && node utils/lint-markdown.js",
     "format": "prettier --write .",
     "prepare": "husky"
   },
@@ -19,7 +19,11 @@
       "eslint --fix",
       "prettier --write"
     ],
-    "*.{md,scss,json,yaml,yml}": [
+    "*.md": [
+      "node utils/lint-markdown.js",
+      "prettier --write"
+    ],
+    "*.{scss,json,yaml,yml}": [
       "prettier --write"
     ]
   },

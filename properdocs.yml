@@ -44,7 +44,6 @@ markdown_extensions:
       pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
-  - pymdownx.superfences
 
 plugins:
   - search
@@ -108,7 +107,6 @@ nav:
       - Bitwise & Data Packing: expressions/operators/bitwise-packing.md
       - Evaluation Stages:
           - Overview: expressions/evaluation-stage/index.md
-          - Pipeline Stages: expressions/evaluation-stage/overview/index.md
           - Constant Stage:
               - Overview: expressions/evaluation-stage/constant/index.md
               - Numeric Literals: expressions/evaluation-stage/constant/numeric-literals.md
@@ -119,15 +117,15 @@ nav:
       - Let Declaration: variables/let.md
       - Const Declaration: variables/const.md
       - Override Declaration: variables/override.md
-      - Function Variables: variables/var-function.md
+      - Local Variables: variables/var-function.md
       - Private Variables: variables/var-private.md
       - Workgroup Variables: variables/var-workgroup.md
+      - Thread Coordinates: variables/thread-coordinates.md
+      - Barriers & Memory Synchronization: variables/memory-barriers.md
       - Uniform Variables: variables/var-uniform.md
       - Storage Variables: variables/var-storage.md
       - Handle Variables: variables/var-handle.md
-      #      - Thread Coordinates: variables/thread-coordinates.md
-      #      - Barriers & Memory Synchronization: variables/memory-barriers.md
-      - Shadowing: variables/shadowing.md
+      - Name Shadowing: variables/shadowing.md
   - Control Flow:
       - Overview: control-flow/index.md
       - If Statements: control-flow/if-statements.md
@@ -145,7 +143,7 @@ nav:
       - Overview: uniformity-analysis/index.md
       - Invocations: uniformity-analysis/invocations.md
       - Fragment Derivative Builtins: uniformity-analysis/fragment-derivative-builtins.md
-#      - Subgroups & Register Shuffling: uniformity-analysis/subgroups.md
+      - Subgroups & Register Shuffling: uniformity-analysis/subgroups.md
 #  - Colophon: colophon.md
 #  - Changelog: changelog.md
 #  - Copyright & License: copyright.md

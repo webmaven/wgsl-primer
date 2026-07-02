@@ -101,6 +101,27 @@ code .template {
   background-color: #a0a0a02b;
   border-color: #a0a0a06c;
 }
+.template-struct-name {
+  background-color: #ffd7001b;
+  border-color: #ffd70066;
+}
+.template-struct-v1 {
+  background-color: #81d3ff49;
+  border-color: #81d3ffab;
+}
+.template-struct-v2 {
+  background-color: #ffb8813b;
+  border-color: #ffb88185;
+}
+.template-struct-v3 {
+  background-color: #ff818149;
+  border-color: #ff8181ab;
+}
+.template-align-n,
+.template-size-n {
+  background-color: #4cff552b;
+  border-color: #1eff295d;
+}
 
 /* Wide Display Two-Column Layout and Anchored Footer for Tour of WGSL */
 @media (min-width: 1200px) {
@@ -119,6 +140,9 @@ code .template {
     max-width: none !important;
     padding-top: 0.1rem !important;
     padding-bottom: 0 !important; /* Reset bottom padding to let playground stay sticky to the bottom */
+    min-height: calc(
+      100vh - 4.6rem - 20px
+    ) !important; /* Guarantee height match for sticky visualizer */
     box-sizing: border-box !important;
 
     /* Span h1 title across both columns for a cleaner header design */
@@ -814,4 +838,110 @@ body[data-md-color-scheme='slate'] {
       text-decoration: underline !important;
     }
   }
+}
+
+/* Standardized Interactive Tour Table System */
+.tour-table-container {
+  overflow-x: auto;
+  background: #0f172a;
+  border: 1.5px solid #1e293b;
+  border-radius: 12px;
+  margin: 24px 0 40px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+
+  table.tour-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 12px;
+    color: #e2e8f0;
+
+    thead th {
+      padding: 8px 10px;
+      font-weight: 700;
+      color: #f1f5f9;
+      border-bottom: 2px solid #1e293b;
+      background: rgba(30, 41, 59, 0.85);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #1e293b;
+      transition: background 0.15s ease;
+      background: rgba(15, 23, 42, 0.5);
+
+      &:hover {
+        background: rgba(30, 41, 59, 0.4) !important;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    tbody td {
+      padding: 8px 10px;
+      color: #cbd5e1;
+      vertical-align: middle;
+    }
+
+    /* Template Chips with high contrast inside tables */
+    .template {
+      display: inline-block;
+      font-weight: 700 !important;
+      border-radius: 4px !important;
+      font-size: 11px !important;
+      border: 1px solid !important;
+    }
+
+    .template-ptr-as {
+      background-color: rgba(56, 189, 248, 0.2) !important;
+      border-color: rgba(56, 189, 248, 0.5) !important;
+      color: #38bdf8 !important;
+
+      &.as-workgroup {
+        background-color: rgba(249, 115, 22, 0.2) !important;
+        border-color: rgba(249, 115, 22, 0.5) !important;
+        color: #ff914d !important;
+      }
+
+      &.as-global {
+        background-color: rgba(16, 185, 129, 0.2) !important;
+        border-color: rgba(16, 185, 129, 0.5) !important;
+        color: #34d399 !important;
+      }
+    }
+
+    .template-ptr-am {
+      background-color: rgba(251, 191, 36, 0.2) !important;
+      border-color: rgba(251, 191, 36, 0.5) !important;
+      color: #fbbf24 !important;
+    }
+
+    .template-ptr-t {
+      background-color: rgba(239, 68, 68, 0.2) !important;
+      border-color: rgba(239, 68, 68, 0.5) !important;
+      color: #f87171 !important;
+    }
+  }
+}
+
+/* Figure and Mermaid Diagram Responsive Scaling and Layout Alignment */
+.md-typeset figure {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 2.5rem 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.mermaid {
+  width: 100% !important;
+  max-width: 850px !important; /* Optimized comfortable reading width */
+  margin: 2.5rem auto !important; /* Centering block element with premium spacing */
+  display: block !important;
+  overflow-x: auto !important; /* Allow scrollbar if the diagram is extremely wide on mobile */
+  box-sizing: border-box !important;
 }
