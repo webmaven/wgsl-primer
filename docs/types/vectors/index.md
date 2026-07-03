@@ -34,6 +34,32 @@ WGSL also predeclares the aliases <code>vec<span class="template template-vec-n"
 
 ---
 
+## Vector Dimensionality Constraint
+
+WGSL strictly limits vector dimensions to 2, 3, or 4 elements. This restriction reflects fundamental hardware and mathematical design constraints:
+
+- **GPU Register & Memory Alignment**: Graphics hardware architectures are highly optimized for power-of-two memory layouts (such as 64-bit or 128-bit memory bus widths). A 2-element vector of 32-bit floats (`vec2f`) takes 8 bytes, and a 4-element vector (`vec4f`) takes 16 bytes. A 5-element float vector would require 20 bytes, breaking power-of-two memory boundaries and complicating register packing, cache line alignment, and GPU memory bus utilization.
+- **Graphics Pipeline Design**: Shader vectors are designed to map directly to graphics concepts, such as homogeneous spatial coordinates \((x, y, z, w)\) or color channels with transparency \((r, g, b, a)\). There are no common graphics primitives or rendering pipeline operations that require 5-element or larger vectors.
+- **Alternative Containers**: For collections of 5 or more components, you should use standard <code>array&lt;<span class="template template-array-t">T</span>, <span class="template template-array-n">N</span>&gt;</code> types or define a custom `struct` with explicitly ordered fields. This allows the compiler to optimize the alignment and memory packing explicitly.
+
+---
+
+## The Scalar-Only Constraint
+
+The underlying element type <span class="template template-vec-t">T</span> in the vector definition <code>vec<span class="template template-vec-n">N</span>&lt;<span class="template template-vec-t">T</span>&gt;</code> is strictly limited to **constructible scalar types**: `f32`, `i32`, `u32`, `f16` (if enabled), and `bool`.
+
+This restriction excludes other container or reference types:
+
+- **No Vectors of Vectors**: You cannot nest vectors (such as `vec3<vec2f>`). To represent multi-dimensional coordinate fields, use matrices (e.g. `mat3x3f`) or collections of vectors.
+- **No Vectors of Pointers**: You cannot construct a vector containing references or pointers (such as `vec4<ptr<private, f32>>`).
+- **Only Concrete Scalars**: Vector elements must be standard scalar types (`f32`, `i32`, `u32`, `f16`, or `bool`). WGSL lacks sub-16-bit scalar floats; see **[Basic Scalars](../basic-scalars.md)** for details on scalar precision limitations.
+- **GPU Hardware Foundations**: Because WGSL vectors map directly to physical hardware SIMD vector registers, they must hold uniform, raw, contiguous scalar values.
+
+!!! note "Vectors vs. Lists"
+    WGSL vectors represent physical, short mathematical coordinate/color tuples. They do not represent dynamically-allocated heap collections like C++'s `std::vector` or Java's `java.util.Vector`. For dynamic or nested multi-dimensional elements, you must utilize matrices, fixed-size <code>array&lt;<span class="template template-array-t">T</span>, <span class="template template-array-n">N</span>&gt;</code> types, or custom `struct` definitions.
+
+---
+
 ## Next Steps
 
 Vector operations and usage:

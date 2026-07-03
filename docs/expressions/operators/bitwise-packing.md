@@ -229,6 +229,27 @@ Because modern GPUs are hardware-optimized for 3D vector arithmetic, the vectori
 
 ---
 
+## Packing Constraints & Hardware Realities
+
+When planning a custom data packing layout, developers often ask if they can pack very low-bitwidth integers (such as 8-bit `i8` or `u8` elements) into a 16-bit floating-point type (`f16`), or if they should stick to integer registers (`u32` or `i32`).
+
+### Why You Should Never Pack Integer Bits into Floating-Point Containers (`f16`/`f32`)
+
+While it might seem intuitive to pack two 8-bit integers into a single 16-bit float (`f16`), doing so is a major anti-pattern on the GPU:
+
+1. **Risk of Bit Corruption (NaNs, Infinities, and Denormals)**: The IEEE-754 half-precision float (`f16`) uses a structured bit format (1 sign bit, 5 exponent bits, and 10 mantissa bits). If you force-pack raw 8-bit integer bits into these ranges, the resulting combined 16-bit pattern may represent a **NaN (Not-a-Number)**, a **positive/negative infinity**, or a **denormal**. Modern GPU floating-point arithmetic units (ALUs) or compiler drivers can automatically clamp, flush, or modify these special float representations, permanently corrupting your underlying integer bits.
+2. **No Bitwise Operators on Floats**: WGSL strictly prohibits performing bitwise operations (such as `&`, `|`, `<<`, and `>>`) directly on floating-point types (`f16` and `f32`). To unpack them, you would have to bitcast the float to a temporary integer container, wasting precious ALU clock cycles.
+3. **Optional Support**: The `f16` type is an **optional extension** in WebGPU. If you write a shader relying on `f16` for packing, it will fail to compile on devices that do not support the extension. In contrast, 32-bit integers (`u32`/`i32`) are universally supported on all WebGPU hardware.
+
+### The Optimal GPU Way: Fixed-Function Hardware Unpacking
+
+Instead of writing complex ALU instructions to pack and unpack 8-bit integers (like four `i8` into a `u32`), you should rely on the GPU's **fixed-function texture and vertex fetch pipelines**:
+
+- **GPU Texture & Vertex Formats**: You can store data in GPU memory buffers or textures using standard 8-bit channels—such as `R8G8B8A8_UINT` (unsigned 8-bit integers), `R8G8B8A8_SINT` (signed 8-bit integers), or `R8G8B8A8_UNORM` (unsigned normalized floating-point representation).
+- **Zero ALU Cost Unpacking**: When the shader fetches or samples from these memory blocks, the GPU's specialized hardware sampler/fetch unit automatically decompresses the 8-bit values into standard 32-bit register formats (`vec4u`, `vec4i`, or `vec4f`) **before** your shader code runs. This provides instant, hardware-level unpacking with absolute zero ALU overhead.
+
+---
+
 ## Interactive Visualizer
 
 The interactive editor demonstrates this packing system executing directly on the GPU. The **Results** section displays the input values alongside their packed `u32` integer representations, showing how the unpacked normal is reconstructed with high precision.

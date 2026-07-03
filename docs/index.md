@@ -36,18 +36,19 @@ Each of these shaders can serve as the starting point for your own
 exploration.
 
 !!! question "Warmup Activity"
-    As a warmup, edit the `frag_main` function. Change the first component of its return value from `1` to `0`, so it is `vec4(0, sin(f32(frame) / 128), 0, 1)`. What happens?
+    As a warmup, edit the `frag_main` function. First, uncomment the assignment on line 67 (which rotates the color values clockwise: `final_color = final_color.gbr;`). Then, instead, try uncommenting the assignment on line 69 (which rotates the color values counter-clockwise: `final_color = final_color.brg;`). What happens to the gradient's colors?
 
 The primer is organized into the following sections:
 
-- **[Types](types/index.md)**: Supported types in WGSL, from basic scalars and vectors to structures and pointers.
-- **[Variables & Constants](variables/index.md)**: Declaration and usage of mutable variables (`var`) and immutable values (`const`, `override`, `let`).
-- **[Expressions](expressions/index.md)**: Operators and different evaluation stages (constant, override, runtime).
-- **[Control Flow](control-flow/index.md)**: Branching and looping statements (`if`, `switch`, `loop`, `while`, `for`).
 - **[Functions](functions/index.md)**: Function syntax, calls, the `@must_use` attribute, and entry points.
+- **[Types](types/index.md)**: Supported types in WGSL, from basic scalars and vectors to structures, pointers, and atomics.
+- **[Expressions](expressions/index.md)**: Operators and different evaluation stages (constant, override, runtime).
+- **[Variables & Constants](variables/index.md)**: Declaration and usage of mutable variables (`var`) and immutable values (`const`, `override`, `let`).
+- **[Control Flow](control-flow/index.md)**: Branching and looping statements (`if`, `switch`, `loop`, `while`, `for`).
 - **[Binding Points](binding-points/index.md)**: Connection of shaders to CPU-side resources like buffers and textures using binding points and attributes.
 - **[Uniformity Analysis](uniformity-analysis/index.md)**: Compile-time execution uniformity tracking for derivative and barrier safety.
 
 Each section has several sub-pages, and you can navigate forward
 and backward using the buttons on the bottom of each page, or by using the
 left and right keys on your keyboard.
+

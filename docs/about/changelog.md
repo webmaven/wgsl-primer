@@ -9,7 +9,7 @@ All notable changes to **WGSL: A Primer** (forked from the original 2023 *Tour o
 
 ---
 
-## 2.0.0-alpha.1 (Modern Fork)
+## 2.0.0-alpha.1 (this fork)
 
 This version represents a modernization of the platform, transitioning from Hugo to a ProperDocs-based interactive workspace with GPGPU topics and custom visualizers.
 
@@ -52,7 +52,7 @@ Added **28,896 words** overall to the Primer, expanding it from a 9,000-word dra
 
 ---
 
-## Pre-Fork Legacy (2022–2024)
+## Pre-Fork Legacy (2023–2024)
 
 The original *Tour of WGSL* infrastructure, core content organization, and WebGPU compiler simulation engines were built and maintained by Google WebGPU team contributors and open-source community members.
 

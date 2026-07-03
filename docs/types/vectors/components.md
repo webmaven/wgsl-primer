@@ -3,14 +3,7 @@
 # See root README.md for global project-wide upstream attributions.
 title: 'Components & swizzling'
 shader: ./components.wgsl
-visualizer: /ts/value_visualizer.ts
-visualizerOptions: '{"fields": [
-    {"expr": "test_individual_access()", "type": "f32"},
-    {"expr": "test_color_style()", "type": "f32"},
-    {"expr": "test_array_indexing()", "type": "f32"},
-    {"expr": "test_swizzling_reorder()", "type": "vec3f"},
-    {"expr": "test_swizzling_repeat()", "type": "vec4f"}
-]}'
+visualizer: /ts/graphics_visualizer.ts
 ---
 In WGSL, vectors are multi-component containers. To manipulate vectors effectively, you need to read individual components, reorder them, or index them like arrays. WGSL provides high-performance, built-in syntax for component selection, indexing, and swizzling.
 
@@ -30,11 +23,12 @@ You can access individual vector components using dot-notation. WGSL supports tw
 To keep code readable and prevent compiler ambiguity, WGSL enforces two critical rules:
 
 1. **No Style Mixing**: You cannot mix coordinate and color naming styles within a single access expression.
-   - `my_vec.xy` is **valid**.
-   - `my_vec.rg` is **valid**.
-   - `my_vec.xg` is **invalid** and results in a compilation error.
+    - `my_vec.xy` is **valid**.
+    - `my_vec.rg` is **valid**.
+    - `my_vec.xg` is **invalid** and results in a compilation error.
 2. **Bounds Checking**: You can only access components that exist within the vector's declared dimension.
-   - Attempting to access `.z` or `.b` on a `vec2` will cause a compile-time error.
+    - Attempting to access `.z` or `.b` on a `vec2` will cause a compile-time error.
+    - Attempting to access `.w` or `.a` on a `vec3` will cause a compile-time error.
 
 ---
 
@@ -87,5 +81,14 @@ The resulting vector's size is determined by the number of component letters you
     //  VALID: Assign to the entire vector
     position = vec3f(10.0, 20.0, position.z);
     ```
+
+---
+
+!!! question "Try It Out: Interact with Swizzling!"
+    The interactive visualizer on the right (or below) renders a real-time wave pattern. You can use swizzling overrides in the shader to manipulate both color channels and coordinates:
+    
+    1. **Color Swapping**: Uncomment line 43 (`final_color = vec4f(base_color.bgr, 1.0);`) to swap the red and blue channels, transforming warm pinks/oranges into cool cyan/blue gradients.
+    2. **Component Isolation**: Comment line 43 out, and uncomment line 46 (`final_color = vec4f(base_color.ggg, 1.0);`) to duplicate the green component, creating a monochromatic glowing green wave.
+    3. **Coordinate Swizzling**: Uncomment line 49 (`final_color = vec4f(sin(in.uv.xyx * 10.0 + t) * 0.5 + 0.5, 1.0);`). Notice how the coordinate swizzle `.xyx` transforms the flat 2D coordinate space into a rich, complex 3D color field!
 
 ---

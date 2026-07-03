@@ -15,11 +15,11 @@ This document describes the copyright ownership, authorship, and licensing terms
 
 ### Contributors & Maintainers
 
-* **Michael R. Bernstein (Active)**: Modern fork author and primary maintainer. Developer of the modern fixed-size/runtime array layouts, workgroup/subgroup timeline visualizers, bitwise operator lessons, uniformity analysis cases, and static linters.
-* **Original Upstream Creators ([Upstream](#3-upstream-code-structure-bsd-3-clause))**: Authors of the foundational 2023 content structure, core visualizer backing systems, and original WebGPU simulation engines:
-  - **Ben Clayton** ([@ben-clayton](https://github.com/ben-clayton)) — Core upstream developer, Tint/compiler architect.
-  - **Dan Sinclair** ([@dj2](https://github.com/dj2)) — Upstream author, former WGSL specification editor, and key curriculum contributor.
-  - **David Neto** ([@dneto0](https://github.com/dneto0)) — Tint team lead, compiler engineer, and WGSL specification editor.
+* **Michael R. Bernstein (Active)**: Modern fork author and primary maintainer. Developer of the modern fixed-size/runtime array layouts, workgroup/subgroup timeline visualizers, bitwise operator material, uniformity analysis cases, and static linters.
+* **Legacy Upstream Creators ([Upstream Licensing](#3-upstream-code-structure-bsd-3-clause))**: Authors of the foundational 2023 content structure, core visualizer backing systems, and original WebGPU simulation engines:
+    - **Ben Clayton** ([@ben-clayton](https://github.com/ben-clayton)) — Core upstream developer, Tint/compiler architect.
+    - **Dan Sinclair** ([@dj2](https://github.com/dj2)) — Upstream author, former WGSL specification editor, and key curriculum contributor.
+    - **David Neto** ([@dneto0](https://github.com/dneto0)) — Tint team lead, compiler engineer, and WGSL specification editor.
 
 ### Third-Party Assets & Logos
 

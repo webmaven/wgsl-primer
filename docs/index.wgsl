@@ -33,27 +33,22 @@ fn vtx_main(@builtin(vertex_index) vertex_index : u32) -> VertexOutput {
     vec2f( 0.779154,  0.238075)  // P5_C
   );
 
-  const colors = array(
+  const palette = array(
     vec3f(0.57, 0.12, 0.94), // Purple
     vec3f(0.12, 0.40, 0.94), // Royal Blue
     vec3f(0.00, 0.65, 0.85), // Blue-Teal
-    vec3f(0.12, 0.40, 0.94), // Royal Blue
-    vec3f(0.00, 0.65, 0.85), // Blue-Teal
     vec3f(0.00, 0.75, 0.75), // Teal
-    vec3f(0.00, 0.65, 0.85), // Blue-Teal
     vec3f(0.05, 0.75, 0.55), // Teal-Green
-    vec3f(0.12, 0.75, 0.35), // Green
     vec3f(0.12, 0.75, 0.35), // Green
     vec3f(0.50, 0.80, 0.20), // Lime-Green
     vec3f(0.94, 0.85, 0.12), // Yellow
-    vec3f(0.94, 0.85, 0.12), // Yellow
-    vec3f(0.12, 0.75, 0.35), // Green
     vec3f(0.70, 0.82, 0.15)  // Lime-Yellow
   );
+  const color_indices = array(0, 1, 2, 1, 2, 3, 2, 4, 5, 5, 6, 7, 7, 5, 8);
 
   var out: VertexOutput;
   out.pos = vec4f(pos[vertex_index], 0.0, 1.0);
-  out.color = colors[vertex_index];
+  out.color = palette[color_indices[vertex_index]];
   out.uv = pos[vertex_index];
   return out;
 }
@@ -65,10 +60,13 @@ fn frag_main(in: VertexOutput) -> @location(0) vec4f {
   let wave = sin(in.uv.x * 3.0 + t) * 0.18 + cos(in.uv.y * 3.0 - t) * 0.18;
   
   let animated_color = in.color + vec3f(wave, -wave * 0.6, sin(t) * 0.12);
+  var final_color = clamp(animated_color, vec3f(0.0), vec3f(1.0));
   
   // WARMUP ACTIVITY: Try altering the animation or colors below!
-  // For example, uncomment this line to see a pulsing solid green:
-  // return vec4f(0.0, sin(f32(frame) / 128.0), 0.0, 1.0);
+  // Uncomment this line to rotate the color values clockwise:
+  // final_color = final_color.gbr;
+  // Or uncomment this line to rotate the color values counter-clockwise:
+  // final_color = final_color.brg;
   
-  return vec4f(clamp(animated_color, vec3f(0.0), vec3f(1.0)), 1.0);
+  return vec4f(final_color, 1.0);
 }
