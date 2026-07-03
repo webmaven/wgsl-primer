@@ -65,7 +65,7 @@ async def main():
             page.on("console", lambda msg: print(f"Browser Console {msg.type}: {msg.text}"))
             page.on("pageerror", lambda err: print(f"Browser Page Error: {err.message}"))
             
-            url = f"http://localhost:{port}/tour-of-wgsl/types/atomics/atomic-operations/index.html"
+            url = f"http://localhost:{port}/wgsl-primer/types/atomics/atomic-operations/index.html"
             print(f"Navigating to: {url}")
             await page.goto(url)
             await page.wait_for_timeout(2000)

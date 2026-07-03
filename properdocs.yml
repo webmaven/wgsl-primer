@@ -1,8 +1,8 @@
 site_name: 'WGSL: A Primer'
-site_url: https://webmaven.github.io/tour-of-wgsl/
+site_url: https://webmaven.github.io/wgsl-primer/
 repo_url: https://github.com/webmaven/tour-of-wgsl
 repo_name: webmaven/tour-of-wgsl
-copyright: '&copy; 2026 <a href="/tour-of-wgsl/about/copyright/">Michael R. Bernstein</a>. An expanded fork of <a href="https://google.github.io/tour-of-wgsl/" target="_blank">Tour of WGSL</a>.'
+copyright: '&copy; 2026 <a href="/wgsl-primer/about/copyright/">Michael R. Bernstein</a>. An expanded fork of <a href="https://google.github.io/tour-of-wgsl/" target="_blank">Tour of WGSL</a>.'
 
 theme:
   name: materialx

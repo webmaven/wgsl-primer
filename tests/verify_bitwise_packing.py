@@ -61,7 +61,7 @@ async def run():
             page.on("console", lambda msg: print(f"Browser Console {msg.type}: {msg.text}"))
             page.on("pageerror", lambda err: print(f"Browser Page Error: {err.message}"))
             
-            url = f"http://localhost:{port}/tour-of-wgsl/expressions/operators/bitwise-packing/index.html"
+            url = f"http://localhost:{port}/wgsl-primer/expressions/operators/bitwise-packing/index.html"
             print(f"Navigating to {url}...")
             await page.goto(url)
             

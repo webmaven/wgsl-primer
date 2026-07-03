@@ -60,7 +60,7 @@ async def run():
             page.on("requestfailed", lambda req: print(f"Request failed: {req.method} {req.url} - {req.failure if req.failure else 'Unknown error'}"))
             page.on("response", lambda res: print(f"Response Error: {res.status} {res.url}") if res.status >= 400 else None)
             
-            url = f"http://localhost:{port}/tour-of-wgsl/types/pointers/using/index.html"
+            url = f"http://localhost:{port}/wgsl-primer/types/pointers/using/index.html"
             print(f"Navigating to page: {url}")
             await page.goto(url)
             await page.wait_for_timeout(3000)

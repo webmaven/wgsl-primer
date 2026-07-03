@@ -94,7 +94,7 @@ async def main():
             context = await browser.new_context(viewport={"width": 1280, "height": 960})
             page = await context.new_page()
             
-            url = f"http://localhost:{port}/tour-of-wgsl/types/arrays/runtime-sized-arrays/index.html"
+            url = f"http://localhost:{port}/wgsl-primer/types/arrays/runtime-sized-arrays/index.html"
             print(f"Navigating to {url}...")
             await page.goto(url)
             await page.wait_for_timeout(1000)

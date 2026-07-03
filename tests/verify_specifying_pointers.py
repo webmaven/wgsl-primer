@@ -53,7 +53,7 @@ async def run():
             context = await browser.new_context()
             page = await context.new_page()
             
-            url = f"http://localhost:{port}/tour-of-wgsl/types/pointers/specifying/index.html"
+            url = f"http://localhost:{port}/wgsl-primer/types/pointers/specifying/index.html"
             print(f"Navigating to page: {url}")
             await page.goto(url)
             await page.wait_for_timeout(1000)

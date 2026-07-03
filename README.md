@@ -47,7 +47,7 @@ To build and run the project locally, you will need:
    npm run serve
    ```
 
-   This should start the dev server locally. Open your browser and navigate to `http://127.0.0.1:8000/tour-of-wgsl/`.
+   This should start the dev server locally. Open your browser and navigate to `http://127.0.0.1:8000/wgsl-primer/`.
 
 5. **Linting & Formatting**:
    - Verify TypeScript type safety: `npx tsc --noEmit`
