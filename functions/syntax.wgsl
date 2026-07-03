@@ -1,19 +1,27 @@
-// Function with no arguments and no return value
+/*
+ * Copyright ©2026 Michael R. Bernstein. All new modifications licensed under Apache 2.0.
+ * Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
+ */
+
+// WGSL Syntax Demonstration
+
+// 1. A function with no parameters and no return value (void function)
 fn do_nothing() {
-
+    // Body is empty, or performs state modifications
 }
 
-// Function with a single 'i32' parameter, no return value
+// 2. A function with an input parameter and no return value
 fn eat_an_i32(my_param : i32) {
-
+    // Parameter 'my_param' is read-only inside this scope
 }
 
-// Function with no arguments, which returns a 'i32' value
+// 3. A function with no parameters that returns an 'i32' value
 fn give_me_a_number() -> i32 {
     return 42;
 }
 
-// Function with two parameters, which returns a 'f32' value
+// 4. A function with multiple parameters that returns a 'f32' value
+// Notice the literal '2.0' - division must match types strictly!
 fn average(a : f32, b : f32) -> f32 {
-    return (a + b) / 2;
+    return (a + b) / 2.0; 
 }

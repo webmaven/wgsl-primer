@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. All new modifications licensed under Apache 2.0.
+ * Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
+ */
+
 // Create zero-initialized workgroup shared data
 const workgroup_len : u32 = 8;
 var<workgroup> workgroup_data: array<u32, workgroup_len>;
@@ -7,7 +12,7 @@ var<workgroup> workgroup_data: array<u32, workgroup_len>;
 
 // Our workgroup will execute workgroup_len invocations of the shader
 @compute @workgroup_size(workgroup_len, 1, 1)
-fn computeMain(@builtin(local_invocation_id) local_id: vec3<u32>) {
+fn main(@builtin(local_invocation_id) local_id: vec3<u32>) {
   // Each invocation will populate the shared workgroup data from the input data
   workgroup_data[local_id.x] = input_data[local_id.x];
 

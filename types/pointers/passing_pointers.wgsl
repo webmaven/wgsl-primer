@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. All new modifications licensed under Apache 2.0.
+ * Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
+ */
+
 var<private> first_count: u32;
 var<private> second_count: u32;
 fn reset_counter(p: ptr<private,u32>) { *p = 0; }
@@ -18,6 +23,15 @@ struct Cursor {
   write_at: u32,
 }
 var<private> cursor: Cursor;
-fn bad_pass_ptr_to_part_of_composite() {
-  //reset_counter(&cursor.read_at); // Error: Can't pass pointer to part of composite
+fn bad_pass_ptr_to_let() {
+  let temp: u32 = 12u;
+  //reset_counter(&temp); // Error: Can't take address of a let-bound value
 }
+
+fn run_test() -> vec2u {
+  first_count = 10u;
+  second_count = 20u;
+  init_counters();
+  return vec2u(first_count, second_count);
+}
+

@@ -1,0 +1,4087 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://webmaven.github.io/tour-of-wgsl/expressions/operators/bitwise-packing/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../../evaluation-stage/">
+      
+      
+        
+      
+      
+      
+      
+        
+        
+        
+          <link rel="icon" href="../../../images/favicon.svg">
+        
+      
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-materialx-10.1.8">
+    
+    
+      
+        <title>Bitwise Operators & Data Packing - WGSL: A Primer</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.314bbef5.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.a45159b5.min.css">
+      
+    
+    
+
+    
+
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/css/app.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal" data-mx-topbar="glass">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="toc" type="checkbox" id="__toc" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <label class="md-overlay" for="__toc"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#the-bitwise-operators" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="WGSL: A Primer" class="md-header__button md-logo" aria-label="WGSL: A Primer" data-md-component="logo">
+      
+  <img src="../../../images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            WGSL: A Primer
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Bitwise Operators & Data Packing
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="teal"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.25 2a8.25 8.25 0 0 1 6.34 13.53l5.69 5.69a.749.749 0 0 1-.326 1.275.75.75 0 0 1-.734-.215l-5.69-5.69A8.25 8.25 0 1 1 10.25 2M3.5 10.25a6.75 6.75 0 1 0 13.5 0 6.75 6.75 0 0 0-13.5 0"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.25 2a8.25 8.25 0 0 1 6.34 13.53l5.69 5.69a.749.749 0 0 1-.326 1.275.75.75 0 0 1-.734-.215l-5.69-5.69A8.25 8.25 0 1 1 10.25 2M3.5 10.25a6.75 6.75 0 1 0 13.5 0 6.75 6.75 0 0 0-13.5 0"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0">
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/webmaven/tour-of-wgsl" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    webmaven/tour-of-wgsl
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="WGSL: A Primer" class="md-nav__button md-logo" aria-label="WGSL: A Primer" data-md-component="logo">
+      
+  <img src="../../../images/logo.svg" alt="logo">
+
+    </a>
+    WGSL: A Primer
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/webmaven/tour-of-wgsl" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    webmaven/tour-of-wgsl
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list">
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Welcome
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../functions/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Functions
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Functions
+  
+
+          </label>
+          <ul class="md-nav__list">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../functions/syntax/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Syntax
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../functions/calls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../functions/entry-points/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entry Points
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../functions/must-use/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Must Use Attributes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../types/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Types
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Types
+  
+
+          </label>
+          <ul class="md-nav__list">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/basic-scalars/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Basic Scalars
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/abstract-numerics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Abstract Numerics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../types/vectors/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vectors
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Vectors
+  
+
+          </label>
+          <ul class="md-nav__list">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/vectors/constructors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Constructors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/vectors/components/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Components & Swizzling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../types/matrices/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Matrices
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Matrices
+  
+
+          </label>
+          <ul class="md-nav__list">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/matrices/constructors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Constructors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/matrices/multiplication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multiplication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../types/arrays/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arrays
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_6" id="__nav_3_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Arrays
+  
+
+          </label>
+          <ul class="md-nav__list">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/arrays/fixed-size-arrays/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fixed-size Arrays
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/arrays/runtime-sized-arrays/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime-sized Arrays
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../types/structures/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Structures
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Structures
+  
+
+          </label>
+          <ul class="md-nav__list">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/structures/alignment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Alignment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../types/pointers/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pointers
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pointers
+  
+
+          </label>
+          <ul class="md-nav__list">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/pointers/specifying/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Specifying a Pointer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/pointers/using/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating and Using Pointers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/pointers/passing_pointers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pointers as Function Parameters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/pointers/pointers_as_short_names/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pointers as Short Names
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/pointers/no_aliasing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    No Aliasing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/pointers/no_aliasing_nested_calls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    No Aliasing in Nested Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../types/atomics/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Atomics
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Atomics
+  
+
+          </label>
+          <ul class="md-nav__list">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/atomics/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The Coordination Problem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/atomics/atomic-types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Atomic Types
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../types/atomics/atomic-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Atomic Operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Expressions
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Expressions
+  
+
+          </label>
+          <ul class="md-nav__list">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../strict-typing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Strict Typing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operators Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bitwise & Data Packing
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bitwise & Data Packing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc">
+      
+        <li class="md-nav__item">
+  <a href="#the-bitwise-operators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Bitwise Operators
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#case-study-normal-specular-packing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Case Study: Normal &amp; Specular Packing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Case Study: Normal &amp; Specular Packing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#layout-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#precision-quantization-bit-allocation-trade-offs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Precision, Quantization, &amp; Bit Allocation Trade-offs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Precision, Quantization, &amp; Bit Allocation Trade-offs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#layout-a-10-10-10-2-high-precision-normals-low-precision-specular" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout A: 10-10-10-2 (High-Precision Normals, Low-Precision Specular)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layout-b-8-8-8-8-balanced-normals-specular" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout B: 8-8-8-8 (Balanced Normals &amp; Specular)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layout-c-9-9-9-5-the-sweet-spot-splitting-the-difference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout C: 9-9-9-5 (The Sweet Spot / "Splitting the Difference")
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementing-the-packer-in-wgsl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementing the Packer in WGSL
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementing the Packer in WGSL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-mapping-float-ranges-to-integers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Mapping Float Ranges to Integers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-packing-with-shifts-and-or" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Packing with Shifts (&lt;&lt;) and OR (|)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-unpacking-with-shifts-and-masks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Unpacking with Shifts (&gt;&gt;) and Masks (&amp;)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-reconstructing-floats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Reconstructing floats
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-layouts-simd-friendly-vectorized-packing-96-bit-interleaved-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Layouts: SIMD-Friendly Vectorized Packing (96-Bit Interleaved Layout)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Layouts: SIMD-Friendly Vectorized Packing (96-Bit Interleaved Layout)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#memory-optimization-case-study-dual-3d-vectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory Optimization Case Study: Dual 3D Vectors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison-of-layout-approaches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison of Layout Approaches
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Comparison of Layout Approaches">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sequential-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sequential Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interleaved-vectorized-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interleaved (Vectorized) Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vectorized-unpacking-semantics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vectorized Unpacking Semantics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interactive-visualizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Visualizer
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../evaluation-stage/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evaluation Stages
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Evaluation Stages
+  
+
+          </label>
+          <ul class="md-nav__list">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../evaluation-stage/constant/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Constant Stage
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_5_2" id="__nav_4_5_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Constant Stage
+  
+
+          </label>
+          <ul class="md-nav__list">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../evaluation-stage/constant/numeric-literals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Numeric Literals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../evaluation-stage/override/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Override Stage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../evaluation-stage/runtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime Stage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../variables/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Variables & Constants
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Variables & Constants
+  
+
+          </label>
+          <ul class="md-nav__list">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../variables/let/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Let Declaration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../variables/const/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Const Declaration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../variables/override/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Override Declaration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../variables/var-function/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Local Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../variables/var-private/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Private Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../variables/var-workgroup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workgroup Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../variables/thread-coordinates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Thread Coordinates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../variables/memory-barriers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Barriers & Memory Synchronization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../variables/var-uniform/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Uniform Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../variables/var-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../variables/var-handle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Handle Variables
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../variables/shadowing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Name Shadowing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../control-flow/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Control Flow
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Control Flow
+  
+
+          </label>
+          <ul class="md-nav__list">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../control-flow/if-statements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    If Statements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../control-flow/switch-statements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Switch Statements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../control-flow/while-statements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    While Statements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../control-flow/for-statements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    For Statements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../control-flow/loop-statements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The loop Statement
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../binding-points/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Binding Points
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Binding Points
+  
+
+          </label>
+          <ul class="md-nav__list">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../binding-points/attributes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Attributes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../binding-points/uniform-buffers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Uniform Buffers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../binding-points/storage-buffers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage Buffers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../binding-points/textures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Textures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../uniformity-analysis/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Uniformity Analysis
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Uniformity Analysis
+  
+
+          </label>
+          <ul class="md-nav__list">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../uniformity-analysis/invocations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Invocations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../uniformity-analysis/fragment-derivative-builtins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fragment Derivative Builtins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../uniformity-analysis/subgroups/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Subgroups & Register Shuffling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../about/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_9" id="__nav_9_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    About
+  
+
+          </label>
+          <ul class="md-nav__list">
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../about/colophon/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Colophon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../about/changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../about/copyright/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Copyright & License
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc">
+      
+        <li class="md-nav__item">
+  <a href="#the-bitwise-operators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Bitwise Operators
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#case-study-normal-specular-packing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Case Study: Normal &amp; Specular Packing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Case Study: Normal &amp; Specular Packing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#layout-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout Strategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#precision-quantization-bit-allocation-trade-offs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Precision, Quantization, &amp; Bit Allocation Trade-offs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Precision, Quantization, &amp; Bit Allocation Trade-offs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#layout-a-10-10-10-2-high-precision-normals-low-precision-specular" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout A: 10-10-10-2 (High-Precision Normals, Low-Precision Specular)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layout-b-8-8-8-8-balanced-normals-specular" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout B: 8-8-8-8 (Balanced Normals &amp; Specular)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#layout-c-9-9-9-5-the-sweet-spot-splitting-the-difference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layout C: 9-9-9-5 (The Sweet Spot / "Splitting the Difference")
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementing-the-packer-in-wgsl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementing the Packer in WGSL
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementing the Packer in WGSL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-mapping-float-ranges-to-integers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Mapping Float Ranges to Integers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-packing-with-shifts-and-or" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Packing with Shifts (&lt;&lt;) and OR (|)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-unpacking-with-shifts-and-masks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Unpacking with Shifts (&gt;&gt;) and Masks (&amp;)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-reconstructing-floats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Reconstructing floats
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-layouts-simd-friendly-vectorized-packing-96-bit-interleaved-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Layouts: SIMD-Friendly Vectorized Packing (96-Bit Interleaved Layout)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Layouts: SIMD-Friendly Vectorized Packing (96-Bit Interleaved Layout)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#memory-optimization-case-study-dual-3d-vectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Memory Optimization Case Study: Dual 3D Vectors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparison-of-layout-approaches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison of Layout Approaches
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Comparison of Layout Approaches">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sequential-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sequential Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interleaved-vectorized-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interleaved (Vectorized) Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vectorized-unpacking-semantics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vectorized Unpacking Semantics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Performance Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interactive-visualizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Visualizer
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+  
+
+
+  <h1>Bitwise & Data Packing</h1>
+
+<p>In real-time graphics and WebGPU shader pipelines, GPU execution units are incredibly fast, but memory bandwidth (retreading data from VRAM) is often the primary bottleneck. Passing uncompressed floating-point data through buffers wastes precious bandwidth.</p>
+<p>To solve this, professional graphics programmers use <strong>data packing</strong>—compressing multiple distinct attributes (like coordinates, directions, and material properties) into a single compact integer (like a <code>u32</code>) using <strong>bitwise operators</strong>.</p>
+<p>This section covers the core bitwise operators in WGSL and applies them to a real-world case study: packing a 3D unit normal vector and a specular coefficient into a single <code>u32</code>.</p>
+<hr />
+<h2 id="the-bitwise-operators">The Bitwise Operators</h2>
+<p>Bitwise operators manipulate the individual bits of integer values (<code>i32</code> and <code>u32</code>). They are extremely fast because they map directly to hardware-level bit-logic circuits.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Operator</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>&amp;</code></td>
+<td style="text-align: left;"><strong>AND</strong></td>
+<td style="text-align: left;">Sets each bit to <span class="arithmatex">\(1\)</span> if both bits are <span class="arithmatex">\(1\)</span>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>\|</code></td>
+<td style="text-align: left;"><strong>OR</strong></td>
+<td style="text-align: left;">Sets each bit to <span class="arithmatex">\(1\)</span> if at least one bit is <span class="arithmatex">\(1\)</span>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>^</code></td>
+<td style="text-align: left;"><strong>XOR</strong></td>
+<td style="text-align: left;">Sets each bit to <span class="arithmatex">\(1\)</span> if only one bit is <span class="arithmatex">\(1\)</span>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>~</code></td>
+<td style="text-align: left;"><strong>NOT</strong></td>
+<td style="text-align: left;">Flips all bits (<span class="arithmatex">\(1\)</span> becomes <span class="arithmatex">\(0\)</span>, and vice versa).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>&lt;&lt;</code></td>
+<td style="text-align: left;"><strong>Left Shift</strong></td>
+<td style="text-align: left;">Shifts bits to the left, filling empty spaces on the right with <span class="arithmatex">\(0\)</span>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>&gt;&gt;</code></td>
+<td style="text-align: left;"><strong>Right Shift</strong></td>
+<td style="text-align: left;">Shifts bits to the right, preserving or filling sign bits on the left.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="case-study-normal-specular-packing">Case Study: Normal &amp; Specular Packing</h2>
+<p>Imagine we are building a Deferred Rendering pipeline. For each screen pixel, we must write its surface data (a <strong>G-Buffer</strong>) to texture storage.</p>
+<p>Each pixel needs:
+1. A <strong>surface normal vector</strong> (representing direction): three coordinates, <span class="arithmatex">\(x, y, z \in [-1.0, 1.0]\)</span>.
+2. A <strong>specular reflectivity coefficient</strong>: a scalar, <span class="arithmatex">\(s \in [0.0, 1.0]\)</span>.If we store these as uncompressed floats, we need three <code>f32</code> values for the vector (<span class="arithmatex">\(12\)</span> bytes) and one <code>f32</code> for the specular (<span class="arithmatex">\(4\)</span> bytes), totaling <strong><span class="arithmatex">\(16\)</span> bytes</strong>.</p>
+<p>By using a <strong>9-9-9-5 layout</strong> (which "splits the difference" to provide extremely high precision for both the normals and the specular coefficient), we can fit all four attributes into a single <code>u32</code> (<strong><span class="arithmatex">\(4\)</span> bytes</strong>), reducing our memory bandwidth footprint by <strong><span class="arithmatex">\(75\%\)</span></strong>!</p>
+<h3 id="layout-strategy">Layout Strategy</h3>
+<p>A <code>u32</code> has <span class="arithmatex">\(32\)</span> bits. We allocate:
+- <strong><span class="arithmatex">\(9\)</span> bits</strong> for <span class="arithmatex">\(x\)</span> (value range <span class="arithmatex">\(0\)</span> to <span class="arithmatex">\(511\)</span>)
+- <strong><span class="arithmatex">\(9\)</span> bits</strong> for <span class="arithmatex">\(y\)</span> (value range <span class="arithmatex">\(0\)</span> to <span class="arithmatex">\(511\)</span>)
+- <strong><span class="arithmatex">\(9\)</span> bits</strong> for <span class="arithmatex">\(z\)</span> (value range <span class="arithmatex">\(0\)</span> to <span class="arithmatex">\(511\)</span>)
+- <strong><span class="arithmatex">\(5\)</span> bits</strong> for specular <span class="arithmatex">\(s\)</span> (value range <span class="arithmatex">\(0\)</span> to <span class="arithmatex">\(31\)</span>)</p>
+<h3 id="precision-quantization-bit-allocation-trade-offs">Precision, Quantization, &amp; Bit Allocation Trade-offs</h3>
+<p>When packing floating-point data into integers, we must perform <strong>quantization</strong> (mapping continuous float ranges to discrete integer steps). Because we are fitting multiple fields into a single <span class="arithmatex">\(32\)</span>-bit <code>u32</code>, bit allocation is a zero-sum game: allocating more bits to one attribute means taking them away from another.</p>
+<p>The following comparison of the <strong>9-9-9-5 layout</strong> with other options illustrates this trade-off.</p>
+<h4 id="layout-a-10-10-10-2-high-precision-normals-low-precision-specular">Layout A: 10-10-10-2 (High-Precision Normals, Low-Precision Specular)</h4>
+<ul>
+<li><strong>Normal Coordinates (<span class="arithmatex">\(x, y, z\)</span>)</strong>: <span class="arithmatex">\(10\)</span> bits each.</li>
+<li><span class="arithmatex">\(2^{10} = 1024\)</span> discrete steps.</li>
+<li>Step size: <span class="arithmatex">\(\frac{2.0}{1023} \approx 0.00195\)</span>.</li>
+<li><strong>Precision</strong>: The maximum reconstruction error is less than <span class="arithmatex">\(0.001\)</span>. For 3D surface normals, an angular direction error of less than <span class="arithmatex">\(0.1\%\)</span> is imperceptible to the human eye under real-world lighting ("zero visible loss in precision").</li>
+<li><strong>Result</strong>: An input of <span class="arithmatex">\(-0.577\)</span> unpacks to <span class="arithmatex">\(\approx -0.577712\)</span> (error <span class="arithmatex">\(\approx 0.0007\)</span>).</li>
+<li><strong>Specular (<span class="arithmatex">\(s\)</span>)</strong>: <span class="arithmatex">\(2\)</span> bits.</li>
+<li><span class="arithmatex">\(2^2 = 4\)</span> discrete steps.</li>
+<li>Possible unpacked values: <span class="arithmatex">\(0.0\)</span>, <span class="arithmatex">\(\approx 0.333\)</span>, <span class="arithmatex">\(\approx 0.667\)</span>, and <span class="arithmatex">\(1.0\)</span>.</li>
+<li><strong>Precision</strong>: Extremely coarse. Specular shininess is highly quantized.</li>
+<li><strong>Result</strong>: An input of <span class="arithmatex">\(0.75\)</span> maps to step <span class="arithmatex">\(2\)</span> (<span class="arithmatex">\(0.75 \times 3.0 = 2.25\)</span>, rounded to <span class="arithmatex">\(2.0\)</span>), which unpacks back to <span class="arithmatex">\(\frac{2}{3} \approx 0.6667\)</span>. The error is <span class="arithmatex">\(0.0833\)</span> (<span class="arithmatex">\(8.3\%\)</span>).</li>
+</ul>
+<h4 id="layout-b-8-8-8-8-balanced-normals-specular">Layout B: 8-8-8-8 (Balanced Normals &amp; Specular)</h4>
+<p>If your graphics engine needs higher specular precision and can tolerate slightly rougher normals, you might choose an alternative <strong>8-8-8-8 layout</strong>:</p>
+<ul>
+<li><strong>Normal Coordinates (<span class="arithmatex">\(x, y, z\)</span>)</strong>: <span class="arithmatex">\(8\)</span> bits each.</li>
+<li><span class="arithmatex">\(2^8 = 256\)</span> discrete steps.</li>
+<li>Step size: <span class="arithmatex">\(\frac{2.0}{255} \approx 0.00784\)</span>.</li>
+<li><strong>Precision</strong>: Coarser normals. The reconstruction error can be up to <span class="arithmatex">\(0.004\)</span>. Under sharp specular lighting, this can occasionally cause subtle lighting banding (mach banding) on smooth curved surfaces.</li>
+<li><strong>Result</strong>: An input of <span class="arithmatex">\(-0.577\)</span> maps to step <span class="arithmatex">\(54\)</span> (<span class="arithmatex">\((-0.577 \times 0.5 + 0.5) \times 255.0 = 53.93\)</span>, rounded to <span class="arithmatex">\(54\)</span>), which unpacks to <span class="arithmatex">\(\frac{54}{255} \times 2.0 - 1.0 \approx -0.57647\)</span> (error <span class="arithmatex">\(\approx 0.0005\)</span>). However, an input of <span class="arithmatex">\(-0.570\)</span> maps to step <span class="arithmatex">\(55\)</span>, which unpacks to <span class="arithmatex">\(\frac{55}{255} \times 2.0 - 1.0 \approx -0.5686\)</span> (error <span class="arithmatex">\(\approx 0.0014\)</span>).</li>
+<li><strong>Specular (<span class="arithmatex">\(s\)</span>)</strong>: <span class="arithmatex">\(8\)</span> bits.</li>
+<li><span class="arithmatex">\(2^8 = 256\)</span> discrete steps.</li>
+<li>Step size: <span class="arithmatex">\(\frac{1.0}{255} \approx 0.00392\)</span>.</li>
+<li><strong>Precision</strong>: High-precision specular.</li>
+<li><strong>Result</strong>: An input of <span class="arithmatex">\(0.75\)</span> maps to step <span class="arithmatex">\(191\)</span> (<span class="arithmatex">\(0.75 \times 255.0 = 191.25\)</span>, rounded to <span class="arithmatex">\(191\)</span>), which unpacks to <span class="arithmatex">\(\frac{191}{255} \approx 0.74902\)</span>. The error is only <span class="arithmatex">\(0.00098\)</span> (<span class="arithmatex">\(0.1\%\)</span>), preserving the specular value almost perfectly!</li>
+</ul>
+<h4 id="layout-c-9-9-9-5-the-sweet-spot-splitting-the-difference">Layout C: 9-9-9-5 (The Sweet Spot / "Splitting the Difference")</h4>
+<p>By splitting the difference, we can allocate <span class="arithmatex">\(9\)</span> bits to each coordinate of the normal, and use the remaining <span class="arithmatex">\(5\)</span> bits for specular intensity:</p>
+<ul>
+<li><strong>Normal Coordinates (<span class="arithmatex">\(x, y, z\)</span>)</strong>: <span class="arithmatex">\(9\)</span> bits each.</li>
+<li><span class="arithmatex">\(2^9 = 512\)</span> discrete steps.</li>
+<li>Step size: <span class="arithmatex">\(\frac{2.0}{511} \approx 0.00391\)</span>.</li>
+<li><strong>Precision</strong>: Extremely good. The maximum reconstruction error is around <span class="arithmatex">\(0.002\)</span>, which is completely imperceptible under typical lighting conditions and prevents any visible banding.</li>
+<li><strong>Result</strong>: An input of <span class="arithmatex">\(-0.577\)</span> maps to step <span class="arithmatex">\(108\)</span> (<span class="arithmatex">\((-0.577 \times 0.5 + 0.5) \times 511.0 = 108.0755\)</span>, rounded to <span class="arithmatex">\(108\)</span>), which unpacks back to <span class="arithmatex">\(\frac{108}{511} \times 2.0 - 1.0 \approx -0.577299\)</span> (error is just <span class="arithmatex">\(\approx 0.0003\)</span>).</li>
+<li><strong>Specular (<span class="arithmatex">\(s\)</span>)</strong>: <span class="arithmatex">\(5\)</span> bits.</li>
+<li><span class="arithmatex">\(2^5 = 32\)</span> discrete steps.</li>
+<li>Step size: <span class="arithmatex">\(\frac{1.0}{31} \approx 0.03226\)</span>.</li>
+<li><strong>Precision</strong>: Much better material definition. With <span class="arithmatex">\(32\)</span> distinct shininess values, the specular coefficient is smooth enough for highly realistic lighting highlights.</li>
+<li><strong>Result</strong>: An input of <span class="arithmatex">\(0.75\)</span> maps to step <span class="arithmatex">\(23\)</span> (<span class="arithmatex">\(0.75 \times 31.0 = 23.25\)</span>, rounded to <span class="arithmatex">\(23\)</span>), which unpacks to <span class="arithmatex">\(\frac{23}{31} \approx 0.74194\)</span>. The error is only <span class="arithmatex">\(0.008\)</span> (<span class="arithmatex">\(0.8\%\)</span>), which represents a <strong><span class="arithmatex">\(10\times\)</span> precision increase</strong> for the specular component compared to the 10-10-10-2 layout!</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Single-Precision Floating-Point Limits (<code>f32</code>)</p>
+<p>Even before data packing, you will notice that the input normal <code>vec3f(-0.577, ...)</code> is displayed in the visualizer as <code>vec3f(-0.5770000219345093, ...)</code>. This is because standard 32-bit floating-point numbers store values in binary (base-2), and numbers like <code>0.577</code> cannot be represented exactly in binary fractional form (much like <span class="arithmatex">\(\frac{1}{3}\)</span> in decimal). The browser and GPU instantly approximate it to the closest representable binary float.</p>
+</div>
+<hr />
+<h2 id="implementing-the-packer-in-wgsl">Implementing the Packer in WGSL</h2>
+<p>The math and bit-manipulations required to pack and unpack this data are detailed below.</p>
+<h3 id="step-1-mapping-float-ranges-to-integers">Step 1: Mapping Float Ranges to Integers</h3>
+<p>Bitwise operations work on integers, so we must first convert our floating-point values into positive integers that fit within their allocated bit-widths.</p>
+<ul>
+<li><strong>Normal components</strong> (<span class="arithmatex">\([-1.0, 1.0]\)</span>):
+  We map the coordinate <span class="arithmatex">\(v\)</span> into <span class="arithmatex">\([0.0, 1.0]\)</span> using the equation <span class="arithmatex">\(v_{\text{mapped}} = 0.5v + 0.5\)</span>.
+  Next, we scale it by <span class="arithmatex">\(511.0\)</span> (the maximum value of a <span class="arithmatex">\(9\)</span>-bit integer, <span class="arithmatex">\(2^{9}-1\)</span>) and convert to integer:</li>
+</ul>
+<div class="language-wgsl highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">let</span><span class="w"> </span><span class="n">x_u32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">u32</span><span class="p">(</span><span class="n">round</span><span class="p">((</span><span class="n">normal</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">0.5</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">0.5</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">511.0</span><span class="p">));</span>
+</span></code></pre></div>
+<ul>
+<li><strong>Specular coefficient</strong> (<span class="arithmatex">\([0.0, 1.0]\)</span>):
+  We scale by <span class="arithmatex">\(31.0\)</span> (the maximum value of a <span class="arithmatex">\(5\)</span>-bit integer, <span class="arithmatex">\(2^{5}-1\)</span>) and convert:</li>
+</ul>
+<div class="language-wgsl highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">let</span><span class="w"> </span><span class="n">s_u32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">u32</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">specular</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">31.0</span><span class="p">));</span>
+</span></code></pre></div>
+<h3 id="step-2-packing-with-shifts-and-or">Step 2: Packing with Shifts (<code>&lt;&lt;</code>) and OR (<code>|</code>)</h3>
+<p>Now we position the integer values within our <span class="arithmatex">\(32\)</span>-bit block. Each component is shifted left to its allocated slot:</p>
+<ul>
+<li><span class="arithmatex">\(x\)</span> is stored in bits <span class="arithmatex">\(0\)</span> to <span class="arithmatex">\(8\)</span>: shift by <span class="arithmatex">\(0\)</span> bits.</li>
+<li><span class="arithmatex">\(y\)</span> is stored in bits <span class="arithmatex">\(9\)</span> to <span class="arithmatex">\(17\)</span>: shift left by <span class="arithmatex">\(9\)</span> bits (<code>&lt;&lt; 9u</code>).</li>
+<li><span class="arithmatex">\(z\)</span> is stored in bits <span class="arithmatex">\(18\)</span> to <span class="arithmatex">\(26\)</span>: shift left by <span class="arithmatex">\(18\)</span> bits (<code>&lt;&lt; 18u</code>).</li>
+<li><span class="arithmatex">\(s\)</span> is stored in bits <span class="arithmatex">\(27\)</span> and <span class="arithmatex">\(31\)</span>: shift left by <span class="arithmatex">\(27\)</span> bits (<code>&lt;&lt; 27u</code>).</li>
+</ul>
+<p>We then combine these shifted components together using the bitwise OR (<code>|</code>) operator:</p>
+<div class="language-wgsl highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">let</span><span class="w"> </span><span class="n">packed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_u32</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="n">y_u32</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">9u</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="n">z_u32</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">18u</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="n">s_u32</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">27u</span><span class="p">);</span>
+</span></code></pre></div>
+<h3 id="step-3-unpacking-with-shifts-and-masks">Step 3: Unpacking with Shifts (<code>&gt;&gt;</code>) and Masks (<code>&amp;</code>)</h3>
+<p>To retrieve the values in our lighting shader, we reverse the process.</p>
+<p>First, we shift the bits of the target component to the rightmost position.
+Then, we use a bitwise AND (<code>&amp;</code>) with a <strong>bitmask</strong> to clear out any preceding bits.</p>
+<ul>
+<li>To extract a <span class="arithmatex">\(9\)</span>-bit integer, we use the mask <code>0x1FFu</code> (which is binary <code>111111111</code>, representing <span class="arithmatex">\(9\)</span> bits of <span class="arithmatex">\(1\)</span>s).</li>
+<li>To extract a <span class="arithmatex">\(5\)</span>-bit integer, we use the mask <code>0x1Fu</code> (binary <code>11111</code>, representing <span class="arithmatex">\(5\)</span> bits of <span class="arithmatex">\(1\)</span>s).</li>
+</ul>
+<div class="language-wgsl highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kd">let</span><span class="w"> </span><span class="n">x_u32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">packed</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x1FFu</span><span class="p">;</span><span class="w">               </span><span class="c1">// bits 0-8</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kd">let</span><span class="w"> </span><span class="n">y_u32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">packed</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">9u</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x1FFu</span><span class="p">;</span><span class="w">       </span><span class="c1">// bits 9-17</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kd">let</span><span class="w"> </span><span class="n">z_u32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">packed</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">18u</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x1FFu</span><span class="p">;</span><span class="w">      </span><span class="c1">// bits 18-26</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="kd">let</span><span class="w"> </span><span class="n">s_u32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">packed</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">27u</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0x1Fu</span><span class="p">;</span><span class="w">       </span><span class="c1">// bits 27-31</span>
+</span></code></pre></div>
+<h3 id="step-4-reconstructing-floats">Step 4: Reconstructing floats</h3>
+<p>Finally, we convert our integers back to <code>f32</code> and scale them back to their original ranges:</p>
+<div class="language-wgsl highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">let</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nb">f32</span><span class="p">(</span><span class="n">x_u32</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">511.0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">2.0</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kd">let</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nb">f32</span><span class="p">(</span><span class="n">y_u32</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">511.0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">2.0</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kd">let</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nb">f32</span><span class="p">(</span><span class="n">z_u32</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">511.0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">2.0</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="kd">let</span><span class="w"> </span><span class="n">specular</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">f32</span><span class="p">(</span><span class="n">s_u32</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">31.0</span><span class="p">;</span>
+</span></code></pre></div>
+<hr />
+<h2 id="advanced-layouts-simd-friendly-vectorized-packing-96-bit-interleaved-layout">Advanced Layouts: SIMD-Friendly Vectorized Packing (96-Bit Interleaved Layout)</h2>
+<p>In professional real-time rendering pipelines (such as G-buffers in AAA game engines), optimization often requires packing multiple related vector attributes across shared, compact integer layouts. </p>
+<p>Rather than packing individual vectors into single integer variables, compilers and graphics programmers pack groups of attributes together across multiple integers. This maximizes memory bandwidth savings and aligns with the parallel execution units of the GPU.</p>
+<h3 id="memory-optimization-case-study-dual-3d-vectors">Memory Optimization Case Study: Dual 3D Vectors</h3>
+<p>Consider a scenario where a shader needs to store <strong>two sets of 3D coordinates</strong>: a surface position vector <span class="arithmatex">\(\vec{P} = (x_P, y_P, z_P)\)</span> and a normal vector <span class="arithmatex">\(\vec{N} = (x_N, y_N, z_N)\)</span>, totaling 6 floating-point values.</p>
+<p>To minimize storage overhead, these 6 floats can be packed into <strong>three 32-bit integers</strong> (<span class="arithmatex">\(3 \times \text{u32} = 96\)</span> bits):
+- <strong>Uncompressed representation</strong>: The 6 floats require <strong>24 bytes</strong> of memory.
+- <strong>Compressed representation</strong>: By packing them into three <code>u32</code> integers, the footprint is reduced to <strong>12 bytes</strong> (a <span class="arithmatex">\(50\%\)</span> memory bandwidth reduction).
+- <strong>Precision retention</strong>: This allocation provides <strong>16 bits per coordinate</strong> (<span class="arithmatex">\(2^{16} = 65,536\)</span> discrete steps), preserving high precision (such as sub-millimeter position steps).</p>
+<h3 id="comparison-of-layout-approaches">Comparison of Layout Approaches</h3>
+<h4 id="sequential-approach">Sequential Approach</h4>
+<p>A sequential approach would pack <span class="arithmatex">\(\vec{P}\)</span> into the first 1.5 integers and <span class="arithmatex">\(\vec{N}\)</span> into the remaining 1.5 integers. Unpacking this layout is inefficient because it requires complex, non-uniform scalar bit-shifts and masking, which prevents vectorized GPU optimizations and increases scalar instruction overhead.</p>
+<h4 id="interleaved-vectorized-approach">Interleaved (Vectorized) Approach</h4>
+<p>To optimize for the GPU's vectorized architecture, we use an <strong>interleaved layout</strong> where corresponding coordinates are packed together into the same integer container:
+- <strong><code>integer_0</code></strong> stores the \(x)-coordinates: <span class="arithmatex">\(x_P\)</span> in bits <span class="arithmatex">\(0\text{–}15\)</span>, and <span class="arithmatex">\(x_N\)</span> in bits <span class="arithmatex">\(16\text{–}31\)</span>.
+- <strong><code>integer_1</code></strong> stores the \(y)-coordinates: <span class="arithmatex">\(y_P\)</span> in bits <span class="arithmatex">\(0\text{–}15\)</span>, and <span class="arithmatex">\(y_N\)</span> in bits <span class="arithmatex">\(16\text{–}31\)</span>.
+- <strong><code>integer_2</code></strong> stores the \(z)-coordinates: <span class="arithmatex">\(z_P\)</span> in bits <span class="arithmatex">\(0\text{–}15\)</span>, and <span class="arithmatex">\(z_N\)</span> in bits <span class="arithmatex">\(16\text{–}31\)</span>.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>                      32-Bit Unsigned Integer Layout
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>            Bit 31                    Bit 16 | Bit 15                    Bit 0
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a> integer_0: [    Vector B&#39;s X-Coordinate    ] | [    Vector A&#39;s X-Coordinate    ]
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a> integer_1: [    Vector B&#39;s Y-Coordinate    ] | [    Vector A&#39;s Y-Coordinate    ]
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a> integer_2: [    Vector B&#39;s Z-Coordinate    ] | [    Vector A&#39;s Z-Coordinate    ]
+</span></code></pre></div>
+<h3 id="vectorized-unpacking-semantics">Vectorized Unpacking Semantics</h3>
+<p>By interleaving the bits, a single <code>vec3&lt;u32&gt;</code> can represent the grouped coordinates, enabling <strong>SIMD (Single Instruction, Multiple Data)</strong> bitwise operations across all three axes in parallel. </p>
+<p>Unpacking both 3D vectors is highly efficient in WGSL:</p>
+<div class="language-wgsl highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">struct</span><span class="w"> </span><span class="n">UnpackedPairs</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="nb">position</span><span class="p">:</span><span class="w"> </span><span class="nb">vec3f</span><span class="p">,</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="n">normal</span><span class="p">:</span><span class="w"> </span><span class="nb">vec3f</span><span class="p">,</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="p">};</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="k">fn</span><span class="w"> </span><span class="n">unpack_coordinate_pairs</span><span class="p">(</span><span class="n">packed_xyz</span><span class="p">:</span><span class="w"> </span><span class="nb">vec3</span><span class="o">&lt;</span><span class="nb">u32</span><span class="o">&gt;</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">UnpackedPairs</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="c1">// 1. Isolate lower 16 bits (Vector A) and upper 16 bits (Vector B) for all 3 axes in parallel!</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">a_u16</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">packed_xyz</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="nb">vec3</span><span class="o">&lt;</span><span class="nb">u32</span><span class="o">&gt;</span><span class="p">(</span><span class="mh">0xFFFFu</span><span class="p">);</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">b_u16</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">packed_xyz</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="nb">vec3</span><span class="o">&lt;</span><span class="nb">u32</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">16u</span><span class="p">);</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">    </span><span class="c1">// 2. Reconstruct both 3D floating-point vectors in parallel using vector arithmetic</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="n">unpacked</span><span class="p">:</span><span class="w"> </span><span class="n">UnpackedPairs</span><span class="p">;</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">    </span><span class="c1">// Scale 16-bit unsigned ints [0, 65535] to normalized range [0.0, 1.0] (or map to [-1.0, 1.0])</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">    </span><span class="n">unpacked</span><span class="p">.</span><span class="nb">position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">vec3f</span><span class="p">(</span><span class="n">a_u16</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">65535.0</span><span class="p">;</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="w">    </span><span class="n">unpacked</span><span class="p">.</span><span class="n">normal</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nb">vec3f</span><span class="p">(</span><span class="n">b_u16</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">65535.0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">2.0</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">unpacked</span><span class="p">;</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="performance-analysis">Performance Analysis</h3>
+<p>Because modern GPUs are hardware-optimized for 3D vector arithmetic, the vectorized bitwise operations <code>&amp; vec3&lt;u32&gt;</code> and <code>&gt;&gt; vec3&lt;u32&gt;</code> compile down to a single instruction cycle on the GPU's execution registers. This eliminates scalar register bottlenecks and allows the graphics pipeline to unpack surface positions and normal channels with minimal overhead.</p>
+<hr />
+<h2 id="interactive-visualizer">Interactive Visualizer</h2>
+<p>The interactive editor demonstrates this packing system executing directly on the GPU. The <strong>Results</strong> section displays the input values alongside their packed <code>u32</code> integer representations, showing how the unpacked normal is reconstructed with high precision.</p>
+<div id='tour-wrapper'>
+  <wgsl-tour id='tour'>
+    <pre id='tour-content' style='visibility: hidden'>/*
+ * Copyright ©2026 Michael R. Bernstein. Licensed under Apache 2.0.
+ * See root README.md for global project-wide upstream attributions.
+ */
+
+// Case study: Surface Normal (vec3&lt;f32&gt;) and Specular intensity (f32) packing
+// - Normal: x, y, z in [-1.0, 1.0] -&gt; packed into 9 bits each (0 to 511)
+// - Specular: s in [0.0, 1.0] -&gt; packed into 5 bits (0 to 31)
+
+struct UnpackedData {
+    normal: vec3&lt;f32&gt;,
+    specular: f32,
+};
+
+fn pack_surface_data(normal: vec3&lt;f32&gt;, specular: f32) -&gt; u32 {
+    // 1. Clamp and map normal components from [-1.0, 1.0] to [0.0, 1.0]
+    let n_mapped = clamp(normal, vec3f(-1.0), vec3f(1.0)) * 0.5 + 0.5;
+
+    // 2. Convert to 9-bit integers (0 to 511)
+    let x_u32 = u32(round(n_mapped.x * 511.0));
+    let y_u32 = u32(round(n_mapped.y * 511.0));
+    let z_u32 = u32(round(n_mapped.z * 511.0));
+
+    // 3. Clamp and map specular to 5-bit integer (0 to 31)
+    let s_mapped = clamp(specular, 0.0, 1.0);
+    let s_u32 = u32(round(s_mapped * 31.0));
+
+    // 4. Combine into a single u32 using bitwise shifts and OR operations
+    // - x goes to bits 0-8   (shift 0)
+    // - y goes to bits 9-17  (shift 9)
+    // - z goes to bits 18-26 (shift 18)
+    // - s goes to bits 27-31 (shift 27)
+    let packed = x_u32 | (y_u32 &lt;&lt; 9u) | (z_u32 &lt;&lt; 18u) | (s_u32 &lt;&lt; 27u);
+    return packed;
+}
+
+fn unpack_surface_data(packed: u32) -&gt; UnpackedData {
+    // 1. Extract 9-bit components using bitwise shifts and AND masks (0x1FFu is 9 bits of 1s)
+    let x_u32 = packed &amp; 0x1FFu;
+    let y_u32 = (packed &gt;&gt; 9u) &amp; 0x1FFu;
+    let z_u32 = (packed &gt;&gt; 18u) &amp; 0x1FFu;
+
+    // 2. Extract 5-bit specular intensity (0x1Fu is 5 bits of 1s)
+    let s_u32 = (packed &gt;&gt; 27u) &amp; 0x1Fu;
+
+    // 3. Map back to original floating-point ranges
+    var unpacked: UnpackedData;
+    unpacked.normal.x = (f32(x_u32) / 511.0) * 2.0 - 1.0;
+    unpacked.normal.y = (f32(y_u32) / 511.0) * 2.0 - 1.0;
+    unpacked.normal.z = (f32(z_u32) / 511.0) * 2.0 - 1.0;
+    unpacked.specular = f32(s_u32) / 31.0;
+
+    return unpacked;
+}
+
+// Global functions for visualization
+fn get_input_normal() -&gt; vec3f {
+    return vec3f(-0.577, 0.577, -0.577);
+}
+
+fn get_input_specular() -&gt; f32 {
+    return 0.75;
+}
+
+fn get_packed_val() -&gt; u32 {
+    return pack_surface_data(get_input_normal(), get_input_specular());
+}
+
+fn get_unpacked_normal() -&gt; vec3f {
+    let unpacked = unpack_surface_data(get_packed_val());
+    return unpacked.normal;
+}
+
+fn get_unpacked_specular() -&gt; f32 {
+    let unpacked = unpack_surface_data(get_packed_val());
+    return unpacked.specular;
+}
+
+</pre>
+  </wgsl-tour>
+</div>
+<script type="module">
+  import VisualizationBuilder from '/tour-of-wgsl/assets/js/value_visualizer.js';
+  customElements.whenDefined('wgsl-tour').then(() => {
+    let tour = document.getElementById('tour');
+    tour.setVisualizationBuilder(new VisualizationBuilder("{\"fields\": [{\"expr\": \"get_input_normal()\", \"type\": \"vec3f\"}, {\"expr\": \"get_input_specular()\", \"type\": \"f32\"}, {\"expr\": \"get_packed_val()\", \"type\": \"u32\"}, {\"expr\": \"get_unpacked_normal()\", \"type\": \"vec3f\"}, {\"expr\": \"get_unpacked_specular()\", \"type\": \"f32\"}]}"));
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+          <div class="md-top" data-md-component="top" hidden>
+  <div class="md-top__center">
+    <button type="button" class="md-top__button md-top__button--main" data-md-action="top">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+      <span>Back to top</span>
+    </button>
+    
+      
+      
+      <label class="md-top__button md-top__side md-top__side--nav" for="__drawer" >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-panel-left" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>
+      </label>
+    
+    
+      
+      
+      <label class="md-top__button md-top__side md-top__side--toc" for="__toc" >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-panel-right" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M15 3v18"/></svg>
+      </label>
+    
+  </div>
+</div>
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Operators Reference">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Operators Reference
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../evaluation-stage/" class="md-footer__link md-footer__link--next" aria-label="Next: Evaluation Stages Overview">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Evaluation Stages Overview
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      &copy; 2026 <a href="/tour-of-wgsl/about/copyright/">Michael R. Bernstein</a>. An expanded fork of <a href="https://google.github.io/tour-of-wgsl/" target="_blank">Tour of WGSL</a>.
+    </div>
+  
+  
+    Made with
+    <a href="https://jaywhj.github.io/mkdocs-materialx/" target="_blank" rel="noopener">
+      MaterialX
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "code": null, "features": ["navigation.indexes", "navigation.footer"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "code.collapse": "Collapse", "code.download": "Download", "code.expand": "Expand remaining # lines", "code.select": "Toggle line selection", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.fc193f93.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="../../../assets/js/app.js" type="module"></script>
+      
+    
+  </body>
+</html>

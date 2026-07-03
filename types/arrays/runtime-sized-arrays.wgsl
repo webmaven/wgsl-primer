@@ -1,23 +1,30 @@
-// The whole storage buffer is a runtime-sized array.
-@group(0) @binding(0) var<storage> weights: array<f32>;
+/*
+ * Copyright ©2026 Michael R. Bernstein. All new modifications licensed under Apache 2.0.
+ * Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
+ */
 
-// The runtime-sized array is the last member of
-// a struct describing the whole storage buffer.
-struct PointLight { position: vec3f, color: vec3f, }
-struct LightData {
-  meanIntensity: f32,
-  point: array<PointLight>,
-}
-@group(0) @binding(1) var<storage> lights: LightData;
+// The input storage buffer is a runtime-sized array.
+@group(0) @binding(0) var<storage, read> input_data: array<f32>;
 
-fn number_of_lights() -> u32 {
-  return arrayLength(&lights.point);
-}
+// The output storage buffer is a runtime-sized array.
+@group(0) @binding(1) var<storage, read_write> output_data: array<f32>;
 
-fn get_ith_point_light(i: i32) -> PointLight {
-  return lights.point[i];
-}
-
-fn cannot_copy_whole_array() {
-  // var all_point_lights = lights.point; // Error
+@compute @workgroup_size(64)
+fn main(@builtin(global_invocation_id) global_id: vec3u) {
+    let index = global_id.x;
+    
+    // Query the element count of the runtime-sized array.
+    // arrayLength accepts a pointer to the array and returns a u32.
+    let length = arrayLength(&input_data);
+    
+    // Check bounds before performing array operations.
+    if (index < length) {
+        let original_value = input_data[index];
+        
+        // Multiply the input element by a scaling factor
+        let scaled_value = original_value * 2.5;
+        
+        // Write the result directly to the output array
+        output_data[index] = scaled_value;
+    }
 }

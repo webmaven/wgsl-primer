@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. All new modifications licensed under Apache 2.0.
+ * Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
+ */
+
 const m2x3 = mat2x3f(1, 2, 3, 4, 5, 6);
 
 const mul_s_by_m2x3 : mat2x3f = 10 * m2x3;

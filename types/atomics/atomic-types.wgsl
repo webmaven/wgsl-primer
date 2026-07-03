@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. All new modifications licensed under Apache 2.0.
+ * Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
+ */
+
 var<workgroup> item_sum: atomic<i32>;
 
 fn what_is_the_sum_now() -> i32 {
@@ -12,12 +17,20 @@ struct Queue {
   write_count: atomic<u32>,
   items: array<i32>,
 }
-@group(0) @binding(0)
-var<storage,read_write> work: Queue;
+// Note: To avoid a WebGPU bind group collision with the live-running value visualizer,
+// we comment out the storage variable below. It is perfectly valid to use atomic types here:
+// @group(0) @binding(0) var<storage,read_write> work: Queue;
 
 //var<private> bad_private: atomic<u32>; // Error: wrong address space
 
 fn helper() {
   //var bad: atomic<u32>; // Error: wrong address space
 }
+
+fn run_atomic_test() -> i32 {
+  reset_sum();
+  atomicAdd(&item_sum, 5);
+  return what_is_the_sum_now();
+}
+
 

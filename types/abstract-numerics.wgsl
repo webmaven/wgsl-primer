@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. All new modifications licensed under Apache 2.0.
+ * Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
+ */
+
 const pi = 3.14159265359; // 'pi' is of type abstract-float
 const two = 2;            // 'two' is of type abstract-int
 
