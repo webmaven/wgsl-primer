@@ -7,8 +7,8 @@
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
-    "build": "vite build && venv/bin/properdocs build",
-    "serve": "vite build && venv/bin/properdocs serve",
+    "build": "vite build && ([ -f venv/bin/properdocs ] && venv/bin/properdocs build || properdocs build)",
+    "serve": "vite build && ([ -f venv/bin/properdocs ] && venv/bin/properdocs serve || properdocs serve)",
     "docs": "typedoc",
     "lint": "eslint . && node utils/lint-markdown.js",
     "format": "prettier --write .",
