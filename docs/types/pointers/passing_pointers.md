@@ -1,12 +1,11 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: 'Pointers As Function Parameters'
 shader: ./passing_pointers.wgsl
 visualizer: /ts/value_visualizer.ts
 visualizerOptions: '{"fields": [{"expr": "run_test()", "type": "vec2u"}]}'
 ---
-
-# Pointers As Function Parameters
-
 Pointers can be passed into functions. This allows you to split your shader logic into modular, clean helper functions that can read or modify variables belonging to the parent caller.
 
 A few standard builtin functions take pointer parameters, such as the [arrayLength()](https://w3.org/TR/wgsl/#arrayLength-builtin) and various [atomic builtins](https://w3.org/TR/wgsl/#atomic-builtin-functions).

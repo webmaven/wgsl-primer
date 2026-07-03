@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. All new modifications licensed under Apache 2.0.
+ * Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
+ */
+
 // f1 writes via p1, reads via p2
 fn f1(p1 : ptr<function, i32>, p2 : ptr<function, i32>) {
   *p1 = *p2; // Writes via p1, reads via p2

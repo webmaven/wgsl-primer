@@ -1,12 +1,11 @@
 ---
-title: 'Constant Stage'
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
+title: 'Constant Stage Overview'
 shader: ./constant.wgsl
 visualizer: /ts/value_visualizer.ts
 visualizerOptions: '{"fields": [{"expr": "my_constant", "type": "i32"}, {"expr": "angle_rad", "type": "f32"}]}'
 ---
-
-# Constant Evaluation Stage
-
 The **Constant Stage** is the earliest stage in the lifecycle of a WGSL expression. Expressions evaluated during this stage are called **constant-expressions**. They are computed entirely by the compiler on the CPU at **shader module creation time** (when WebGPU loads your shader).
 
 By computing values at compile-time, WGSL can completely eliminate execution overhead on the GPU for those computations.
@@ -23,17 +22,14 @@ A constant-expression can only be formed from:
 
 ---
 
-## Compile-Time Variables (`const`)
+## Constant Declarations (`const`)
 
-You declare a compile-time constant using the `const` keyword. These values are immutable and must be initialized immediately with a constant-expression.
+A variable declared with the `const` keyword binds a name to a **constant-expression**. 
 
-```wgsl
-const scale_factor = 2.0;               // ✔️ VALID: initialized with a float literal
-const max_threads = 64u;                // ✔️ VALID: initialized with an unsigned literal
+Once defined, a `const` identifier can be used as a sub-expression inside any other constant-expression, acting as a foundational building block for compile-time math.
 
-let runtime_val = 5.0;
-const invalid_const = runtime_val * 2.0; // ❌ COMPILE ERROR: cannot initialize const with let variable
-```
+!!! info "Syntax Reference: `const` Declarations"
+    For full syntax patterns, scoping rules, type inference, and validation constraints of compile-time constants, refer to the **[`const` Declarations](../../../variables/const.md)** guide.
 
 ---
 

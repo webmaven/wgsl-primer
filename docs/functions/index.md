@@ -1,9 +1,8 @@
 ---
-title: 'Functions'
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
+title: 'Functions Overview'
 ---
-
-# Functions Overview
-
 Functions in WGSL are named, reusable subroutines that group a series of statements to perform specific tasks. Because shaders operate in a highly parallel execution environment, WGSL functions are designed for high efficiency and predictable execution.
 
 ---
@@ -26,5 +25,4 @@ This section covers the core mechanics of writing and calling functions in WGSL:
 - **[Function Calls & Recursion](calls.md)**: Function invocation mechanics, copy-on-pass parameter behavior, and the structural hardware constraints that prohibit recursion.
 - **[Pipeline Entry Points](entry-points.md)**: Special entry point stages annotated with `@vertex`, `@fragment`, or `@compute` that serve as interface boundaries with the WebGPU API.
 - **[Must Use Attributes](must-use.md)**: Safety-critical compiler guarantees using the `@must_use` attribute to prevent silently discarding evaluation results.
-
 

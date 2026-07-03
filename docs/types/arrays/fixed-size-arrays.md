@@ -1,4 +1,6 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. All new modifications licensed under CC-BY 4.0.
+# Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
 title: "Fixed-Size Arrays"
 shader: ./fixed-size-arrays.wgsl
 visualizer: /ts/value_visualizer.ts
@@ -16,7 +18,7 @@ In most cases <span class="template template-array-n">N</span> is a
 [const-expression](../../expressions/evaluation-stage/constant/index.md).
 
 !!! note "Exception for Workgroup Variables"
-    When the array is used as the type of a workgroup variable, <span class="template template-array-n">N</span> can be an [override-expression](../../expressions/evaluation-stage/override/index.md). This means the array size can be adjusted at [pipeline-creation time](../../expressions/evaluation-stage/overview/index.md), though it is still "fixed" before the shader executes.
+    When the array is used as the type of a workgroup variable, <span class="template template-array-n">N</span> can be an [override-expression](../../expressions/evaluation-stage/override/index.md). This means the array size can be adjusted at [pipeline-creation time](../../expressions/evaluation-stage/index.md), though it is still "fixed" before the shader executes.
 
 ### Common Fixed-Size Array Types
 

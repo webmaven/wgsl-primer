@@ -1,9 +1,8 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: 'Operators'
 ---
-
-# WGSL Operators
-
 WGSL supports a rich set of operators for performing mathematical calculations, manipulating bits, comparing values, and managing logical control flow. While these operators will feel familiar to developers coming from C++, JavaScript, or Rust, WGSL introduces key constraints and overloaded behaviors that are critical for GPU programming.
 
 ---
@@ -109,12 +108,4 @@ let v = vec2f(5.0, 6.0);
 let result = m * v; 
 ```
 
-To learn more about the mathematics and constructors of vectors and matrices, refer to the [Vectors Overview](../../types/vectors/index.md) and [Matrices Overview](../../types/matrices/index.md) sections.
-
----
-
-## Next Steps
-
-Now that you understand the basic operators, let's explore how bitwise operators are used in modern graphics to dramatically compress data and save memory bandwidth:
-
-- **[Bitwise Operators & Data-Packing Masterclass](bitwise-packing.md)**: Master the bitwise operators (`&`, `|`, `~`, `^`, `<<`, `>>`) by building a real-world high-performance normal/specular packer.
+For detailed specifications of vectors and matrices, see the [Vectors Overview](../../types/vectors/index.md) and [Matrices Overview](../../types/matrices/index.md) sections.

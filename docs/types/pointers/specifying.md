@@ -1,10 +1,9 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: 'Specifying a pointer type'
 shader: ./specifying.wgsl
 ---
-
-# Specifying a Pointer Type
-
 A pointer type in WGSL is parameterized. It defines not only the type of data being pointed to, but also where that data lives and what access permissions are allowed.
 
 A pointer type is written in one of two ways:

@@ -1,12 +1,13 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. All new modifications licensed under CC-BY 4.0.
+# Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
 title: 'Uniform Buffers'
 ---
+Uniform buffers in WGSL are used to store read-only data that can be accessed efficiently by any shader stage. They are typically used for data that remains constant across an entire draw or dispatch call, such as transformation matrices, lighting parameters, camera positions, or system settings.
 
-## Uniform Buffers
+### Declaring Uniform Variables
 
-Uniform buffers in WGSL are used to store read-only data that can be accessed by shaders. They are typically used to store transformation matrices, lighting information, and other constant data that does not change frequently.
-
-### Declaring Uniform Buffers
+Uniform variables reside in the `uniform` address space.
 
 **Syntax:**
 
@@ -14,36 +15,27 @@ Uniform buffers in WGSL are used to store read-only data that can be accessed by
 var<uniform> u: T;
 ```
 
-- `T` is the type of the data stored in the buffer.
+- `T` must be a **host-shareable** type, typically a structure.
+- **No Access Modes**: Unlike `storage` variables, you **cannot** specify an access mode (e.g., `read`) for uniform variables. Writing `var<uniform, read>` is a WGSL syntax error. Uniform buffers are implicitly read-only.
+- **Strict Alignment**: WebGPU requires strict alignment for uniform buffers. The type `T` must align to 16 bytes on the host side, and nested structures or arrays must be padded accordingly.
 
-### Example: Declaring a Uniform Buffer
+---
 
-**WGSL Code:**
+## Example: Declaring and Binding a Uniform Buffer
 
-```wgsl
-struct MyUniformBufferType {
-    modelMatrix: mat4x4<f32>;
-    viewMatrix: mat4x4<f32>;
-    projectionMatrix: mat4x4<f32>;
-};
+This complete example shows how a uniform buffer is defined in WGSL and mapped to JavaScript on the host side.
 
-@group(0) @binding(0) var<uniform> myUniformBuffer: MyUniformBufferType;
-```
-
-### JavaScript to WGSL Mapping
-
-To use uniform buffers in a WebGPU application, you need to create the buffer in JavaScript and bind it to the appropriate resource group and binding.
-
-#### Example: Uniform Buffer
+<details class='example'>
+<summary>Example</summary>
 
 **WGSL Code:**
 
 ```wgsl
 struct MyUniformBufferType {
-    modelMatrix: mat4x4<f32>;
-    viewMatrix: mat4x4<f32>;
-    projectionMatrix: mat4x4<f32>;
-};
+    modelMatrix: mat4x4<f32>,
+    viewMatrix: mat4x4<f32>,
+    projectionMatrix: mat4x4<f32>,
+}
 
 @group(0) @binding(0) var<uniform> myUniformBuffer: MyUniformBufferType;
 ```
@@ -80,7 +72,7 @@ const bindGroupLayout = device.createBindGroupLayout({
   entries: [
     {
       binding: 0,
-      visibility: GPUShaderStage.VERTEX,
+      visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
       buffer: {
         type: 'uniform',
       },
@@ -102,9 +94,14 @@ const bindGroup = device.createBindGroup({
 });
 ```
 
-### Summary
+</details>
 
-Uniform buffers are essential for storing constant data that shaders can read. By using the `var<uniform>` keyword, you can declare uniform buffers in WGSL. In JavaScript, you create and bind these buffers to the shader using WebGPU APIs.
+---
 
-- `var<uniform> u: T`: Declares a uniform buffer with type `T`.
-- Uniform buffers are read-only and typically used for storing constant data like transformation matrices.
+## Technical Considerations
+
+- **Size Limits**: Uniform buffers are optimized for low-latency, cached access, but they are limited in size. By default, WebGPU guarantees a maximum uniform buffer size of **16 KB** (though individual GPUs may support more). For larger datasets, use storage buffers.
+- **Layout Constraints**: Because of hardware performance optimizations, types within uniform buffers have strict alignment rules:
+  - Structure members are aligned based on their type's alignment requirements.
+  - Uniform matrices (like `mat4x4<f32>`) require each column to be aligned to 16 bytes.
+  - Arrays inside uniform buffers (using the <code>array&lt;<span class="template template-array-t">T</span>, <span class="template template-array-n">N</span>&gt;</code> syntax) must have an element stride that is a multiple of 16 bytes.

@@ -1,4 +1,6 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: 'The Coordination Problem'
 shader: ./coordination.wgsl
 visualizer: /ts/value_visualizer.ts
@@ -7,9 +9,6 @@ visualizerOptions: '{"fields": [
     {"expr": "atomic_results.atomic_sum", "type": "u32"}
 ]}'
 ---
-
-# The Coordination Problem
-
 GPUs execute shaders with massive parallelism. Thousands of invocations (threads) run concurrently, executing code with overlapping, uncoordinated schedules.
 
 Invocations often share variables in the `workgroup` and `storage` address spaces. Since both spaces allow reading and writing, overlapping threads accessing the same memory word will conflict if at least one of those accesses is a write. Without coordination, this results in a **data race**.
@@ -86,5 +85,4 @@ This live contrast shows why atomics are indispensable when writing concurrent G
 !!! warning "Beware: Weak Ordering"
     Atomic hardware serialization is only guaranteed and consistent with respect to a **single memory location**. When comparing the orderings of operations across *different* memory locations, GPU threads execute under a **weakly-ordered memory model**. It may appear that causality is violated between variables unless you explicitly synchronize memory caches. 
 
-    To coordinate visibility across multiple distinct variables, you must use **Memory Barriers**. Learn more in the [Barriers & Memory Synchronization](../../variables/memory-barriers.md) section.
-
+    To coordinate visibility across multiple distinct variables, you must use **Memory Barriers**. Refer to the [Barriers & Memory Synchronization](../../variables/memory-barriers.md) section.

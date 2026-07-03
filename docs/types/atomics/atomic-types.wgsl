@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. All new modifications licensed under Apache 2.0.
+ * Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
+ */
+
 var<workgroup> item_sum: atomic<i32>;
 
 fn what_is_the_sum_now() -> i32 {

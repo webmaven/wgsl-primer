@@ -1,5 +1,7 @@
 ---
-title: 'Matrices'
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
+title: 'Matrices Overview'
 shader: ./index.wgsl
 visualizer: /ts/value_visualizer.ts
 visualizerOptions: '{"fields": [
@@ -9,9 +11,6 @@ visualizerOptions: '{"fields": [
     {"expr": "m2x2", "type": "mat2x2f"}
 ]}'
 ---
-
-# Matrices Overview
-
 WGSL supports matrices between \(2 \times 2\) and \(4 \times 4\) `f32` elements.
 
 Matrices are declared with the form <code>mat<span class="template template-mat-c">C</span>x<span class="template template-mat-r">R</span>&lt;f32&gt;</code>, where <span class="template template-mat-c">C</span> is the number of columns in the matrix, and <span class="template template-mat-r">R</span> is the number of rows in the matrix.

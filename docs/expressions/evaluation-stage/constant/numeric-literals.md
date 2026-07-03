@@ -1,9 +1,8 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: 'Numeric Literals'
 ---
-
-# Numeric Literals
-
 A numeric literal in WGSL is a constant-expression representing a number. It can be written in multiple formats (including decimal and hexadecimal) and can optionally include a suffix that forces a specific concrete type.
 
 ---
@@ -34,23 +33,21 @@ Adding a suffix to a numeric literal forces the value to have a concrete, fixed-
 
 ## Unsuffixed Literals & Abstract Types
 
-If you write a numeric literal without a suffix, its type is **abstract**:
+If you write a numeric literal without a suffix, its type is automatically **abstract**. This allows the compiler to treat constant numeric values with extremely high precision at compile time before they are assigned to a concrete fixed-precision type:
 
 - **`abstract-float`**: Any unsuffixed literal with a decimal point (e.g., `1.2`) or an exponent (e.g., `1e2`).
-- **`abstract-int`**: Any unsuffixed integer literal (e.g., `42`, `0xFF`).
+- **`abstract-int`**: Any unsuffixed integer literal (e.g., `42` or hex `0xFF`).
 
-### Why Abstract Types Exist
-Abstract types represent numbers with **mathematically infinite precision** during compile-time. The compiler performs all constant arithmetic using these high-precision representations (at least 64-bit float and 64-bit signed integer precision) to prevent rounding errors or overflows.
-
-During assignment, abstract types automatically **resolve** to the concrete type required by the variable or expression:
+When you assign an unsuffixed literal to a typed variable, the compiler implicitly resolves the abstract type to the concrete type required by the variable:
 
 ```wgsl
-let a: f32 = 1.5;     // abstract-float 1.5 automatically resolves to f32
-let b: i32 = 10;      // abstract-int 10 automatically resolves to i32
-let c: u32 = 10;      // abstract-int 10 automatically resolves to u32
-
-let mix = 1.5 + 2;    // abstract-float + abstract-int -> abstract-float 3.5
+let a: f32 = 1.5;     // abstract-float 1.5 resolves to f32
+let b: i32 = 10;      // abstract-int 10 resolves to i32
+let c: u32 = 10;      // abstract-int 10 resolves to u32
 ```
+
+!!! tip "Deep-Dive: Abstract Numerics Semantics"
+    While unsuffixed literals represent the entry-point to WGSL's compile-time types, their full behaviors (64-bit CPU evaluation, implicit conversions, default resolution rules, and strict bounds checking) are detailed in the **[Abstract Numerics](../../../types/abstract-numerics.md)** reference guide.
 
 ---
 
@@ -73,7 +70,7 @@ A hex float begins with `0x` or `0X`, followed by a hexadecimal significand (man
 
 <code>0x<span class="template template-struct-v1">significand</span>p<span class="template template-struct-v2">exponent</span></code>
 
-Let's break down a real-world example: `0x1.5p-3`
+Below is a breakdown of a real-world example: `0x1.5p-3`
 
 - `0x1.5`: The significand in hexadecimal. In hex, \(0.5\) is equivalent to \(\frac{5}{16} = 0.3125\), so `1.5` is \(1 + \frac{5}{16} = 1.3125\) in decimal.
 - `p-3`: This specifies a binary exponent of \(2^{-3}\) (which is \(\frac{1}{8} = 0.125\)).
@@ -82,11 +79,3 @@ Let's break down a real-world example: `0x1.5p-3`
 ```wgsl
 const precise_float: f32 = 0x1.5p-3f; // Evaluates exactly to 0.1640625f
 ```
-
----
-
-## Next Steps
-
-Now that you have mastered numeric literal formats, let's explore how the compiler evaluates variables that can only be resolved during pipeline creation on the CPU:
-
-- **[Override Stage](../override/index.md)**: Master pipeline constants and the CPU-to-GPU dynamic specialization interface.

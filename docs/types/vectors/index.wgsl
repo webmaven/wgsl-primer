@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. Licensed under Apache 2.0.
+ * See root README.md for global project-wide upstream attributions.
+ */
+
 // Demonstrates that vec2<f32> is fully equivalent to its short-hand alias vec2f.
 fn a(v : vec2<f32>) {}
 

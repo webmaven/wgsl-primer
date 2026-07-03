@@ -1,5 +1,7 @@
 ---
-title: "Structures"
+# Copyright ©2026 Michael R. Bernstein. All new modifications licensed under CC-BY 4.0.
+# Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
+title: "Structures Overview"
 shader: ./index.wgsl
 visualizer: /ts/value_visualizer.ts
 visualizerOptions: '{"fields": [
@@ -12,9 +14,6 @@ visualizerOptions: '{"fields": [
     {"expr": "light_shininess", "type": "f32"}
 ]}'
 ---
-
-# Structures Overview
-
 In WebGPU, shaders process complex multi-dimensional data such as 3D meshes, material properties, and physical lights. A **structure** is a user-defined custom data type that groups related variables into a single, cohesive unit.
 
 Rather than managing disjointed values or passing numerous individual parameters to functions, you can declare structures to modularize and logically model your physical graphics pipelines.
@@ -99,13 +98,3 @@ const light = PointLight(vec3<f32>(0.0, 5.0, -2.0), 1.5, default_material);
 You can read nested members by chaining dot-member accessors together:
 
 * `light.material.shininess` accesses the nested `shininess` member.
-
-Let's look at the accompanying shader code to see nested structs and constructors in action!
-
----
-
-## Next Steps
-
-Now let's explore how structures are stored in memory and how to satisfy WebGPU's strict GPU hardware layouts:
-
-- **[Memory Alignment](alignment.md)**: Structure layouts, byte alignments, `@align` and `@size` attributes, and Vulkan `std430` layout rules.

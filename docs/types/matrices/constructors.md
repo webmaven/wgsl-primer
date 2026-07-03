@@ -1,4 +1,6 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: "Matrix Constructors"
 shader: ./constructors.wgsl
 visualizer: /ts/value_visualizer.ts
@@ -8,9 +10,6 @@ visualizerOptions: '{"fields": [
     {"expr": "scalar_wise",  "type": "mat2x3f"}
 ]}'
 ---
-
-# Matrix Constructors
-
 In WGSL, matrices can be constructed or initialized using three primary constructor styles: zero-value initialization, column-vector composition, or element-by-element scalar initialization in column-major order.
 
 | Style | Syntax Pattern | Description |
@@ -75,9 +74,3 @@ The resulting matrix layout is:
 ```
 
 </div>
-
----
-
-## Next Steps
-
-- **[Matrix Multiplication](multiplication.md)**: Linear algebra operations, including scalar, vector, and matrix multiplications.

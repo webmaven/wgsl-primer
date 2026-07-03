@@ -1,4 +1,6 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. All new modifications licensed under CC-BY 4.0.
+# Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
 title: "Matrix Multiplication"
 shader: ./multiplication.wgsl
 visualizer: /ts/value_visualizer.ts
@@ -11,9 +13,6 @@ visualizerOptions: '{"fields": [
     {"expr": "mul_m2x3_by_m4x2", "type": "mat4x3f"}
 ]}'
 ---
-
-# Matrix Multiplication
-
 Matrices are incredibly powerful for geometric transformations and linear algebra. WGSL supports multiplication of matrices with **scalars**, **vectors**, and **other matrices** using the standard multiplication operator (`*`).
 
 Depending on the types of the operands, matrix multiplication behaves in different ways:

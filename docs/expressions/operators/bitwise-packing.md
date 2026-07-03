@@ -1,17 +1,16 @@
 ---
-title: 'Bitwise Operators & Data-Packing Masterclass'
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
+title: 'Bitwise Operators & Data Packing'
 shader: ./bitwise-packing.wgsl
 visualizer: /ts/value_visualizer.ts
 visualizerOptions: '{"fields": [{"expr": "get_input_normal()", "type": "vec3f"}, {"expr": "get_input_specular()", "type": "f32"}, {"expr": "get_packed_val()", "type": "u32"}, {"expr": "get_unpacked_normal()", "type": "vec3f"}, {"expr": "get_unpacked_specular()", "type": "f32"}]}'
 ---
-
-# Bitwise Operators & Data-Packing Masterclass
-
 In real-time graphics and WebGPU shader pipelines, GPU execution units are incredibly fast, but memory bandwidth (retreading data from VRAM) is often the primary bottleneck. Passing uncompressed floating-point data through buffers wastes precious bandwidth.
 
 To solve this, professional graphics programmers use **data packing**—compressing multiple distinct attributes (like coordinates, directions, and material properties) into a single compact integer (like a `u32`) using **bitwise operators**.
 
-In this masterclass, we will cover the core bitwise operators in WGSL and apply them to a real-world case study: packing a 3D unit normal vector and a specular coefficient into a single `u32`.
+This section covers the core bitwise operators in WGSL and applies them to a real-world case study: packing a 3D unit normal vector and a specular coefficient into a single `u32`.
 
 ---
 
@@ -51,7 +50,7 @@ A `u32` has \(32\) bits. We allocate:
 
 When packing floating-point data into integers, we must perform **quantization** (mapping continuous float ranges to discrete integer steps). Because we are fitting multiple fields into a single \(32\)-bit `u32`, bit allocation is a zero-sum game: allocating more bits to one attribute means taking them away from another.
 
-Let's look at how our chosen **9-9-9-5 layout** compares with other layouts to understand this trade-off.
+The following comparison of the **9-9-9-5 layout** with other options illustrates this trade-off.
 
 #### Layout A: 10-10-10-2 (High-Precision Normals, Low-Precision Specular)
 
@@ -96,15 +95,14 @@ By splitting the difference, we can allocate \(9\) bits to each coordinate of th
   * **Precision**: Much better material definition. With \(32\) distinct shininess values, the specular coefficient is smooth enough for highly realistic lighting highlights.
   * **Result**: An input of \(0.75\) maps to step \(23\) (\(0.75 \times 31.0 = 23.25\), rounded to \(23\)), which unpacks to \(\frac{23}{31} \approx 0.74194\). The error is only \(0.008\) (\(0.8\%\)), which represents a **\(10\times\) precision increase** for the specular component compared to the 10-10-10-2 layout!
 
-> [!NOTE]
-> **Single-Precision Floating-Point Limits (`f32`)**:
-> Even before data packing, you will notice that the input normal `vec3f(-0.577, ...)` is displayed in the visualizer as `vec3f(-0.5770000219345093, ...)`. This is because standard 32-bit floating-point numbers store values in binary (base-2), and numbers like `0.577` cannot be represented exactly in binary fractional form (much like \(\frac{1}{3}\) in decimal). The browser and GPU instantly approximate it to the closest representable binary float.
+!!! note "Single-Precision Floating-Point Limits (`f32`)"
+    Even before data packing, you will notice that the input normal `vec3f(-0.577, ...)` is displayed in the visualizer as `vec3f(-0.5770000219345093, ...)`. This is because standard 32-bit floating-point numbers store values in binary (base-2), and numbers like `0.577` cannot be represented exactly in binary fractional form (much like \(\frac{1}{3}\) in decimal). The browser and GPU instantly approximate it to the closest representable binary float.
 
 ---
 
 ## Implementing the Packer in WGSL
 
-Let's walk through the math and bit-manipulations required to pack and unpack this data.
+The math and bit-manipulations required to pack and unpack this data are detailed below.
 
 ### Step 1: Mapping Float Ranges to Integers
 Bitwise operations work on integers, so we must first convert our floating-point values into positive integers that fit within their allocated bit-widths.
@@ -166,22 +164,30 @@ let specular = f32(s_u32) / 31.0;
 
 ---
 
-## Advanced Masterclass: SIMD-Friendly Vectorized Packing (96-Bit Interleaved Layout)
+## Advanced Layouts: SIMD-Friendly Vectorized Packing (96-Bit Interleaved Layout)
 
-Your intuition is spot on! In professional AAA game engines (such as Unreal Engine 5 or Frostbite), programmers don't just pack single vectors into single integers; they pack groups of related vector attributes across multiple integers.
+In professional real-time rendering pipelines (such as G-buffers in AAA game engines), optimization often requires packing multiple related vector attributes across shared, compact integer layouts. 
 
-Suppose we need to pack **two sets of 3D coordinates** (for example, a surface position vector \(\vec{P} = (x_P, y_P, z_P)\) and a normal vector \(\vec{N} = (x_N, y_N, z_N)\), totaling 6 floating-point values) into **three 32-bit integers** (\(3 \times \text{u32} = 96\) bits).
+Rather than packing individual vectors into single integer variables, compilers and graphics programmers pack groups of attributes together across multiple integers. This maximizes memory bandwidth savings and aligns with the parallel execution units of the GPU.
 
-Uncompressed, these 6 floats require **24 bytes**. By packing them into three `u32` integers, we reduce the footprint to **12 bytes** (a \(50\%\) memory savings) while allocating a highly-precise **16 bits per coordinate** (\(2^{16} = 65,536\) steps, allowing sub-millimeter precision).
+### Memory Optimization Case Study: Dual 3D Vectors
+Consider a scenario where a shader needs to store **two sets of 3D coordinates**: a surface position vector \(\vec{P} = (x_P, y_P, z_P)\) and a normal vector \(\vec{N} = (x_N, y_N, z_N)\), totaling 6 floating-point values.
 
-### The Standard (Naive) Approach
-A naive implementation would pack \(\vec{P}\) into 1.5 integers, and \(\vec{N}\) into the remaining 1.5 integers. Unpacking this in a shader is slow and tedious because it requires complex scalar shifts and bitmasking for individual coordinates, causing branch instruction overhead on the GPU's execution units.
+To minimize storage overhead, these 6 floats can be packed into **three 32-bit integers** (\(3 \times \text{u32} = 96\) bits):
+- **Uncompressed representation**: The 6 floats require **24 bytes** of memory.
+- **Compressed representation**: By packing them into three `u32` integers, the footprint is reduced to **12 bytes** (a \(50\%\) memory bandwidth reduction).
+- **Precision retention**: This allocation provides **16 bits per coordinate** (\(2^{16} = 65,536\) discrete steps), preserving high precision (such as sub-millimeter position steps).
 
-### The Vectorized (Interleaved) Approach
+### Comparison of Layout Approaches
+
+#### Sequential Approach
+A sequential approach would pack \(\vec{P}\) into the first 1.5 integers and \(\vec{N}\) into the remaining 1.5 integers. Unpacking this layout is inefficient because it requires complex, non-uniform scalar bit-shifts and masking, which prevents vectorized GPU optimizations and increases scalar instruction overhead.
+
+#### Interleaved (Vectorized) Approach
 To optimize for the GPU's vectorized architecture, we use an **interleaved layout** where corresponding coordinates are packed together into the same integer container:
-- **`integer_0`** stores the $x$-coordinates: \(x_P\) in bits \(0\text{–}15\), and \(x_N\) in bits \(16\text{–}31\).
-- **`integer_1`** stores the $y$-coordinates: \(y_P\) in bits \(0\text{–}15\), and \(y_N\) in bits \(16\text{–}31\).
-- **`integer_2`** stores the $z$-coordinates: \(z_P\) in bits \(0\text{–}15\), and \(z_N\) in bits \(16\text{–}31\).
+- **`integer_0`** stores the \\(x\)-coordinates: \(x_P\) in bits \(0\text{–}15\), and \(x_N\) in bits \(16\text{–}31\).
+- **`integer_1`** stores the \\(y\)-coordinates: \(y_P\) in bits \(0\text{–}15\), and \(y_N\) in bits \(16\text{–}31\).
+- **`integer_2`** stores the \\(z\)-coordinates: \(z_P\) in bits \(0\text{–}15\), and \(z_N\) in bits \(16\text{–}31\).
 
 ```
                       32-Bit Unsigned Integer Layout
@@ -191,10 +197,10 @@ To optimize for the GPU's vectorized architecture, we use an **interleaved layou
  integer_2: [    Vector B's Z-Coordinate    ] | [    Vector A's Z-Coordinate    ]
 ```
 
-### Why GPUs Love Interleaved Vectorization
-By layouting the bits this way, we can construct a single `vec3<u32>` and perform **SIMD (Single Instruction, Multiple Data)** operations on all three coordinates in parallel! 
+### Vectorized Unpacking Semantics
+By interleaving the bits, a single `vec3<u32>` can represent the grouped coordinates, enabling **SIMD (Single Instruction, Multiple Data)** bitwise operations across all three axes in parallel. 
 
-Unpacking *both* full 3D vectors takes just a few lines of highly optimized, vectorized WGSL:
+Unpacking both 3D vectors is highly efficient in WGSL:
 
 ```wgsl
 struct UnpackedPairs {
@@ -218,13 +224,11 @@ fn unpack_coordinate_pairs(packed_xyz: vec3<u32>) -> UnpackedPairs {
 }
 ```
 
-### The Performance Payoff
-Because graphics cards are hardware-optimized for 3D vector arithmetic, the vectorized bitwise operations `& vec3<u32>` and `>> vec3<u32>` compile down to a single instruction cycle on the GPU's execution registers. We eliminate scalar register bottlenecks, allowing the graphics pipeline to unpack surface positions and normal channels at lightning speed.
+### Performance Analysis
+Because modern GPUs are hardware-optimized for 3D vector arithmetic, the vectorized bitwise operations `& vec3<u32>` and `>> vec3<u32>` compile down to a single instruction cycle on the GPU's execution registers. This eliminates scalar register bottlenecks and allows the graphics pipeline to unpack surface positions and normal channels with minimal overhead.
 
 ---
 
 ## Interactive Visualizer
 
-In the interactive editor on the right, you can see this exact system executing on your GPU. 
-
-Look at the **Results** section to compare the input values against the packed `u32` integer representation, and witness how the unpacked normal is perfectly reconstructed with zero visible loss in precision.
+The interactive editor demonstrates this packing system executing directly on the GPU. The **Results** section displays the input values alongside their packed `u32` integer representations, showing how the unpacked normal is reconstructed with high precision.

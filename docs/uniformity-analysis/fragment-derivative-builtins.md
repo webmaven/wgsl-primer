@@ -1,22 +1,21 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: 'Fragment Derivative Builtins'
 ---
+Fragment derivative builtins in WGSL compute the spatial rate of change (derivative) of a value across the screen-space of a rendered primitive. These functions are highly useful for anti-aliasing, bump mapping, calculating custom mipmap levels, and implementing procedural shading.
 
-## Fragment Derivative Builtins in WGSL
+Because derivatives are computed relative to adjacent screen pixels, they are **only available in the fragment shader stage**. Calling them in vertex or compute stages is a compile-time error.
 
-Fragment derivative builtins in WGSL are used to compute the rate of change of a value across the surface of a primitive. These builtins are useful for various effects, such as mipmapping, bump mapping, and other texture-related operations.
+---
 
-### Available Builtins
+## Available Builtins
 
-WGSL provides three fragment derivative builtins:
+WGSL provides three primary derivative functions:
 
-1. `dpdx`
-2. `dpdy`
-3. `fwidth`
+### `dpdx` (Derivative of \(e\) with respect to \(x\))
 
-### `dpdx`
-
-The `dpdx` function computes the partial derivative of an expression with respect to the screen-space x-coordinate.
+Computes the partial derivative of an expression with respect to the screen-space X-coordinate.
 
 **Syntax:**
 
@@ -24,18 +23,12 @@ The `dpdx` function computes the partial derivative of an expression with respec
 fn dpdx(e: T) -> T
 ```
 
-- `e`: The expression to compute the derivative of.
-- Returns the partial derivative of `e` with respect to x.
+- `e`: A scalar or vector of type `f32` or `f16`.
+- Returns the change in value per horizontal pixel.
 
-**Example:**
+### `dpdy` (Derivative of \(e\) with respect to \(y\))
 
-```wgsl
-let dx: f32 = dpdx(someValue);
-```
-
-### `dpdy`
-
-The `dpdy` function computes the partial derivative of an expression with respect to the screen-space y-coordinate.
+Computes the partial derivative of an expression with respect to the screen-space Y-coordinate.
 
 **Syntax:**
 
@@ -43,18 +36,12 @@ The `dpdy` function computes the partial derivative of an expression with respec
 fn dpdy(e: T) -> T
 ```
 
-- `e`: The expression to compute the derivative of.
-- Returns the partial derivative of `e` with respect to y.
+- `e`: A scalar or vector of type `f32` or `f16`.
+- Returns the change in value per vertical pixel.
 
-**Example:**
+### `fwidth` (Filter Width)
 
-```wgsl
-let dy: f32 = dpdy(someValue);
-```
-
-### `fwidth`
-
-The `fwidth` function computes the sum of the absolute values of the partial derivatives of an expression with respect to the screen-space x and y coordinates.
+Computes the sum of the absolute values of the horizontal and vertical derivatives. This represents the total spatial variation of the expression.
 
 **Syntax:**
 
@@ -62,36 +49,74 @@ The `fwidth` function computes the sum of the absolute values of the partial der
 fn fwidth(e: T) -> T
 ```
 
-- `e`: The expression to compute the width of.
-- Returns the sum of the absolute values of the partial derivatives of `e`.
+- Under the hood, `fwidth(e)` is equivalent to: `abs(dpdx(e)) + abs(dpdy(e))`.
 
-**Example:**
+---
 
-```wgsl
-let width: f32 = fwidth(someValue);
+## The Uniformity Analysis Rule
+
+Derivative functions have a strict execution requirement: **they must only be invoked in uniform control flow.**
+
+### Why This Rule Exists
+
+Modern GPUs execute fragment shaders in parallel groups called **quads** (\(2 \times 2\) pixel clusters).
+To compute a derivative like `dpdx(someValue)`, the GPU subtracts the value of `someValue` in the current pixel's thread from the value of `someValue` in the horizontally adjacent pixel's thread within the same quad.
+
+```
++-----------+-----------+
+|  Pixel 0  |  Pixel 1  |  -> dpdx is computed as:
+| (Value A) | (Value B) |     Value B - Value A
++-----------+-----------+
+|  Pixel 2  |  Pixel 3  |
+|           |           |
++-----------+-----------+
 ```
 
-### Practical Usage
+If the control flow diverges—for example, if an `if (condition)` causes Pixels 0 and 2 to execute a block of code, but Pixels 1 and 3 skip it—horizontal neighbors are no longer executing the same instructions. Attempting to compute a derivative inside this branch would read uninitialized or garbage data from the inactive threads, leading to undefined behavior or visual artifacts.
 
-Fragment derivative builtins are often used in texture mapping to compute mipmap levels or to create smooth transitions in shading.
+To prevent this, WGSL's static **uniformity analysis** compiler pass strictly enforces that:
 
-**Example: Using `fwidth` for Mipmapping:**
+!!! important
+    Any call to `dpdx`, `dpdy`, `fwidth`, or implicit derivative functions (such as `textureSample` which uses derivatives to select mipmaps) inside a divergent `if`, `switch`, or loop statement is a compile-time error.
+
+---
+
+## Practical Example: Manual Mipmap Level Calculation
+
+The following fragment shader calculates the rate of change of texture coordinates to manually compute a mipmap level, illustrating how to safely declare variables and cast types.
+
+<details class='example'>
+<summary>Example</summary>
 
 ```wgsl
+@group(0) @binding(0) var texture: texture_2d<f32>;
+@group(0) @binding(1) var textureSampler: sampler;
+
 @fragment
 fn main(@location(0) uv: vec2<f32>) -> @location(0) vec4<f32> {
-    let texCoord = uv * textureSize(texture, 0);
-    let mipLevel = log2(max(fwidth(texCoord.x), fwidth(texCoord.y)));
-    return textureSampleLevel(texture, sampler, uv, mipLevel);
+    // textureSize returns vec2<u32>; cast it to vec2<f32> for type safety
+    let texSize = vec2<f32>(textureSize(texture, 0));
+
+    // Scale UV coordinates to texel coordinates
+    let texCoord = uv * texSize;
+
+    // Calculate total spatial variation of the texel coordinates (always in uniform control flow!)
+    let dx = dpdx(texCoord);
+    let dy = dpdy(texCoord);
+
+    // Determine the level of detail (LOD) based on the maximum derivative length
+    let deltaMax = max(dot(dx, dx), dot(dy, dy));
+    let mipLevel = 0.5 * log2(deltaMax);
+
+    // Sample texture with the explicitly calculated level
+    return textureSampleLevel(texture, textureSampler, uv, mipLevel);
 }
 ```
 
-In this example, `fwidth` is used to compute the appropriate mipmap level for a texture sample based on the rate of change of the texture coordinates.
+</details>
 
-### Summary
+## Summary
 
-Fragment derivative builtins in WGSL provide powerful tools for computing the rate of change of values across the surface of a primitive. By using `dpdx`, `dpdy`, and `fwidth`, you can implement advanced texture and shading techniques in your shaders.
-
-- `dpdx(e)`: Computes the partial derivative of `e` with respect to x.
-- `dpdy(e)`: Computes the partial derivative of `e` with respect to y.
-- `fwidth(e)`: Computes the sum of the absolute values of the partial derivatives of `e`.
+- **Fragment Only**: Derivatives represent pixel changes on the screen, so they only exist in `@fragment` shaders.
+- **Uniform Control Flow Required**: Because they read values from neighboring threads inside a \(2 \times 2\) pixel quad, they cannot be called inside divergent blocks.
+- **Implicit Derivatives**: `textureSample` and `textureSampleCompare` implicitly compute derivatives for mipmapping. Thus, they are also restricted to uniform control flow! If you need to sample inside divergent control flow, use `textureSampleLevel` or `textureSampleGrad`.

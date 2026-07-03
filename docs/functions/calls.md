@@ -1,12 +1,11 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: 'Function Calls & Recursion'
 shader: ./calls.wgsl
 visualizer: /ts/value_visualizer.ts
 visualizerOptions: '{"fields": [{"expr": "transform_val(12.5)", "type": "f32"}]}'
 ---
-
-# Calling Functions
-
 Functions in WGSL are called by writing the function name followed by comma-separated arguments enclosed in parentheses `()`.
 
 ---

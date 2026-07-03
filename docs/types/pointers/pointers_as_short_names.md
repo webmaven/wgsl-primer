@@ -1,12 +1,11 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: 'Pointers As Short Names'
 shader: ./pointers_as_short_names.wgsl
 visualizer: /ts/buffer_viewer.ts
 visualizerOptions: '{"length": 8, "datatype": "f32"}'
 ---
-
-# Pointers As Short Names
-
 When working with deeply nested, complex structures, writing out full variable access paths like `particles[i].physics.transform.position` over and over is tedious, error-prone, and clutters your shader code. 
 
 Inside a function, you can combine the address-of operator `&` with an immutable [let-declaration](../../variables/let.md) to create a clean, ultra-fast **short name** (alias pointer) targeting a sub-element inside a larger structure.

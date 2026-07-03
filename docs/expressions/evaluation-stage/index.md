@@ -1,10 +1,20 @@
 ---
-title: 'Evaluation stage'
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
+title: 'Evaluation Stages Overview'
 ---
-
-# Evaluation Stages Overview
-
 Value expressions in WGSL are classified according to the earliest phase in which they can be fully evaluated. To maximize performance and optimization, the WebGPU compilation pipeline evaluates expressions across three distinct **Evaluation Stages**, each occurring at a different point in a shader's lifetime.
+
+```mermaid
+flowchart LR
+   sc[Shader creation time]
+   pc[Pipeline creation time]
+   rt[Shader execution time]
+   style sc fill:#fff5ad
+   style pc fill:#fff5ad
+   style rt fill:#fff5ad
+   sc --> pc --> rt
+```
 
 By performing as much computation as possible on the CPU before the shader runs on the graphics hardware, WebGPU is able to generate highly optimized machine code specifically tailored to your hardware and execution parameters.
 
@@ -55,11 +65,47 @@ The **Runtime Stage** is the final stage, occurring when the compiled shader is 
 
 ---
 
-## Detailed Stages
+## In Context
 
-To explore each evaluation stage in detail, proceed to the following lessons:
+The evaluation phases fit into a WebGPU application's API lifecycle as follows:
 
-- **[Pipeline Evaluation Stages](overview/index.md)**: A visual sequence and flowchart breakdown showing how these compilation phases fit into a WebGPU application's lifecycle.
-- **[Constant Stage](constant/index.md)**: Explore compile-time expressions and numeric literals.
-- **[Override Stage](override/index.md)**: Learn about CPU-evaluated, overridable variables set during pipeline creation.
-- **[Runtime Stage](runtime/index.md)**: Learn about GPU-evaluated variables and execution-time logic.
+<figure>
+
+```mermaid
+sequenceDiagram
+  participant A as App
+  participant C as Browser
+  note over A,C: Get a GPUAdapter, GPUDevice
+  A ->>+C: device.createShaderModule(...)
+  activate C
+  Note right of C: Shader-creation time
+  C -->> A: a GPUShaderModule
+  deactivate C
+  A ->>C: device.createComputePipeline(...)<br/>or device.createRenderPipeline(...)<br>Provides GPUProgrammablestage.constants
+  activate C
+  Note right of C: Pipeline-creation time
+  C -->> A: a GPUComputePipeline<br/>or GPURenderPipeline
+  deactivate C
+  Note over A,C: Create and bind resources,<br>Record GPU commands ...
+  %%Note over A,C: Submit commands
+  A ->>C: device.queue.submit(...)
+  C-->>C: Wait to be scheduled
+  activate C
+  Note right of C: Shader execution
+  A ->> C: device.queue.onSubmittedWorkDone()
+  C -->> A: "a pending Promise<undefined>"
+  C -->> A: fulfill Promise
+  deactivate C
+```
+
+</figure>
+
+---
+
+## Stage Deep Dives
+
+For detailed reference, syntax patterns, and interactive visualizers for each stage, refer to the following guides:
+
+- **[Constant Stage](constant/index.md)**: Compile-time expressions, constant folding, and compile-time assertions.
+- **[Override Stage](override/index.md)**: Pipeline-creatable expressions, CPU overrides, and dynamic sizing.
+- **[Runtime Stage](runtime/index.md)**: GPU registers, parallel execution, and performance optimization.

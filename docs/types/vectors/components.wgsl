@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. Licensed under Apache 2.0.
+ * See root README.md for global project-wide upstream attributions.
+ */
+
 fn get_vector() -> vec4f {
   return vec4f(1.0, 2.0, 3.0, 4.0);
 }

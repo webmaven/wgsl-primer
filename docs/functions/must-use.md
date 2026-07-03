@@ -1,12 +1,11 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: '@must_use'
 shader: ./must-use.wgsl
 visualizer: /ts/value_visualizer.ts
 visualizerOptions: '{"fields": [{"expr": "calculate_critical_factor(2.5)", "type": "f32"}, {"expr": "standard_calculation(4.2)", "type": "f32"}]}'
 ---
-
-# The `@must_use` Attribute
-
 In shader programming, functions are primarily designed to calculate values rather than perform stateful side effects. If you call a pure mathematical function but discard its returned result, the entire computation is wasted. This is almost always a logical bug in your shader.
 
 To prevent these silent bugs, WGSL provides the `@must_use` attribute. When applied to a function, the compiler will refuse to compile your shader if that function's returned value is discarded.

@@ -1,4 +1,6 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: "Structure Layouts & Memory Alignment"
 shader: ./alignment.wgsl
 visualizer: /ts/value_visualizer.ts
@@ -9,9 +11,6 @@ visualizerOptions: '{"fields": [
     {"expr": "computed_offsets.size_of_struct", "type": "u32"}
     ]}'
 ---
-
-# Structure Layouts & Memory Alignment
-
 When passing structures between your host program (JavaScript/TypeScript) and shaders, you must follow strict **Structure Layout & Memory Alignment** rules. 
 
 Unlike general-purpose CPU programming where compilers automatically hide alignment and padding details, GPU memory architectures enforce explicit layouts. Understanding these rules is essential to prevent mismatched CPU-to-GPU structures, which lead to corrupted data or silent rendering failures.
@@ -39,8 +38,8 @@ Every WGSL data type has a compile-time **alignment requirement** (the starting 
 | `vec4<f32>` | \(16\) | \(16\) |
 | `mat4x4<f32>` | \(16\) | \(64\) (4 columns of 16 bytes each) |
 
-> [!WARNING]
-> **The `vec3` Trap**: A `vec3<f32>` contains 3 floats, meaning it only occupies \(12\) bytes of raw data. However, **its alignment requirement is \(16\) bytes**. If you place a variable immediately after a `vec3`, the compiler forces it to start at the next \(16\)-byte boundary, creating an automatic **\(4\)-byte padding hole** in your structure!
+!!! warning "The `vec3` Trap"
+    A `vec3<f32>` contains 3 floats, meaning it only occupies \(12\) bytes of raw data. However, **its alignment requirement is \(16\) bytes**. If you place a variable immediately after a `vec3`, the compiler forces it to start at the next \(16\)-byte boundary, creating an automatic **\(4\)-byte padding hole** in your structure!
 
 ---
 
@@ -155,4 +154,4 @@ To maintain absolute control over memory serialization or match a specific host 
 * **`@align(N)`**: Forces a member's alignment requirement to be a multiple of <span class="template template-align-n">N</span> bytes.
 * **`@size(N)`**: Forces a member's overall size to occupy exactly <span class="template template-size-n">N</span> bytes, appending trailing padding to that specific member if necessary.
 
-Let's inspect the interactive shader code panel to see how offsets and sizes are computed dynamically using these custom attributes!
+The interactive shader panel demonstrates how offsets and sizes are computed dynamically using these custom attributes.

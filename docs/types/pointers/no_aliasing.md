@@ -1,10 +1,9 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: 'No Aliasing Allowed With Pointer Parameters'
 shader: ./no_aliasing.wgsl
 ---
-
-# Static Alias Analysis & Memory Hazards
-
 To achieve maximum throughput, GPU compilers must aggressively optimize memory accesses. They load values into physical registers, reorder read and write instructions to hide latency, and combine consecutive operations. However, if two different variables in a function can refer to the exact same physical memory cell—a condition known as **aliasing**—these optimizations become incredibly hazardous.
 
 To guarantee safety and allow peak performance without complex runtime checks, WGSL enforces a strict **Static Alias Analysis** rule at compile time. 

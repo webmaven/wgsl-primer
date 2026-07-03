@@ -1,9 +1,8 @@
 ---
-title: 'Arrays'
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
+title: 'Arrays Overview'
 ---
-
-# Arrays Overview
-
 An array is a sequentially allocated, contiguous collection of elements of the same type. In WGSL, arrays are zero-indexed: the first element is located at index \(0\), and the \(i\)-th element is accessed via the subscript operator `a[i]`.
 
 WGSL divides arrays into two main categories:

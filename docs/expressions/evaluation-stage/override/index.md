@@ -1,4 +1,6 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. All new modifications licensed under CC-BY 4.0.
+# Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
 title: 'Override expressions'
 shader: ./override.wgsl
 visualizer: /ts/value_visualizer.ts
@@ -7,9 +9,6 @@ visualizerOptions: '{"fields": [
     {"expr": "TOTAL_CACHE_SIZE", "type": "u32"}
 ]}'
 ---
-
-# Override Expressions
-
 Override-expressions are value expressions that are evaluated at
 [pipeline creation](https://www.w3.org/TR/webgpu/#pipelines) time, or earlier.
 
@@ -32,3 +31,8 @@ Try modifying the default value of `WORKGROUP_WIDTH` in the editor (for example,
 1. **`DEFAULT_MULTIPLIER`**: This is a compile-time constant (`const`). Its value is fixed when the shader is translated.
 2. **`WORKGROUP_WIDTH`**: This is an overridable constant (`override`). If the host CPU application provides a value for ID `101` when creating the compute pipeline, `WORKGROUP_WIDTH` takes that value; otherwise, it defaults to `16u`.
 3. **`TOTAL_CACHE_SIZE`**: The expression `WORKGROUP_WIDTH * DEFAULT_MULTIPLIER` is an **override-expression**. It cannot be fully resolved at compile-time since it depends on the overridable `WORKGROUP_WIDTH`. Instead, it is evaluated during pipeline creation time, after any host-provided overrides are substituted.
+
+---
+
+!!! info "Syntax Reference: `override` Declarations & JS APIs"
+    For detailed reference on how to declare overridable constants in WGSL shaders and supply their overridden values dynamically inside the WebGPU JavaScript host application, refer to the **[`override` Declarations](../../../variables/override.md)** guide.

@@ -1,4 +1,6 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. All new modifications licensed under CC-BY 4.0.
+# Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
 title: "Vector Constructors"
 shader: ./constructors.wgsl
 visualizer: /ts/value_visualizer.ts
@@ -12,9 +14,6 @@ visualizerOptions: '{"fields": [
    {"expr": "implict_abstract_convert",        "type": "vec3f"}
 ]}'
 ---
-
-# Vector Constructors
-
 In WGSL, vectors can be constructed or converted using several built-in constructor forms. There are three primary constructor styles, alongside type inference and element-wise conversion syntax.
 
 | Style                                              | Syntax Pattern                | Description                                                       |

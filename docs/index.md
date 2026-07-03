@@ -1,20 +1,24 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. All new modifications licensed under CC-BY 4.0.
+# Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
 IsHome: true
-title: WGSL
+title: "WGSL: A Primer"
 shader: ./index.wgsl
 visualizer: /ts/graphics_visualizer.ts
 ---
 
 <!-- Force pages rebuild -->
 
-# Welcome to the tour of WGSL
+# WGSL: A Primer
+
+<p class="primer-subtitle">An introductory tour of the WebGPU Shader Language</p>
 
 This site is a quick introduction to the [WebGPU Shading
-Language](https://w3.org/TR/WGSL). The tour provides an overview
+Language](https://w3.org/TR/WGSL). The primer provides an overview
 of the syntax and features of WGSL, but assumes a familiarity with
 programming.
 
-The tour provides the WGSL shaders for each example. The shaders can be
+The primer provides the WGSL shaders for each example. The shaders can be
 edited in the text view on the right (or below), and the resulting output is displayed
 below the editor.
 
@@ -31,23 +35,19 @@ The editor provides:
 Each of these shaders can serve as the starting point for your own
 exploration.
 
-> As a warmup, edit the `frag_main` function. Change the first component of its
-> return value from 1 to 0, so it's `vec4(0, sin(f32(frame) / 128), 0, 1)`.
-> What happens?
+!!! question "Warmup Activity"
+    As a warmup, edit the `frag_main` function. Change the first component of its return value from `1` to `0`, so it is `vec4(0, sin(f32(frame) / 128), 0, 1)`. What happens?
 
-The tour is organized into the following sections:
+The primer is organized into the following sections:
 
-- **[Types](types/index.md)**: Explore the wide variety of types supported by WGSL, from basic scalars and vectors to structures and pointers.
-- **[Variables & Constants](variables/index.md)**: Learn how to declare and use mutable variables (`var`) and immutable values (`const`, `override`, `let`).
-- **[Expressions](expressions/index.md)**: Understand operators and different evaluation stages (constant, override, runtime).
-- **[Control Flow](control-flow/index.md)**: Learn about branching and looping statements (`if`, `switch`, `loop`, `while`, `for`).
-- **[Functions](functions/index.md)**: Explore function syntax, calls, the `@must_use` attribute, and entry points.
-- **[Binding Points](binding-points/index.md)**: See how shaders connect to CPU-side resources like buffers and textures using binding points and attributes.
-- **[Uniformity Analysis](uniformity-analysis/index.md)**: Understand how WGSL tracks uniformity of execution for derivative and barrier safety.
+- **[Types](types/index.md)**: Supported types in WGSL, from basic scalars and vectors to structures and pointers.
+- **[Variables & Constants](variables/index.md)**: Declaration and usage of mutable variables (`var`) and immutable values (`const`, `override`, `let`).
+- **[Expressions](expressions/index.md)**: Operators and different evaluation stages (constant, override, runtime).
+- **[Control Flow](control-flow/index.md)**: Branching and looping statements (`if`, `switch`, `loop`, `while`, `for`).
+- **[Functions](functions/index.md)**: Function syntax, calls, the `@must_use` attribute, and entry points.
+- **[Binding Points](binding-points/index.md)**: Connection of shaders to CPU-side resources like buffers and textures using binding points and attributes.
+- **[Uniformity Analysis](uniformity-analysis/index.md)**: Compile-time execution uniformity tracking for derivative and barrier safety.
 
 Each section has several sub-pages, and you can navigate forward
 and backward using the buttons on the bottom of each page, or by using the
 left and right keys on your keyboard.
-
-You can quickly get back to a higher level page using the breadcrumb
-links at the top of this pane.

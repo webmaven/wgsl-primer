@@ -1,4 +1,6 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: 'Atomic Types'
 shader: ./atomic-types.wgsl
 visualizer: /ts/value_visualizer.ts

@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. Licensed under Apache 2.0.
+ * See root README.md for global project-wide upstream attributions.
+ */
+
 // Declare compile-time constants
 const my_constant = 4i;
 const angle_deg = 30.0f;

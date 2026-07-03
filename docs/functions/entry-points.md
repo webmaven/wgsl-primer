@@ -1,11 +1,10 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: 'Entry Points'
 shader: ./entry-points.wgsl
 visualizer: /ts/graphics_visualizer.ts
 ---
-
-# Pipeline Entry Points
-
 An **entry point** is a special user-defined function that acts as the starting point of execution within a GPU shader. These functions are invoked directly by the host WebGPU application on the CPU.
 
 A single WGSL file (or module) can contain multiple entry points, allowing you to define vertex, fragment, and compute pipelines in one place.

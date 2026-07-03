@@ -1,9 +1,8 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: 'Strict Typing'
 ---
-
-# Strict Typing & Coercion Rules
-
 In many high-level CPU languages like JavaScript or Python, the runtime or compiler automatically converts variables from one type to another (known as **implicit coercion**). For example, you can add an integer to a floating-point number without thinking twice:
 
 ```javascript
@@ -13,7 +12,7 @@ let x = 1.0 + 2; // Automatically becomes 3.0 (float)
 
 In WGSL, this operation is a **compile-time error**. WGSL enforces **strict typing with absolutely zero implicit coercion**.
 
-In this lesson, we will explore why WGSL enforces such strict typing and how to write clean, idiomatic code using explicit constructors.
+This section details why WGSL enforces strict typing and how to write clean, idiomatic code using explicit constructors.
 
 ---
 
@@ -28,7 +27,7 @@ Strict typing on the GPU is not a limitation—it is a critical **performance an
 
 ## Common Coercion Pitfalls
 
-Because WGSL does not perform implicit casts, beginners frequently encounter compilation errors. Let's look at the most common scenarios.
+Because WGSL does not perform implicit casts, mixing different types results in compilation errors. The most common scenarios include:
 
 ### 1. Mixing Float and Integer Literals
 You cannot mix floating-point types (`f32`) and concrete integer types (`i32`, `u32`) in any binary operation.
@@ -48,7 +47,7 @@ let sum_correct = 1.5 + f32(2i);
     let x = 1.5 + 2; // ✔️ VALID: evaluates to abstract-float 3.5, then resolves to f32
     ```
     
-    To learn how unsuffixed literals resolve automatically, check out the [Numeric Literals](evaluation-stage/constant/numeric-literals.md) lesson.
+    For details on how unsuffixed literals resolve automatically, see the [Numeric Literals](evaluation-stage/constant/numeric-literals.md) reference.
 
 ### 2. Initializing Variables with Mismatched Literals
 An explicit variable type must exactly match the initializer's type.
@@ -99,11 +98,3 @@ let converted_bool: bool = my_int != 0; // In WGSL, bool() constructor cannot ca
     // ✔️ Converts to vec3f(1.0, 2.0, 3.0) element-wise
     let float_vector = vec3f(int_vector); 
     ```
-
----
-
-## Next Steps
-
-Now that you understand typing and operators, let's explore **evaluation stages** to see how the WGSL compiler decides which expressions can be computed at compile-time versus those that must execute on the GPU:
-
-- **[Evaluation Stages Overview](evaluation-stage/index.md)**: Explore the timeline of shader execution, from module compilation to GPU runtime.

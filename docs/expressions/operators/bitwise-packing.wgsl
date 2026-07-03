@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. Licensed under Apache 2.0.
+ * See root README.md for global project-wide upstream attributions.
+ */
+
 // Case study: Surface Normal (vec3<f32>) and Specular intensity (f32) packing
 // - Normal: x, y, z in [-1.0, 1.0] -> packed into 9 bits each (0 to 511)
 // - Specular: s in [0.0, 1.0] -> packed into 5 bits (0 to 31)

@@ -1,12 +1,11 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: 'Syntax'
 shader: ./syntax.wgsl
 visualizer: /ts/value_visualizer.ts
 visualizerOptions: '{"fields": [{"expr": "give_me_a_number()", "type": "i32"}, {"expr": "average(10.0, 20.0)", "type": "f32"}]}'
 ---
-
-# Declaring Functions
-
 Functions in WGSL are declared using the `fn` keyword. Each function must explicitly specify its parameters and return type if it yields a value.
 
 ---

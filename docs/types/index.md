@@ -1,9 +1,8 @@
 ---
-title: 'Types'
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
+title: 'Types Overview'
 ---
-
-# Types Overview
-
 WGSL supports a wide range of types to enable efficient GPU programming:
 
 - **[Basic Scalars](basic-scalars.md)**: Standard concrete scalar types including `bool`, `i32`, `u32`, and `f32`.

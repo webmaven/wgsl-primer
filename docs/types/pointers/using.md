@@ -1,12 +1,11 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: 'Creating and Using Pointers'
 shader: ./using.wgsl
 visualizer: /ts/pointer_visualizer.ts
 visualizerOptions: '{"fields": [{"expr": "run_test_age()", "type": "f32"}]}'
 ---
-
-# Creating and Using Pointers
-
 To work with pointers, WGSL provides two fundamental operators: the **Address-of (`&`)** operator to create a pointer, and the **Dereference (`*`)** operator to read or write the memory it references.
 
 ---
@@ -36,6 +35,7 @@ What happens to `*p` depends entirely on where it appears in your code:
   ```wgsl
   *p = 12u; // Writes the value 12 directly to the memory pointed to by p
   ```
+
 * **Reading from Memory (R-Value)**: If `*p` appears anywhere else, the pointer is dereferenced and the value is read out.
   ```wgsl
   let current_val = *p; // Reads the value from the memory pointed to by p

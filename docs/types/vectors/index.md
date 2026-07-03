@@ -1,5 +1,7 @@
 ---
-title: 'Vectors'
+# Copyright ©2026 Michael R. Bernstein. All new modifications licensed under CC-BY 4.0.
+# Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
+title: 'Vectors Overview'
 shader: ./index.wgsl
 visualizer: /ts/value_visualizer.ts
 visualizerOptions: '{"fields": [
@@ -8,9 +10,6 @@ visualizerOptions: '{"fields": [
     {"expr": "test_vec4i()", "type": "vec4i"}
 ]}'
 ---
-
-# Vectors Overview
-
 WGSL supports 2-element, 3-element and 4-element vectors of scalar types.
 
 Vectors are declared with the form <code>vec<span class="template template-vec-n">N</span>&lt;<span class="template template-vec-t">T</span>&gt;</code>, where <span class="template template-vec-n">N</span> is the number of elements in the vector, and <span class="template template-vec-t">T</span> is the element type.

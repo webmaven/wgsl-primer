@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. Licensed under Apache 2.0.
+ * See root README.md for global project-wide upstream attributions.
+ */
+
 const my_matrix = mat3x3f(
   vec3f(1.0, 2.0, 3.0), // Column 0
   vec3f(4.0, 5.0, 6.0), // Column 1

@@ -1,4 +1,6 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. All new modifications licensed under CC-BY 4.0.
+# Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
 title: 'While Statements'
 shader: ./while.wgsl
 visualizer: /ts/value_visualizer.ts
@@ -14,7 +16,7 @@ Condition must be of type `bool`.
 <details class='example'>
 <summary>Example</summary>
 
-```groovy
+```wgsl
 while condition {
   // code
 }
@@ -22,10 +24,11 @@ while condition {
 
 </details>
 
-> condition in a "while" loop can also be written within parentheses
+!!! tip
+    The condition in a `while` loop can also be written within parentheses.
 
-The condition is evaluated initially. If the condition is false from the beginning, the code block is skipped, and the program continues executing the next line of code after the "while" loop.
+    The condition is evaluated initially. If the condition is false from the beginning, the code block is skipped, and the program continues executing the next line of code after the `while` loop.
 
-After executing the code block, the condition is re-evaluated. If the condition is still true, the code block is executed again. This process continues until the condition becomes false.
+    After executing the code block, the condition is re-evaluated. If the condition is still true, the code block is executed again. This process continues until the condition becomes false.
 
-Once the condition becomes false, the program exits the "while" loop, and execution continues with the next line of code after the "while" statement.
+    Once the condition becomes false, the program exits the `while` loop, and execution continues with the next line of code after the `while` statement.

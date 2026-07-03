@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. Licensed under Apache 2.0.
+ * See root README.md for global project-wide upstream attributions.
+ */
+
 // A compile-time constant expression (evaluated at shader module creation)
 const DEFAULT_MULTIPLIER = 2u;
 

@@ -1,10 +1,9 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: 'No Aliasing In Any Nested Call'
 shader: ./no_aliasing_nested_calls.wgsl
 ---
-
-# Deep Call-Stack Alias Tracking
-
 In complex shaders, functions often delegate work to other helper functions, passing their pointer parameters deeper down the call stack. To guarantee zero-aliasing optimization safety across the entire program, WGSL's compiler does not just look at the immediate function you call—it recursively evaluates **every nested function call** triggered by that invocation.
 
 This transitive, multi-layered tracking is known as **Deep Call-Stack Alias Analysis**.

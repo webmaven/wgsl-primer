@@ -1,4 +1,6 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: 'Components & swizzling'
 shader: ./components.wgsl
 visualizer: /ts/value_visualizer.ts
@@ -10,9 +12,6 @@ visualizerOptions: '{"fields": [
     {"expr": "test_swizzling_repeat()", "type": "vec4f"}
 ]}'
 ---
-
-# Vector Components & Swizzling
-
 In WGSL, vectors are multi-component containers. To manipulate vectors effectively, you need to read individual components, reorder them, or index them like arrays. WGSL provides high-performance, built-in syntax for component selection, indexing, and swizzling.
 
 ---

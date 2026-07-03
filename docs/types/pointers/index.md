@@ -1,9 +1,8 @@
 ---
-title: 'Pointers'
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
+title: 'Pointers Overview'
 ---
-
-# Pointers Overview
-
 In high-performance GPU shading, variables and buffers are stored across distinct types of physical memory on the chip. To write modular, reusable code without copying large chunks of data between functions, WGSL uses **Pointers**.
 
 A **pointer** is a value that refers to a specific storage location in memory rather than holding a direct data value.
@@ -27,7 +26,7 @@ If you come from a systems programming background (in languages like C, C++, or 
 
 When you declare a pointer in WGSL, its type must explicitly declare its **Address Space**. This is because GPUs are massive parallel engines with several distinct tiers of memory, each optimized for different bandwidth, latency, and sharing requirements. 
 
-Understanding how these address spaces map to physical GPU architectures is key to writing high-performance shaders:
+How these address spaces map to physical GPU architectures is essential for writing high-performance shaders:
 
 <div style="background: #0f172a; border: 1.5px solid #1e293b; border-radius: 12px; padding: 24px; margin: 24px 0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);">
   <h3 style="color: #cbd5e1; font-weight: 700; font-size: 16px; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
@@ -93,4 +92,4 @@ Understanding how these address spaces map to physical GPU architectures is key 
   </div>
 </div>
 
-In the next sections, we will explore how to write, instantiate, and pass pointers in your shader code.
+The subsequent sections detail how to write, instantiate, and pass pointers.

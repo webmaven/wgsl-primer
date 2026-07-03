@@ -1,73 +1,53 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. All new modifications licensed under CC-BY 4.0.
+# Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
 title: 'Attributes'
 ---
+WebGPU Shading Language (WGSL) uses attributes to attach metadata to declarations. Attributes provide essential instructions to the compiler, link resources to WebGPU API host handles, and coordinate inputs/outputs between pipeline stages. 
 
-## Attributes in WGSL
+Attributes are specified using the `@` symbol followed by the attribute name and any necessary parameters, such as `@group(0)`.
 
-WebGPU Shading Language (WGSL) uses attributes to provide additional information about variables, functions, and other elements in shader code. Attributes are specified using the `@` symbol followed by the attribute name and any necessary parameters.
+---
 
-### @group
+## 1. Resource Binding Attributes
 
-The `@group` attribute is used to specify the resource group that a binding belongs to. Resource groups are a way to organize and manage resources such as textures, buffers, and samplers in a shader. By grouping resources, you can efficiently bind and unbind them as needed.
+Resource binding attributes connect WGSL variables to CPU-side WebGPU API resources (like buffers, textures, and samplers).
 
-**Syntax:**
+### `@group` and `@binding`
 
-```wgsl
-@group(n)
-```
+Every resource declaration at module scope must be annotated with both `@group` and `@binding`.
 
-- `n`: The group index, which is a non-negative integer.
+- **`@group(G)`**: Specifies the bind group index (logical collection of resources bound together).
+- **`@binding(B)`**: Specifies the binding slot index within that specific bind group.
 
-**Example:**
+Together, they form a unique coordinate `(group, binding)` for each resource.
 
 ```wgsl
 @group(0) @binding(0) var<uniform> myUniformBuffer: MyUniformBufferType;
-```
-
-### @binding
-
-The `@binding` attribute is used to specify the binding index within a resource group. Each resource within a group must have a unique binding index.
-
-**Syntax:**
-
-```wgsl
-@binding(n)
-```
-
-- `n`: The binding index, which is a non-negative integer.
-
-**Example:**
-
-```wgsl
 @group(0) @binding(1) var<storage, read_write> myStorageBuffer: MyStorageBufferType;
 ```
 
-### Combining @group and @binding
-
-Attributes can be combined to fully specify the location of a resource in the shader. This is useful for ensuring that resources are correctly bound and accessible within the shader code.
-
-**Example:**
-
-```wgsl
-@group(1) @binding(2) var<uniform> anotherUniformBuffer: AnotherUniformBufferType;
-```
-
-In this example, `anotherUniformBuffer` is part of group 1 and has a binding index of 2.
+---
 
 ### JavaScript to WGSL Mapping
 
-To use WGSL shaders in a WebGPU application, you need to map JavaScript variables to WGSL variables. This involves creating buffers and binding them to the appropriate resource groups and bindings.
+To use resources in your shader, you must define matching layouts and bind groups on the host side in JavaScript.
 
-#### Example 1: Uniform Buffer
+#### Example 1: Binding a Uniform Buffer
+
+This example binds a read-only uniform buffer containing matrices.
+
+<details class='example'>
+<summary>Example</summary>
 
 **WGSL Code:**
 
 ```wgsl
 struct MyUniformBufferType {
-    modelMatrix: mat4x4<f32>;
-    viewMatrix: mat4x4<f32>;
-    projectionMatrix: mat4x4<f32>;
-};
+    modelMatrix: mat4x4<f32>,
+    viewMatrix: mat4x4<f32>,
+    projectionMatrix: mat4x4<f32>,
+}
 
 @group(0) @binding(0) var<uniform> myUniformBuffer: MyUniformBufferType;
 ```
@@ -75,235 +55,185 @@ struct MyUniformBufferType {
 **JavaScript Code:**
 
 ```js
-// Define the uniform buffer data
-const modelMatrix = new Float32Array([
-  1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
-]);
-
-const viewMatrix = new Float32Array([
-  1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
-]);
-
-const projectionMatrix = new Float32Array([
-  1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
-]);
-
-const uniformData = new Float32Array([...modelMatrix, ...viewMatrix, ...projectionMatrix]);
-
-// Create the uniform buffer
+// 1. Create the uniform buffer on the GPU
 const uniformBuffer = device.createBuffer({
-  size: uniformData.byteLength,
+  size: 192, // 3 matrices * 64 bytes each
   usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
 });
 
-// Write data to the uniform buffer
-device.queue.writeBuffer(uniformBuffer, 0, uniformData);
-
-// Create the bind group layout
+// 2. Create the bind group layout
 const bindGroupLayout = device.createBindGroupLayout({
   entries: [
     {
       binding: 0,
-      visibility: GPUShaderStage.VERTEX,
-      buffer: {
-        type: 'uniform',
-      },
+      visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
+      buffer: { type: 'uniform' },
     },
   ],
 });
 
-// Create the bind group
+// 3. Bind the resource
 const bindGroup = device.createBindGroup({
   layout: bindGroupLayout,
   entries: [
     {
       binding: 0,
-      resource: {
-        buffer: uniformBuffer,
-      },
+      resource: { buffer: uniformBuffer },
     },
   ],
 });
 ```
 
-### Example 2: Storage Buffer
+</details>
+
+---
+
+#### Example 2: Multiple Resources (Uniform + Storage Buffer)
+
+This example combines a uniform configuration buffer and a read-write storage buffer within a single bind group.
+
+!!! important "Shader Stage Validation"
+    In WebGPU, read-write storage buffers (`var<storage, read_write>`) are **strictly prohibited** in the vertex shader stage. Therefore, their bindings must be visible only to the `COMPUTE` or `FRAGMENT` stages.
+
+<details class='example'>
+<summary>Example</summary>
 
 **WGSL Code:**
 
 ```wgsl
+struct Config {
+    factor: f32,
+}
+
+struct MyStorageBufferType {
+    data: array<f32>,
+}
+
+@group(0) @binding(0) var<uniform> myConfig: Config;
 @group(0) @binding(1) var<storage, read_write> myStorageBuffer: MyStorageBufferType;
 ```
 
 **JavaScript Code:**
 
 ```js
-// Define the storage buffer data
-const storageData = new Float32Array([5.0, 6.0, 7.0, 8.0]);
-
-// Create the storage buffer
-const storageBuffer = device.createBuffer({
-  size: storageData.byteLength,
-  usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
-});
-
-// Write data to the storage buffer
-device.queue.writeBuffer(storageBuffer, 0, storageData);
-
-// Update the bind group layout to include the storage buffer
-const bindGroupLayout = device.createBindGroupLayout({
-  entries: [
-    {
-      binding: 0,
-      visibility: GPUShaderStage.VERTEX,
-      buffer: {
-        type: 'uniform',
-      },
-    },
-    {
-      binding: 1,
-      visibility: GPUShaderStage.VERTEX,
-      buffer: {
-        type: 'storage',
-      },
-    },
-  ],
-});
-
-// Update the bind group to include the storage buffer
-const bindGroup = device.createBindGroup({
-  layout: bindGroupLayout,
-  entries: [
-    {
-      binding: 0,
-      resource: {
-        buffer: uniformBuffer,
-      },
-    },
-    {
-      binding: 1,
-      resource: {
-        buffer: storageBuffer,
-      },
-    },
-  ],
-});
-```
-
-### JavaScript to WGSL Mapping
-
-To use WGSL shaders in a WebGPU application, you need to map JavaScript variables to WGSL variables. This involves creating buffers and binding them to the appropriate resource groups and bindings.
-
-#### Example 1: Uniform Buffer
-
-**WGSL Code:**
-
-```wgsl
-@group(0) @binding(0) var<uniform> myUniformBuffer: MyUniformBufferType;
-```
-
-**JavaScript Code:**
-
-```javascript
-// Define the uniform buffer data
-const uniformData = new Float32Array([1.0, 2.0, 3.0, 4.0]);
-
-// Create the uniform buffer
-const uniformBuffer = device.createBuffer({
-  size: uniformData.byteLength,
+// 1. Create GPU buffers
+const configBuffer = device.createBuffer({
+  size: 16, // Padded config size
   usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
 });
 
-// Write data to the uniform buffer
-device.queue.writeBuffer(uniformBuffer, 0, uniformData);
-
-// Create the bind group layout
-const bindGroupLayout = device.createBindGroupLayout({
-  entries: [
-    {
-      binding: 0,
-      visibility: GPUShaderStage.VERTEX,
-      buffer: {
-        type: 'uniform',
-      },
-    },
-  ],
-});
-
-// Create the bind group
-const bindGroup = device.createBindGroup({
-  layout: bindGroupLayout,
-  entries: [
-    {
-      binding: 0,
-      resource: {
-        buffer: uniformBuffer,
-      },
-    },
-  ],
-});
-```
-
-#### Example 2: Storage Buffer
-
-**WGSL Code:**
-
-```wgsl
-@group(0) @binding(1) var<storage, read_write> myStorageBuffer: MyStorageBufferType;
-```
-
-**JavaScript Code:**
-
-```javascript
-// Define the storage buffer data
-const storageData = new Float32Array([5.0, 6.0, 7.0, 8.0]);
-
-// Create the storage buffer
 const storageBuffer = device.createBuffer({
-  size: storageData.byteLength,
+  size: 1024,
   usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
 });
 
-// Write data to the storage buffer
-device.queue.writeBuffer(storageBuffer, 0, storageData);
-
-// Update the bind group layout to include the storage buffer
+// 2. Define the Bind Group Layout (Compute visibility)
 const bindGroupLayout = device.createBindGroupLayout({
   entries: [
     {
       binding: 0,
-      visibility: GPUShaderStage.VERTEX,
-      buffer: {
-        type: 'uniform',
-      },
+      visibility: GPUShaderStage.COMPUTE,
+      buffer: { type: 'uniform' },
     },
     {
       binding: 1,
-      visibility: GPUShaderStage.VERTEX,
-      buffer: {
-        type: 'storage',
-      },
+      visibility: GPUShaderStage.COMPUTE,
+      buffer: { type: 'storage' }, // Maps to read_write in WGSL
     },
   ],
 });
 
-// Update the bind group to include the storage buffer
+// 3. Create the Bind Group
 const bindGroup = device.createBindGroup({
   layout: bindGroupLayout,
   entries: [
     {
       binding: 0,
-      resource: {
-        buffer: uniformBuffer,
-      },
+      resource: { buffer: configBuffer },
     },
     {
       binding: 1,
-      resource: {
-        buffer: storageBuffer,
-      },
+      resource: { buffer: storageBuffer },
     },
   ],
 });
 ```
 
-These examples demonstrate how to create and bind uniform and storage buffers in JavaScript, and how to map them to WGSL variables using the `@group` and `@binding` attributes.
+</details>
+
+---
+
+## 2. Pipeline Interface Attributes
+
+Pipeline interface attributes declare how data enters and exits the stages of your graphics or compute pipelines.
+
+### `@location`
+
+The `@location(N)` attribute defines a generic user-defined IO channel, where `N` is an unsigned integer. It serves different roles depending on where it is applied:
+
+1. **Vertex Inputs**: Maps GPU vertex buffers (specified via the host API vertex layouts) directly to vertex shader input parameters.
+2. **Inter-Stage Linkage**: Connects outputs from the vertex shader to inputs of the fragment shader. The rasterizer automatically interpolates these values across the triangles.
+3. **Fragment Outputs**: Maps fragment shader outputs to specific render targets (color attachments) in the render pipeline.
+
+#### Example: Inter-Stage Linkage
+
+Here, color data is passed from the vertex shader to the fragment shader via channel 0 (`@location(0)`).
+
+```wgsl
+struct VertexOutput {
+    @builtin(position) pos: vec4f,
+    @location(0) color: vec4f, // Output color channel 0
+}
+
+@vertex
+fn vs_main() -> VertexOutput {
+    var out: VertexOutput;
+    out.pos = vec4f(0.0, 0.0, 0.0, 1.0);
+    out.color = vec4f(1.0, 0.0, 0.0, 1.0); // Pass red color
+    return out;
+}
+
+@fragment
+fn fs_main(in: VertexOutput) -> @location(0) vec4f {
+    return in.color; // Outputs red to color target index 0
+}
+```
+
+---
+
+### `@builtin`
+
+The `@builtin(name)` attribute connects variables to system-generated inputs or outputs managed by the GPU hardware and rasterizer.
+
+| Built-in Name | Stage | I/O | Type | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `position` | Vertex / Fragment | Out / In | `vec4f` | Clip-space position (Vertex output); window-space coordinates (Fragment input). |
+| `vertex_index` | Vertex | In | `u32` | Index of the current vertex being processed. |
+| `instance_index` | Vertex | In | `u32` | Index of the current instance being drawn. |
+| `global_invocation_id` | Compute | In | `vec3u` | Absolute coordinate of the current thread within the global dispatch grid. |
+| `local_invocation_id` | Compute | In | `vec3u` | Coordinate of the thread relative to the current workgroup. |
+
+#### Example: Using Built-ins
+
+```wgsl
+@vertex
+fn vs_main(@builtin(vertex_index) v_idx: u32) -> @builtin(position) vec4f {
+    // Generate a full-screen triangle using the vertex index
+    var pos = vec2f(0.0);
+    if (v_idx == 1u) { pos = vec2f(2.0, 0.0); }
+    if (v_idx == 2u) { pos = vec2f(0.0, 2.0); }
+    return vec4f(pos, 0.0, 1.0);
+}
+```
+
+---
+
+## 3. Other Core Attributes
+
+WGSL includes other specialized attributes covered in depth in their respective chapters:
+
+- **`@vertex` / `@fragment` / `@compute`**: Declares a function as a pipeline entry point ([Entry Points](../functions/entry-points.md)).
+- **`@workgroup_size(X, Y, Z)`**: Sets the dimensions of a compute shader's local execution block ([Local Variables](../variables/var-function.md)).
+- **`@align(A)` / `@size(S)`**: Controls memory layout, padding, and alignment of structure members ([Alignment](../types/structures/alignment.md)).
+- **`@id(I)`**: Associates a pipeline constant with an overridable constant ([Override Declaration](../variables/override.md)).
+- **`@must_use`**: Prevents ignoring a function's return value ([Must Use Attributes](../functions/must-use.md)).

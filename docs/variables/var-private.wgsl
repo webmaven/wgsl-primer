@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. All new modifications licensed under Apache 2.0.
+ * Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
+ */
+
 // var 'i' of type 'i32' is initialized with a value of 10
 var<private> i : i32 = 10;
 

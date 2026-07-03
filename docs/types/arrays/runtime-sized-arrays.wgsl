@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. All new modifications licensed under Apache 2.0.
+ * Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
+ */
+
 // The input storage buffer is a runtime-sized array.
 @group(0) @binding(0) var<storage, read> input_data: array<f32>;
 

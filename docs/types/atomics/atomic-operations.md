@@ -1,4 +1,6 @@
 ---
+# Copyright ©2026 Michael R. Bernstein. Licensed under CC-BY 4.0.
+# See root README.md for global project-wide upstream attributions.
 title: "Atomic Operations"
 shader: ./atomic-operations.wgsl
 visualizer: /ts/value_visualizer.ts
@@ -8,9 +10,6 @@ visualizerOptions: '{"fields": [
     {"expr": "ops_results.after_cas_mul", "type": "u32"}
 ]}'
 ---
-
-# Atomic Operations
-
 Having declared atomic variables, we manipulate them using WGSL's built-in atomic functions. These functions bypass standard CPU/GPU caching hazards to interact directly with physical memory, guaranteeing serialized execution.
 
 ---
@@ -92,7 +91,7 @@ fn atomic_multiply_by_two() {
 ---
 
 !!! note "Multi-Variable Memory Barriers"
-    Remember that atomic operations only serialize and coordinate updates for a **single** memory location. If you need to ensure that non-atomic writes are visible to other threads, or coordinate multi-variable structures, you must combine atomics with execution or memory barriers. Learn more in the [Barriers & Memory Synchronization](../../variables/memory-barriers.md) section.
+    Remember that atomic operations only serialize and coordinate updates for a **single** memory location. If you need to ensure that non-atomic writes are visible to other threads, or coordinate multi-variable structures, you must combine atomics with execution or memory barriers. Refer to the [Barriers & Memory Synchronization](../../variables/memory-barriers.md) section.
 
 ---
 
