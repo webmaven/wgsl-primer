@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. All new modifications licensed under Apache 2.0.
+ * Upstream lineage ©2023 governed by original BSD 3-Clause. See README.md.
+ */
+
 /**
  * Copyright 2023 The Tour of WGSL Authors
  *
@@ -15,6 +20,7 @@ export class GraphicsVisualizer implements Visualizer {
   pipeline: GPURenderPipeline;
   uniformBuffer: GPUBuffer;
   uniformBindGroup: GPUBindGroup;
+  vertexCount: number;
 
   readonly executeFrequency = 'repeat';
 
@@ -25,13 +31,15 @@ export class GraphicsVisualizer implements Visualizer {
     context: GPUCanvasContext,
     pipeline: GPURenderPipeline,
     uniformBuffer: GPUBuffer,
-    uniformBindGroup: GPUBindGroup
+    uniformBindGroup: GPUBindGroup,
+    vertexCount: number = 3
   ) {
     this.device = device;
     this.context = context;
     this.pipeline = pipeline;
     this.uniformBuffer = uniformBuffer;
     this.uniformBindGroup = uniformBindGroup;
+    this.vertexCount = vertexCount;
   }
 
   execute(frame_number: number) {
@@ -78,7 +86,7 @@ export class GraphicsVisualizer implements Visualizer {
     const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
     passEncoder.setPipeline(this.pipeline);
     passEncoder.setBindGroup(0, this.uniformBindGroup);
-    passEncoder.draw(3, 1, 0, 0);
+    passEncoder.draw(this.vertexCount, 1, 0, 0);
     passEncoder.end();
 
     this.device.queue.submit([commandEncoder.finish()]);
@@ -209,12 +217,19 @@ export default class GraphicsVisualizerBuilder implements VisualizerBuilder {
       ],
     });
 
+    let vertexCount = 3;
+    const vertexCountMatch = shader.match(/\/\/\s*vertex_count\s*:\s*(\d+)/);
+    if (vertexCountMatch) {
+      vertexCount = parseInt(vertexCountMatch[1], 10);
+    }
+
     return new GraphicsVisualizer(
       this.device,
       this.context,
       pipeline,
       uniformBuffer,
-      uniformBindGroup
+      uniformBindGroup,
+      vertexCount
     );
   }
 }

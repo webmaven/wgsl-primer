@@ -13,9 +13,12 @@ venv/
 __pycache__/
 *.pyc
 
-# Local backup and utility folders
+# Local backup, utility, and test directories
 _changes_backup/
 utils/__pycache__/
+test_screenshots/
+test_serve*
+scratch/
 
 # OS-specific files
 .DS_Store

@@ -1,8 +1,8 @@
-site_name: Tour of WGSL
+site_name: 'WGSL: A Primer'
 site_url: https://webmaven.github.io/tour-of-wgsl/
 repo_url: https://github.com/webmaven/tour-of-wgsl
 repo_name: webmaven/tour-of-wgsl
-copyright: '&copy; 2023-2026 <a href="/tour-of-wgsl/copyright/">The Tour of WGSL Authors</a>'
+copyright: '&copy; 2026 <a href="/tour-of-wgsl/about/copyright/">Michael R. Bernstein</a>. An expanded fork of <a href="https://google.github.io/tour-of-wgsl/" target="_blank">Tour of WGSL</a>.'
 
 theme:
   name: materialx
@@ -63,32 +63,32 @@ extra_javascript:
 nav:
   - Welcome: index.md
   - Functions:
-      - Overview: functions/index.md
+      - Functions Overview: functions/index.md
       - Syntax: functions/syntax.md
       - Calls: functions/calls.md
       - Entry Points: functions/entry-points.md
       - Must Use Attributes: functions/must-use.md
   - Types:
-      - Overview: types/index.md
+      - Types Overview: types/index.md
       - Basic Scalars: types/basic-scalars.md
       - Abstract Numerics: types/abstract-numerics.md
       - Vectors:
-          - Overview: types/vectors/index.md
+          - Vectors Overview: types/vectors/index.md
           - Constructors: types/vectors/constructors.md
           - Components & Swizzling: types/vectors/components.md
       - Matrices:
-          - Overview: types/matrices/index.md
+          - Matrices Overview: types/matrices/index.md
           - Constructors: types/matrices/constructors.md
           - Multiplication: types/matrices/multiplication.md
       - Arrays:
-          - Overview: types/arrays/index.md
+          - Arrays Overview: types/arrays/index.md
           - Fixed-size Arrays: types/arrays/fixed-size-arrays.md
           - Runtime-sized Arrays: types/arrays/runtime-sized-arrays.md
       - Structures:
-          - Overview: types/structures/index.md
+          - Structures Overview: types/structures/index.md
           - Alignment: types/structures/alignment.md
       - Pointers:
-          - Overview: types/pointers/index.md
+          - Pointers Overview: types/pointers/index.md
           - Specifying a Pointer: types/pointers/specifying.md
           - Creating and Using Pointers: types/pointers/using.md
           - Pointers as Function Parameters: types/pointers/passing_pointers.md
@@ -96,24 +96,24 @@ nav:
           - No Aliasing: types/pointers/no_aliasing.md
           - No Aliasing in Nested Calls: types/pointers/no_aliasing_nested_calls.md
       - Atomics:
-          - Overview: types/atomics/index.md
+          - Atomics Overview: types/atomics/index.md
           - The Coordination Problem: types/atomics/overview.md
           - Atomic Types: types/atomics/atomic-types.md
           - Atomic Operations: types/atomics/atomic-operations.md
   - Expressions:
-      - Overview: expressions/index.md
+      - Expressions Overview: expressions/index.md
       - Strict Typing: expressions/strict-typing.md
       - Operators Reference: expressions/operators/index.md
       - Bitwise & Data Packing: expressions/operators/bitwise-packing.md
       - Evaluation Stages:
-          - Overview: expressions/evaluation-stage/index.md
+          - Evaluation Stages Overview: expressions/evaluation-stage/index.md
           - Constant Stage:
-              - Overview: expressions/evaluation-stage/constant/index.md
+              - Constant Stage Overview: expressions/evaluation-stage/constant/index.md
               - Numeric Literals: expressions/evaluation-stage/constant/numeric-literals.md
           - Override Stage: expressions/evaluation-stage/override/index.md
           - Runtime Stage: expressions/evaluation-stage/runtime/index.md
   - Variables & Constants:
-      - Overview: variables/index.md
+      - Variables Overview: variables/index.md
       - Let Declaration: variables/let.md
       - Const Declaration: variables/const.md
       - Override Declaration: variables/override.md
@@ -127,23 +127,25 @@ nav:
       - Handle Variables: variables/var-handle.md
       - Name Shadowing: variables/shadowing.md
   - Control Flow:
-      - Overview: control-flow/index.md
+      - Control Flow Overview: control-flow/index.md
       - If Statements: control-flow/if-statements.md
       - Switch Statements: control-flow/switch-statements.md
       - While Statements: control-flow/while-statements.md
       - For Statements: control-flow/for-statements.md
       - The loop Statement: control-flow/loop-statements.md
   - Binding Points:
-      - Overview: binding-points/index.md
+      - Binding Points Overview: binding-points/index.md
       - Attributes: binding-points/attributes.md
       - Uniform Buffers: binding-points/uniform-buffers.md
       - Storage Buffers: binding-points/storage-buffers.md
       - Textures: binding-points/textures.md
   - Uniformity Analysis:
-      - Overview: uniformity-analysis/index.md
+      - Uniformity Analysis Overview: uniformity-analysis/index.md
       - Invocations: uniformity-analysis/invocations.md
       - Fragment Derivative Builtins: uniformity-analysis/fragment-derivative-builtins.md
       - Subgroups & Register Shuffling: uniformity-analysis/subgroups.md
-#  - Colophon: colophon.md
-#  - Changelog: changelog.md
-#  - Copyright & License: copyright.md
+  - About:
+      - About This Project: about/index.md
+      - Colophon: about/colophon.md
+      - Changelog: about/changelog.md
+      - Copyright & License: about/copyright.md

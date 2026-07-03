@@ -1,8 +1,11 @@
-# Tour of WGSL
+# WGSL: A Primer
 
-This repository contains the source code for the **Tour of WGSL** (WebGPU Shading Language) website. The site is generated using **ProperDocs** (an actively maintained static site generator), and the interactive visualizers are powered by TypeScript and compiled/bundled using **Vite**.
+> [!NOTE]
+> This repository is a modernized, refined, and expanded fork of the archived original 2023 [Tour of WGSL](https://github.com/google/tour-of-wgsl).
 
-The purpose of this project is to provide a premium, highly interactive introduction to WGSL through examples that can be modified and run directly by the user in their browser.
+This repository contains the source code for the **WGSL: A Primer** (WebGPU Shading Language) website. The site is generated using **ProperDocs** (an actively maintained static site generator), and the interactive visualizers are powered by TypeScript and compiled/bundled using **Vite**.
+
+The purpose of this project is to provide a highly interactive introduction to WGSL through examples that can be modified and run directly by the user in their browser.
 
 ## Development
 
@@ -97,3 +100,17 @@ WebGPU is supported by default in modern web browsers (released after mid-2023).
 - **Safari** (v18 or newer on macOS)
 
 No special flags or nightly builds are required. If the interactive visualizers do not render, check that your device's GPU drivers are up-to-date and that hardware acceleration is enabled in your browser settings.
+
+---
+
+## Licensing & Lineage
+
+**WGSL: A Primer** uses a multi-tiered license structure designed to clearly distinguish original upstream assets from modern improvements:
+
+1. **Curriculum Content & Prose (CC-BY 4.0)**:
+   - All lessons, guides, explanations, diagrams, mathematical formulas, and tutorial text added or modified in 2026 are Copyright &copy; 2026 Michael R. Bernstein and licensed under the **Creative Commons Attribution 4.0 International (CC-BY 4.0)** license. See [LICENSE-TEXT](LICENSE-TEXT) for full license text.
+2. **Software & Infrastructure (Apache 2.0)**:
+   - All site configurations, python build hooks, build utilities, newly created interactive TypeScript visualizer modules, and custom stylesheets added or modified in 2026 are Copyright &copy; 2026 Michael R. Bernstein and licensed under the **Apache License 2.0**. See [LICENSE-CODE](LICENSE-CODE) for full license text.
+3. **Upstream Code & Structure (BSD 3-Clause)**:
+   - The original 2023 files, curriculum structures, and core assets are Copyright &copy; 2023 and licensed under the **BSD 3-Clause License** (preserved in the root [LICENSE-UPSTREAM](LICENSE-UPSTREAM) file).
+   - Where files combine both upstream and modern work (derivative work), they are dual-licensed: modern 2026 contributions are licensed under Apache 2.0 (for code) or CC-BY 4.0 (for prose), while original 2023 BSD 3-Clause copyrights are preserved intact. Newly created or fully rewritten files are governed solely by the 2026 license terms.

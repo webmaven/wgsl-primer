@@ -2,7 +2,7 @@
 
 This style guide establishes explicit, unambiguous rules and semantic constraints for using **Inline Code**, **Inline Code with Templates**, **Inline Math**, and **PyMdown Admonitions** across the Tour of WGSL curriculum.
 
-Ensuring a clean, premium, and zero-jitter layout requires separating these notation categories based on their exact semantic roles.
+Ensuring a clean and zero-jitter layout requires separating these notation categories based on their exact semantic roles.
 
 ---
 
@@ -70,7 +70,7 @@ Use inline math **strictly** for mathematical and geometrical concepts. Do not m
 
 ## 2.1 Template Class Color Schemes
 
-To maintain logical organization and structural linkage, template parameter classes are mapped to distinct, premium color-coded schemes inside `style.scss`:
+To maintain logical organization and structural linkage, template parameter classes are mapped to distinct color-coded schemes inside `style.scss`:
 
 | Class Name                                                                                            | Color-Coding Scheme                                | Represented Concepts / Parameters                            |
 | :---------------------------------------------------------------------------------------------------- | :------------------------------------------------- | :----------------------------------------------------------- |
@@ -184,7 +184,7 @@ The Tour of WGSL is designed for professional programmers and GPGPU developers. 
 - ❌ **Incorrect (Monospace Math)**: "Shaders run on `2x2` pixel quads."
 - ❌ **Incorrect (Raw Math Delimiters)**: "Shaders run on $2 \times 2$ pixel quads."
 - ✔️ **Correct**: "Shaders run on \(2 \times 2\) pixel quads."
-  - _Rationale_: The dimensions of a physical/mathematical pixel cluster are geometrical, requiring premium math formatting, and `\(` and `\)` prevent delimiter collisions.
+  - _Rationale_: The dimensions of a physical/mathematical pixel cluster are geometrical, requiring clean mathematical formatting, and `\(` and `\)` prevent delimiter collisions.
 
 ### Case 5: Alert Callouts
 

@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. Licensed under Apache 2.0.
+ * See root README.md for global project-wide upstream attributions.
+ */
+
 /**
  * Copyright 2023 The Tour of WGSL Authors
  *
@@ -58,7 +63,7 @@ export class WGSLTour extends HTMLElement {
       #wgsl-tour-output-canvas {
         width: 100%;
         max-width: 640px;
-        aspect-ratio: 4 / 3;
+        aspect-ratio: 1 / 1;
         height: auto !important;
         margin-top: 10px;
         display: block;
@@ -267,7 +272,7 @@ export class WGSLTour extends HTMLElement {
           flex: 0 1 auto !important;
           height: auto !important;
           min-height: 50% !important;
-          max-height: calc(100% - 180px) !important;
+          max-height: calc(100% - 320px) !important;
         }
         :host(.has-output) .editor-container.collapsed {
           flex: 0 0 auto !important;
@@ -332,7 +337,7 @@ export class WGSLTour extends HTMLElement {
           height: auto !important;
           max-width: 100% !important;
           max-height: 100% !important;
-          aspect-ratio: 4 / 3 !important;
+          aspect-ratio: 1 / 1 !important;
           margin-top: 0 !important;
           object-fit: contain;
         }

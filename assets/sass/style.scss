@@ -1,3 +1,8 @@
+/*
+ * Copyright ©2026 Michael R. Bernstein. Licensed under Apache 2.0.
+ * See root README.md for global project-wide upstream attributions.
+ */
+
 /**
  * Copyright 2023 The Tour of WGSL Authors
  *
@@ -340,7 +345,7 @@ nav.md-footer__inner {
 }
 
 .md-copyright__highlight {
-  font-size: 0.72rem !important; /* Restore perfect sizing for copyright text */
+  font-size: 0.65rem !important; /* Reduced from 0.72rem to make it clearly secondary */
   color: #cbd5e1 !important; /* slate-300 silver text */
   display: inline !important;
   white-space: nowrap !important;
@@ -351,7 +356,7 @@ nav.md-footer__inner {
     color: #38bdf8 !important; /* Sky-400 links */
     font-weight: 500 !important;
     text-decoration: none !important;
-    font-size: 0.72rem !important;
+    font-size: 0.65rem !important; /* Reduced from 0.72rem */
 
     &:hover {
       text-decoration: underline !important;
@@ -713,9 +718,9 @@ nav.md-path {
   }
 }
 
-/* Mobile footer pagination and copyright spacing overrides */
-@media screen and (max-width: 767.98px) {
-  /* Hide the page title .md-ellipsis in footer links on mobile */
+/* Responsive footer pagination and copyright spacing overrides */
+@media screen and (max-width: 1199.98px) {
+  /* Hide the page title .md-ellipsis in footer links at lower widths to prevent overlap */
   .md-footer__title .md-ellipsis {
     display: none !important;
   }
@@ -741,15 +746,15 @@ nav.md-path {
   }
 
   .md-copyright__highlight {
-    font-size: 0.62rem !important;
+    font-size: 0.58rem !important; /* Reduced to prevent text overlapping and overflow on smaller devices */
 
     a {
-      font-size: 0.62rem !important;
+      font-size: 0.58rem !important;
     }
   }
 }
 
-/* Premium Highlights on Left Sidebar Navigation after Breadcrumbs Removal */
+/* Sidebar Highlights on Left Sidebar Navigation after Breadcrumbs Removal */
 
 /* 1. Active 2nd-Level Navigation Category Container */
 .md-sidebar--primary
@@ -940,8 +945,22 @@ body[data-md-color-scheme='slate'] {
 .mermaid {
   width: 100% !important;
   max-width: 850px !important; /* Optimized comfortable reading width */
-  margin: 2.5rem auto !important; /* Centering block element with premium spacing */
+  margin: 2.5rem auto !important; /* Centering block element with comfortable spacing */
   display: block !important;
   overflow-x: auto !important; /* Allow scrollbar if the diagram is extremely wide on mobile */
   box-sizing: border-box !important;
+}
+
+/* Homepage Subtitle Styling */
+.primer-subtitle {
+  font-size: 1.2rem !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  font-style: italic !important;
+  color: var(--md-default-fg-color) !important;
+  opacity: 0.8 !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 1.5rem !important;
+  display: block !important;
+  letter-spacing: -0.01em !important;
 }
