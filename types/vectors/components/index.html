@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://webmaven.github.io/tour-of-wgsl/types/vectors/components/">
+        <link rel="canonical" href="https://webmaven.github.io/wgsl-primer/types/vectors/components/">
       
       
         <link rel="prev" href="../constructors/">
@@ -3309,12 +3309,17 @@
 <h3 id="strict-naming-rules">Strict Naming Rules</h3>
 <p>To keep code readable and prevent compiler ambiguity, WGSL enforces two critical rules:</p>
 <ol>
-<li><strong>No Style Mixing</strong>: You cannot mix coordinate and color naming styles within a single access expression.</li>
+<li><strong>No Style Mixing</strong>: You cannot mix coordinate and color naming styles within a single access expression.<ul>
 <li><code>my_vec.xy</code> is <strong>valid</strong>.</li>
 <li><code>my_vec.rg</code> is <strong>valid</strong>.</li>
 <li><code>my_vec.xg</code> is <strong>invalid</strong> and results in a compilation error.</li>
-<li><strong>Bounds Checking</strong>: You can only access components that exist within the vector's declared dimension.</li>
+</ul>
+</li>
+<li><strong>Bounds Checking</strong>: You can only access components that exist within the vector's declared dimension.<ul>
 <li>Attempting to access <code>.z</code> or <code>.b</code> on a <code>vec2</code> will cause a compile-time error.</li>
+<li>Attempting to access <code>.w</code> or <code>.a</code> on a <code>vec3</code> will cause a compile-time error.</li>
+</ul>
+</li>
 </ol>
 <hr />
 <h2 id="array-like-indexing">Array-Like Indexing</h2>
@@ -3355,6 +3360,16 @@
 </span></code></pre></div>
 </div>
 <hr />
+<div class="admonition question">
+<p class="admonition-title">Try It Out: Interact with Swizzling!</p>
+<p>The interactive visualizer on the right (or below) renders a real-time wave pattern. You can use swizzling overrides in the shader to manipulate both color channels and coordinates:</p>
+<ol>
+<li><strong>Color Swapping</strong>: Uncomment line 43 (<code>final_color = vec4f(base_color.bgr, 1.0);</code>) to swap the red and blue channels, transforming warm pinks/oranges into cool cyan/blue gradients.</li>
+<li><strong>Component Isolation</strong>: Comment line 43 out, and uncomment line 46 (<code>final_color = vec4f(base_color.ggg, 1.0);</code>) to duplicate the green component, creating a monochromatic glowing green wave.</li>
+<li><strong>Coordinate Swizzling</strong>: Uncomment line 49 (<code>final_color = vec4f(sin(in.uv.xyx * 10.0 + t) * 0.5 + 0.5, 1.0);</code>). Notice how the coordinate swizzle <code>.xyx</code> transforms the flat 2D coordinate space into a rich, complex 3D color field!</li>
+</ol>
+</div>
+<hr />
 <div id='tour-wrapper'>
   <wgsl-tour id='tour'>
     <pre id='tour-content' style='visibility: hidden'>/*
@@ -3362,42 +3377,61 @@
  * See root README.md for global project-wide upstream attributions.
  */
 
-fn get_vector() -&gt; vec4f {
-  return vec4f(1.0, 2.0, 3.0, 4.0);
+@group(0) @binding(0) var&lt;uniform&gt; frame: u32;
+
+struct VertexOutput {
+  @builtin(position) pos: vec4f,
+  @location(0) uv: vec2f,
 }
 
-fn test_individual_access() -&gt; f32 {
-  let v = get_vector();
-  return v.y; // Should be 2.0
+@vertex
+fn vtx_main(@builtin(vertex_index) vertex_index: u32) -&gt; VertexOutput {
+  // A single giant triangle covering the screen (-1 to 3 clip space)
+  const pos = array(
+    vec2f(-1.0, -1.0),
+    vec2f( 3.0, -1.0),
+    vec2f(-1.0,  3.0)
+  );
+
+  var out: VertexOutput;
+  out.pos = vec4f(pos[vertex_index], 0.0, 1.0);
+  out.uv = pos[vertex_index] * 0.5 + vec2f(0.5);
+  return out;
 }
 
-fn test_color_style() -&gt; f32 {
-  let color = vec4f(0.1, 0.2, 0.3, 1.0);
-  return color.g; // Should be 0.2
-}
+@fragment
+fn frag_main(in: VertexOutput) -&gt; @location(0) vec4f {
+  let t = f32(frame) * 0.02;
 
-fn test_array_indexing() -&gt; f32 {
-  let v = get_vector();
-  return v[2]; // Should be 3.0 (equivalent to v.z)
-}
+  // Create a base moving color vector using spatial coordinates and time
+  let r = sin(in.uv.x * 6.28 + t) * 0.5 + 0.5;
+  let g = sin(in.uv.y * 6.28 - t) * 0.5 + 0.5;
+  let b = cos((in.uv.x + in.uv.y) * 3.14 + t) * 0.5 + 0.5;
 
-fn test_swizzling_reorder() -&gt; vec3f {
-  let v = get_vector();
-  return v.zyx; // Should be vec3f(3.0, 2.0, 1.0)
-}
+  let base_color = vec4f(r, g, b, 1.0);
 
-fn test_swizzling_repeat() -&gt; vec4f {
-  let v = get_vector();
-  return v.xxxx; // Should be vec4f(1.0, 1.0, 1.0, 1.0)
+  // SWIZZLING OVERRIDES: Try uncommenting and editing different swizzles below!
+  var final_color = base_color;
+
+  // Option 1: Swap red and blue channels (color swapping)
+  // final_color = vec4f(base_color.bgr, 1.0);
+
+  // Option 2: Extract green channel to make it monochromatic (component isolation)
+  // final_color = vec4f(base_color.ggg, 1.0);
+
+  // Option 3: Generate a 3D color wave from 2D coordinates (.xyx)
+  // final_color = vec4f(sin(in.uv.xyx * 10.0 + t) * 0.5 + 0.5, 1.0);
+
+  return final_color;
 }
 </pre>
   </wgsl-tour>
 </div>
 <script type="module">
-  import VisualizationBuilder from '/tour-of-wgsl/assets/js/value_visualizer.js';
+  import VisualizationBuilder from '/wgsl-primer/assets/js/graphics_visualizer.js';
   customElements.whenDefined('wgsl-tour').then(() => {
     let tour = document.getElementById('tour');
-    tour.setVisualizationBuilder(new VisualizationBuilder("{\"fields\": [ {\"expr\": \"test_individual_access()\", \"type\": \"f32\"}, {\"expr\": \"test_color_style()\", \"type\": \"f32\"}, {\"expr\": \"test_array_indexing()\", \"type\": \"f32\"}, {\"expr\": \"test_swizzling_reorder()\", \"type\": \"vec3f\"}, {\"expr\": \"test_swizzling_repeat()\", \"type\": \"vec4f\"} ]}"));
+    tour.setVisualizationBuilder(new VisualizationBuilder(null));
   });
 </script>
 
@@ -3491,7 +3525,7 @@ fn test_swizzling_repeat() -&gt; vec4f {
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      &copy; 2026 <a href="/tour-of-wgsl/about/copyright/">Michael R. Bernstein</a>. An expanded fork of <a href="https://google.github.io/tour-of-wgsl/" target="_blank">Tour of WGSL</a>.
+      &copy; 2026 <a href="/wgsl-primer/about/copyright/">Michael R. Bernstein</a>. An expanded fork of <a href="https://google.github.io/tour-of-wgsl/" target="_blank">Tour of WGSL</a>.
     </div>
   
   

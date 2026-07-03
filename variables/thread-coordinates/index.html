@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://webmaven.github.io/tour-of-wgsl/variables/thread-coordinates/">
+        <link rel="canonical" href="https://webmaven.github.io/wgsl-primer/variables/thread-coordinates/">
       
       
         <link rel="prev" href="../var-workgroup/">
@@ -3290,7 +3290,7 @@ fn get_local_index(l_id: vec3&lt;u32&gt;, w_size: vec3&lt;u32&gt;) -&gt; u32 {
   </wgsl-tour>
 </div>
 <script type="module">
-  import VisualizationBuilder from '/tour-of-wgsl/assets/js/value_visualizer.js';
+  import VisualizationBuilder from '/wgsl-primer/assets/js/value_visualizer.js';
   customElements.whenDefined('wgsl-tour').then(() => {
     let tour = document.getElementById('tour');
     tour.setVisualizationBuilder(new VisualizationBuilder("{\"fields\": [ {\"expr\": \"computed_coords.global_id\", \"type\": \"vec3u\"}, {\"expr\": \"computed_coords.local_id\",  \"type\": \"vec3u\"}, {\"expr\": \"computed_coords.workgroup_id\", \"type\": \"vec3u\"}, {\"expr\": \"computed_coords.local_idx\", \"type\": \"u32\"} ]}"));
@@ -3387,7 +3387,7 @@ fn get_local_index(l_id: vec3&lt;u32&gt;, w_size: vec3&lt;u32&gt;) -&gt; u32 {
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      &copy; 2026 <a href="/tour-of-wgsl/about/copyright/">Michael R. Bernstein</a>. An expanded fork of <a href="https://google.github.io/tour-of-wgsl/" target="_blank">Tour of WGSL</a>.
+      &copy; 2026 <a href="/wgsl-primer/about/copyright/">Michael R. Bernstein</a>. An expanded fork of <a href="https://google.github.io/tour-of-wgsl/" target="_blank">Tour of WGSL</a>.
     </div>
   
   

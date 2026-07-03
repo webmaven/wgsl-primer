@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://webmaven.github.io/tour-of-wgsl/expressions/operators/bitwise-packing/">
+        <link rel="canonical" href="https://webmaven.github.io/wgsl-primer/expressions/operators/bitwise-packing/">
       
       
         <link rel="prev" href="../">
@@ -1950,6 +1950,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#packing-constraints-hardware-realities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packing Constraints &amp; Hardware Realities
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Packing Constraints &amp; Hardware Realities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-you-should-never-pack-integer-bits-into-floating-point-containers-f16f32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why You Should Never Pack Integer Bits into Floating-Point Containers (f16/f32)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-optimal-gpu-way-fixed-function-hardware-unpacking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Optimal GPU Way: Fixed-Function Hardware Unpacking
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#interactive-visualizer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3627,6 +3666,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#packing-constraints-hardware-realities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Packing Constraints &amp; Hardware Realities
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Packing Constraints &amp; Hardware Realities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-you-should-never-pack-integer-bits-into-floating-point-containers-f16f32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why You Should Never Pack Integer Bits into Floating-Point Containers (f16/f32)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-optimal-gpu-way-fixed-function-hardware-unpacking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Optimal GPU Way: Fixed-Function Hardware Unpacking
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#interactive-visualizer" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3864,6 +3942,22 @@ Then, we use a bitwise AND (<code>&amp;</code>) with a <strong>bitmask</strong> 
 <h3 id="performance-analysis">Performance Analysis</h3>
 <p>Because modern GPUs are hardware-optimized for 3D vector arithmetic, the vectorized bitwise operations <code>&amp; vec3&lt;u32&gt;</code> and <code>&gt;&gt; vec3&lt;u32&gt;</code> compile down to a single instruction cycle on the GPU's execution registers. This eliminates scalar register bottlenecks and allows the graphics pipeline to unpack surface positions and normal channels with minimal overhead.</p>
 <hr />
+<h2 id="packing-constraints-hardware-realities">Packing Constraints &amp; Hardware Realities</h2>
+<p>When planning a custom data packing layout, developers often ask if they can pack very low-bitwidth integers (such as 8-bit <code>i8</code> or <code>u8</code> elements) into a 16-bit floating-point type (<code>f16</code>), or if they should stick to integer registers (<code>u32</code> or <code>i32</code>).</p>
+<h3 id="why-you-should-never-pack-integer-bits-into-floating-point-containers-f16f32">Why You Should Never Pack Integer Bits into Floating-Point Containers (<code>f16</code>/<code>f32</code>)</h3>
+<p>While it might seem intuitive to pack two 8-bit integers into a single 16-bit float (<code>f16</code>), doing so is a major anti-pattern on the GPU:</p>
+<ol>
+<li><strong>Risk of Bit Corruption (NaNs, Infinities, and Denormals)</strong>: The IEEE-754 half-precision float (<code>f16</code>) uses a structured bit format (1 sign bit, 5 exponent bits, and 10 mantissa bits). If you force-pack raw 8-bit integer bits into these ranges, the resulting combined 16-bit pattern may represent a <strong>NaN (Not-a-Number)</strong>, a <strong>positive/negative infinity</strong>, or a <strong>denormal</strong>. Modern GPU floating-point arithmetic units (ALUs) or compiler drivers can automatically clamp, flush, or modify these special float representations, permanently corrupting your underlying integer bits.</li>
+<li><strong>No Bitwise Operators on Floats</strong>: WGSL strictly prohibits performing bitwise operations (such as <code>&amp;</code>, <code>|</code>, <code>&lt;&lt;</code>, and <code>&gt;&gt;</code>) directly on floating-point types (<code>f16</code> and <code>f32</code>). To unpack them, you would have to bitcast the float to a temporary integer container, wasting precious ALU clock cycles.</li>
+<li><strong>Optional Support</strong>: The <code>f16</code> type is an <strong>optional extension</strong> in WebGPU. If you write a shader relying on <code>f16</code> for packing, it will fail to compile on devices that do not support the extension. In contrast, 32-bit integers (<code>u32</code>/<code>i32</code>) are universally supported on all WebGPU hardware.</li>
+</ol>
+<h3 id="the-optimal-gpu-way-fixed-function-hardware-unpacking">The Optimal GPU Way: Fixed-Function Hardware Unpacking</h3>
+<p>Instead of writing complex ALU instructions to pack and unpack 8-bit integers (like four <code>i8</code> into a <code>u32</code>), you should rely on the GPU's <strong>fixed-function texture and vertex fetch pipelines</strong>:</p>
+<ul>
+<li><strong>GPU Texture &amp; Vertex Formats</strong>: You can store data in GPU memory buffers or textures using standard 8-bit channels—such as <code>R8G8B8A8_UINT</code> (unsigned 8-bit integers), <code>R8G8B8A8_SINT</code> (signed 8-bit integers), or <code>R8G8B8A8_UNORM</code> (unsigned normalized floating-point representation).</li>
+<li><strong>Zero ALU Cost Unpacking</strong>: When the shader fetches or samples from these memory blocks, the GPU's specialized hardware sampler/fetch unit automatically decompresses the 8-bit values into standard 32-bit register formats (<code>vec4u</code>, <code>vec4i</code>, or <code>vec4f</code>) <strong>before</strong> your shader code runs. This provides instant, hardware-level unpacking with absolute zero ALU overhead.</li>
+</ul>
+<hr />
 <h2 id="interactive-visualizer">Interactive Visualizer</h2>
 <p>The interactive editor demonstrates this packing system executing directly on the GPU. The <strong>Results</strong> section displays the input values alongside their packed <code>u32</code> integer representations, showing how the unpacked normal is reconstructed with high precision.</p>
 <div id='tour-wrapper'>
@@ -3950,7 +4044,7 @@ fn get_unpacked_specular() -&gt; f32 {
   </wgsl-tour>
 </div>
 <script type="module">
-  import VisualizationBuilder from '/tour-of-wgsl/assets/js/value_visualizer.js';
+  import VisualizationBuilder from '/wgsl-primer/assets/js/value_visualizer.js';
   customElements.whenDefined('wgsl-tour').then(() => {
     let tour = document.getElementById('tour');
     tour.setVisualizationBuilder(new VisualizationBuilder("{\"fields\": [{\"expr\": \"get_input_normal()\", \"type\": \"vec3f\"}, {\"expr\": \"get_input_specular()\", \"type\": \"f32\"}, {\"expr\": \"get_packed_val()\", \"type\": \"u32\"}, {\"expr\": \"get_unpacked_normal()\", \"type\": \"vec3f\"}, {\"expr\": \"get_unpacked_specular()\", \"type\": \"f32\"}]}"));
@@ -4047,7 +4141,7 @@ fn get_unpacked_specular() -&gt; f32 {
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      &copy; 2026 <a href="/tour-of-wgsl/about/copyright/">Michael R. Bernstein</a>. An expanded fork of <a href="https://google.github.io/tour-of-wgsl/" target="_blank">Tour of WGSL</a>.
+      &copy; 2026 <a href="/wgsl-primer/about/copyright/">Michael R. Bernstein</a>. An expanded fork of <a href="https://google.github.io/tour-of-wgsl/" target="_blank">Tour of WGSL</a>.
     </div>
   
   

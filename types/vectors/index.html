@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://webmaven.github.io/tour-of-wgsl/types/vectors/">
+        <link rel="canonical" href="https://webmaven.github.io/wgsl-primer/types/vectors/">
       
       
         <link rel="prev" href="../abstract-numerics/">
@@ -90,7 +90,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#next-steps" class="md-skip">
+        <a href="#vector-dimensionality-constraint" class="md-skip">
           Skip to content
         </a>
       
@@ -3097,6 +3097,28 @@
     <ul class="md-nav__list" data-md-component="toc">
       
         <li class="md-nav__item">
+  <a href="#vector-dimensionality-constraint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vector Dimensionality Constraint
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-scalar-only-constraint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Scalar-Only Constraint
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#next-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3180,6 +3202,28 @@
 </tbody>
 </table>
 <hr />
+<h2 id="vector-dimensionality-constraint">Vector Dimensionality Constraint</h2>
+<p>WGSL strictly limits vector dimensions to 2, 3, or 4 elements. This restriction reflects fundamental hardware and mathematical design constraints:</p>
+<ul>
+<li><strong>GPU Register &amp; Memory Alignment</strong>: Graphics hardware architectures are highly optimized for power-of-two memory layouts (such as 64-bit or 128-bit memory bus widths). A 2-element vector of 32-bit floats (<code>vec2f</code>) takes 8 bytes, and a 4-element vector (<code>vec4f</code>) takes 16 bytes. A 5-element float vector would require 20 bytes, breaking power-of-two memory boundaries and complicating register packing, cache line alignment, and GPU memory bus utilization.</li>
+<li><strong>Graphics Pipeline Design</strong>: Shader vectors are designed to map directly to graphics concepts, such as homogeneous spatial coordinates <span class="arithmatex">\((x, y, z, w)\)</span> or color channels with transparency <span class="arithmatex">\((r, g, b, a)\)</span>. There are no common graphics primitives or rendering pipeline operations that require 5-element or larger vectors.</li>
+<li><strong>Alternative Containers</strong>: For collections of 5 or more components, you should use standard <code>array&lt;<span class="template template-array-t">T</span>, <span class="template template-array-n">N</span>&gt;</code> types or define a custom <code>struct</code> with explicitly ordered fields. This allows the compiler to optimize the alignment and memory packing explicitly.</li>
+</ul>
+<hr />
+<h2 id="the-scalar-only-constraint">The Scalar-Only Constraint</h2>
+<p>The underlying element type <span class="template template-vec-t">T</span> in the vector definition <code>vec<span class="template template-vec-n">N</span>&lt;<span class="template template-vec-t">T</span>&gt;</code> is strictly limited to <strong>constructible scalar types</strong>: <code>f32</code>, <code>i32</code>, <code>u32</code>, <code>f16</code> (if enabled), and <code>bool</code>.</p>
+<p>This restriction excludes other container or reference types:</p>
+<ul>
+<li><strong>No Vectors of Vectors</strong>: You cannot nest vectors (such as <code>vec3&lt;vec2f&gt;</code>). To represent multi-dimensional coordinate fields, use matrices (e.g. <code>mat3x3f</code>) or collections of vectors.</li>
+<li><strong>No Vectors of Pointers</strong>: You cannot construct a vector containing references or pointers (such as <code>vec4&lt;ptr&lt;private, f32&gt;&gt;</code>).</li>
+<li><strong>Only Concrete Scalars</strong>: Vector elements must be standard scalar types (<code>f32</code>, <code>i32</code>, <code>u32</code>, <code>f16</code>, or <code>bool</code>). WGSL lacks sub-16-bit scalar floats; see <strong><a href="../basic-scalars/">Basic Scalars</a></strong> for details on scalar precision limitations.</li>
+<li><strong>GPU Hardware Foundations</strong>: Because WGSL vectors map directly to physical hardware SIMD vector registers, they must hold uniform, raw, contiguous scalar values.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Vectors vs. Lists</p>
+<p>WGSL vectors represent physical, short mathematical coordinate/color tuples. They do not represent dynamically-allocated heap collections like C++'s <code>std::vector</code> or Java's <code>java.util.Vector</code>. For dynamic or nested multi-dimensional elements, you must utilize matrices, fixed-size <code>array&lt;<span class="template template-array-t">T</span>, <span class="template template-array-n">N</span>&gt;</code> types, or custom <code>struct</code> definitions.</p>
+</div>
+<hr />
 <h2 id="next-steps">Next Steps</h2>
 <p>Vector operations and usage:</p>
 <ul>
@@ -3225,7 +3269,7 @@ fn test_vec4i() -&gt; vec4i {
   </wgsl-tour>
 </div>
 <script type="module">
-  import VisualizationBuilder from '/tour-of-wgsl/assets/js/value_visualizer.js';
+  import VisualizationBuilder from '/wgsl-primer/assets/js/value_visualizer.js';
   customElements.whenDefined('wgsl-tour').then(() => {
     let tour = document.getElementById('tour');
     tour.setVisualizationBuilder(new VisualizationBuilder("{\"fields\": [ {\"expr\": \"test_vec2f()\", \"type\": \"vec2f\"}, {\"expr\": \"test_vec3u()\", \"type\": \"vec3u\"}, {\"expr\": \"test_vec4i()\", \"type\": \"vec4i\"} ]}"));
@@ -3322,7 +3366,7 @@ fn test_vec4i() -&gt; vec4i {
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      &copy; 2026 <a href="/tour-of-wgsl/about/copyright/">Michael R. Bernstein</a>. An expanded fork of <a href="https://google.github.io/tour-of-wgsl/" target="_blank">Tour of WGSL</a>.
+      &copy; 2026 <a href="/wgsl-primer/about/copyright/">Michael R. Bernstein</a>. An expanded fork of <a href="https://google.github.io/tour-of-wgsl/" target="_blank">Tour of WGSL</a>.
     </div>
   
   

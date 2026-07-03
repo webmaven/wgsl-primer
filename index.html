@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://webmaven.github.io/tour-of-wgsl/">
+        <link rel="canonical" href="https://webmaven.github.io/wgsl-primer/">
       
       
       
@@ -3138,15 +3138,15 @@ below the editor.</p>
 exploration.</p>
 <div class="admonition question">
 <p class="admonition-title">Warmup Activity</p>
-<p>As a warmup, edit the <code>frag_main</code> function. Change the first component of its return value from <code>1</code> to <code>0</code>, so it is <code>vec4(0, sin(f32(frame) / 128), 0, 1)</code>. What happens?</p>
+<p>As a warmup, edit the <code>frag_main</code> function. First, uncomment the assignment on line 67 (which rotates the color values clockwise: <code>final_color = final_color.gbr;</code>). Then, instead, try uncommenting the assignment on line 69 (which rotates the color values counter-clockwise: <code>final_color = final_color.brg;</code>). What happens to the gradient's colors?</p>
 </div>
 <p>The primer is organized into the following sections:</p>
 <ul>
-<li><strong><a href="types/">Types</a></strong>: Supported types in WGSL, from basic scalars and vectors to structures and pointers.</li>
-<li><strong><a href="variables/">Variables &amp; Constants</a></strong>: Declaration and usage of mutable variables (<code>var</code>) and immutable values (<code>const</code>, <code>override</code>, <code>let</code>).</li>
-<li><strong><a href="expressions/">Expressions</a></strong>: Operators and different evaluation stages (constant, override, runtime).</li>
-<li><strong><a href="control-flow/">Control Flow</a></strong>: Branching and looping statements (<code>if</code>, <code>switch</code>, <code>loop</code>, <code>while</code>, <code>for</code>).</li>
 <li><strong><a href="functions/">Functions</a></strong>: Function syntax, calls, the <code>@must_use</code> attribute, and entry points.</li>
+<li><strong><a href="types/">Types</a></strong>: Supported types in WGSL, from basic scalars and vectors to structures, pointers, and atomics.</li>
+<li><strong><a href="expressions/">Expressions</a></strong>: Operators and different evaluation stages (constant, override, runtime).</li>
+<li><strong><a href="variables/">Variables &amp; Constants</a></strong>: Declaration and usage of mutable variables (<code>var</code>) and immutable values (<code>const</code>, <code>override</code>, <code>let</code>).</li>
+<li><strong><a href="control-flow/">Control Flow</a></strong>: Branching and looping statements (<code>if</code>, <code>switch</code>, <code>loop</code>, <code>while</code>, <code>for</code>).</li>
 <li><strong><a href="binding-points/">Binding Points</a></strong>: Connection of shaders to CPU-side resources like buffers and textures using binding points and attributes.</li>
 <li><strong><a href="uniformity-analysis/">Uniformity Analysis</a></strong>: Compile-time execution uniformity tracking for derivative and barrier safety.</li>
 </ul>
@@ -3190,27 +3190,22 @@ fn vtx_main(@builtin(vertex_index) vertex_index : u32) -&gt; VertexOutput {
     vec2f( 0.779154,  0.238075)  // P5_C
   );
 
-  const colors = array(
+  const palette = array(
     vec3f(0.57, 0.12, 0.94), // Purple
     vec3f(0.12, 0.40, 0.94), // Royal Blue
     vec3f(0.00, 0.65, 0.85), // Blue-Teal
-    vec3f(0.12, 0.40, 0.94), // Royal Blue
-    vec3f(0.00, 0.65, 0.85), // Blue-Teal
     vec3f(0.00, 0.75, 0.75), // Teal
-    vec3f(0.00, 0.65, 0.85), // Blue-Teal
     vec3f(0.05, 0.75, 0.55), // Teal-Green
-    vec3f(0.12, 0.75, 0.35), // Green
     vec3f(0.12, 0.75, 0.35), // Green
     vec3f(0.50, 0.80, 0.20), // Lime-Green
     vec3f(0.94, 0.85, 0.12), // Yellow
-    vec3f(0.94, 0.85, 0.12), // Yellow
-    vec3f(0.12, 0.75, 0.35), // Green
     vec3f(0.70, 0.82, 0.15)  // Lime-Yellow
   );
+  const color_indices = array(0, 1, 2, 1, 2, 3, 2, 4, 5, 5, 6, 7, 7, 5, 8);
 
   var out: VertexOutput;
   out.pos = vec4f(pos[vertex_index], 0.0, 1.0);
-  out.color = colors[vertex_index];
+  out.color = palette[color_indices[vertex_index]];
   out.uv = pos[vertex_index];
   return out;
 }
@@ -3222,18 +3217,21 @@ fn frag_main(in: VertexOutput) -&gt; @location(0) vec4f {
   let wave = sin(in.uv.x * 3.0 + t) * 0.18 + cos(in.uv.y * 3.0 - t) * 0.18;
 
   let animated_color = in.color + vec3f(wave, -wave * 0.6, sin(t) * 0.12);
+  var final_color = clamp(animated_color, vec3f(0.0), vec3f(1.0));
 
   // WARMUP ACTIVITY: Try altering the animation or colors below!
-  // For example, uncomment this line to see a pulsing solid green:
-  // return vec4f(0.0, sin(f32(frame) / 128.0), 0.0, 1.0);
+  // Uncomment this line to rotate the color values clockwise:
+  // final_color = final_color.gbr;
+  // Or uncomment this line to rotate the color values counter-clockwise:
+  // final_color = final_color.brg;
 
-  return vec4f(clamp(animated_color, vec3f(0.0), vec3f(1.0)), 1.0);
+  return vec4f(final_color, 1.0);
 }
 </pre>
   </wgsl-tour>
 </div>
 <script type="module">
-  import VisualizationBuilder from '/tour-of-wgsl/assets/js/graphics_visualizer.js';
+  import VisualizationBuilder from '/wgsl-primer/assets/js/graphics_visualizer.js';
   customElements.whenDefined('wgsl-tour').then(() => {
     let tour = document.getElementById('tour');
     tour.setVisualizationBuilder(new VisualizationBuilder(null));
@@ -3314,7 +3312,7 @@ fn frag_main(in: VertexOutput) -&gt; @location(0) vec4f {
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      &copy; 2026 <a href="/tour-of-wgsl/about/copyright/">Michael R. Bernstein</a>. An expanded fork of <a href="https://google.github.io/tour-of-wgsl/" target="_blank">Tour of WGSL</a>.
+      &copy; 2026 <a href="/wgsl-primer/about/copyright/">Michael R. Bernstein</a>. An expanded fork of <a href="https://google.github.io/tour-of-wgsl/" target="_blank">Tour of WGSL</a>.
     </div>
   
   

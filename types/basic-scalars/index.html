@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://webmaven.github.io/tour-of-wgsl/types/basic-scalars/">
+        <link rel="canonical" href="https://webmaven.github.io/wgsl-primer/types/basic-scalars/">
       
       
         <link rel="prev" href="../">
@@ -88,6 +88,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <label class="md-overlay" for="__toc"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#sub-16-bit-scalar-limitations" class="md-skip">
+          Skip to content
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -568,6 +573,24 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Basic Scalars
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -584,6 +607,51 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc">
+      
+        <li class="md-nav__item">
+  <a href="#sub-16-bit-scalar-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sub-16-Bit Scalar Limitations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sub-16-Bit Scalar Limitations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bitwise-data-packing-for-compact-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bitwise Data Packing for Compact Storage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -3091,6 +3159,42 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc">
+      
+        <li class="md-nav__item">
+  <a href="#sub-16-bit-scalar-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sub-16-Bit Scalar Limitations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sub-16-Bit Scalar Limitations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bitwise-data-packing-for-compact-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bitwise Data Packing for Compact Storage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -3117,6 +3221,17 @@
 <li><code>bool</code> - a <code>true</code> or <code>false</code> value, with no specified storage representation.</li>
 </ul>
 <p>These types are known as concrete scalar types, and can be used in <a href="../../expressions/evaluation-stage/">all evaluation stages</a>.</p>
+<hr />
+<h2 id="sub-16-bit-scalar-limitations">Sub-16-Bit Scalar Limitations</h2>
+<p>WGSL does not support low-precision scalar float types like <code>f8</code>, <code>f4</code>, or <code>f2</code>. </p>
+<ul>
+<li><strong>Booleans as 1-Bit Flags</strong>: A <code>bool</code> acts logically as a 1-bit value (conceptually a logical "f1"). However, <code>bool</code> types have no specified physical storage representation and <strong>cannot</strong> be stored in host-shareable memory buffers (such as uniform or storage buffers).</li>
+<li><strong>Minimum Floating-Point Precision</strong>: The smallest native floating-point types supported by WebGPU are <code>f32</code> and <code>f16</code> (the latter requiring the <code>f16</code> hardware extension).</li>
+</ul>
+<h3 id="bitwise-data-packing-for-compact-storage">Bitwise Data Packing for Compact Storage</h3>
+<p>For applications demanding high-density, low-precision storage (such as packing 3D normal vectors, custom 8-bit color weights, or specular coefficients), developers must pack their data manually. </p>
+<p>Instead of relying on nonexistent hardware types like <code>f8</code> or <code>f4</code>, developers map these values to integers and utilize bitwise shift and mask operations to store multiple components inside a single <code>u32</code> or <code>i32</code> scalar. </p>
+<p>See the <strong><a href="../../expressions/operators/bitwise-packing/">Bitwise Operators &amp; Data Packing</a></strong> guide for a comprehensive tutorial on compression and decompression techniques on the GPU.</p>
 
 
 
@@ -3208,7 +3323,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      &copy; 2026 <a href="/tour-of-wgsl/about/copyright/">Michael R. Bernstein</a>. An expanded fork of <a href="https://google.github.io/tour-of-wgsl/" target="_blank">Tour of WGSL</a>.
+      &copy; 2026 <a href="/wgsl-primer/about/copyright/">Michael R. Bernstein</a>. An expanded fork of <a href="https://google.github.io/tour-of-wgsl/" target="_blank">Tour of WGSL</a>.
     </div>
   
   
