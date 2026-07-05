@@ -14,9 +14,10 @@ import VisualizerBuilder, { CompilationFailure, VisualizerError, Visualizer } fr
 import WGSLDocs from './wgsl-docs';
 import { EditorView, basicSetup } from 'codemirror';
 import { EditorState } from '@codemirror/state';
-import { hoverTooltip, keymap, activateHover } from '@codemirror/view';
+import { hoverTooltip, keymap, activateHover, closeHoverTooltip } from '@codemirror/view';
 import { wgsl } from '@iizukak/codemirror-lang-wgsl';
-import { syntaxTree } from '@codemirror/language';
+import { syntaxTree, HighlightStyle, syntaxHighlighting } from '@codemirror/language';
+import { tags as t } from '@lezer/highlight';
 import { lintGutter, setDiagnostics, Diagnostic } from '@codemirror/lint';
 
 export class WGSLTour extends HTMLElement {
@@ -31,9 +32,16 @@ export class WGSLTour extends HTMLElement {
   frame_number: number = 0;
   key_timer: ReturnType<typeof setTimeout> | undefined = undefined;
   autorun: boolean = true;
+  themeObserver: MutationObserver | undefined = undefined;
 
   constructor() {
     super();
+  }
+
+  disconnectedCallback() {
+    if (this.themeObserver) {
+      this.themeObserver.disconnect();
+    }
   }
 
   connectedCallback() {
@@ -49,6 +57,49 @@ export class WGSLTour extends HTMLElement {
       :host {
         display: block;
         font-family: var(--md-text-font-family, inherit);
+
+        /* Default / Light Theme Color Tokens */
+        --cm-bg: var(--md-code-bg-color, #f8fafc);
+        --cm-fg: var(--md-code-fg-color, #0f172a);
+        --cm-gutter-bg: var(--md-code-bg-color, #f8fafc);
+        --cm-gutter-fg: #64748b;
+        --cm-active-line-bg: rgba(0, 0, 0, 0.03);
+        --cm-active-line-gutter-bg: rgba(0, 0, 0, 0.01);
+        --cm-cursor: #0f172a;
+        --cm-selection: rgba(59, 130, 246, 0.2);
+        --cm-matching-bracket: rgba(16, 185, 129, 0.25);
+
+        --cm-keyword: #7c3aed;       /* Purple */
+        --cm-type: #0284c7;          /* Sky Blue */
+        --cm-number: #0d9488;        /* Teal */
+        --cm-string: #16a34a;        /* Green */
+        --cm-comment: #94a3b8;       /* Slate Grey */
+        --cm-variable: #0f172a;      /* Dark Slate */
+        --cm-function: #2563eb;      /* Blue */
+        --cm-operator: #475569;      /* Medium Slate */
+        --cm-attribute: #b45309;     /* Amber */
+      }
+      .editor-container.dark {
+        /* Dark Theme Color Tokens */
+        --cm-bg: var(--md-code-bg-color, #1e293b);
+        --cm-fg: var(--md-code-fg-color, #cbd5e1);
+        --cm-gutter-bg: var(--md-code-bg-color, #1e293b);
+        --cm-gutter-fg: #64748b;
+        --cm-active-line-bg: rgba(255, 255, 255, 0.05);
+        --cm-active-line-gutter-bg: rgba(255, 255, 255, 0.02);
+        --cm-cursor: #f8fafc;
+        --cm-selection: rgba(59, 130, 246, 0.35);
+        --cm-matching-bracket: rgba(45, 212, 191, 0.35);
+
+        --cm-keyword: #c084fc;       /* Vibrant Purple */
+        --cm-type: #38bdf8;          /* Radiant Sky Blue */
+        --cm-number: #2dd4bf;        /* Bright Teal */
+        --cm-string: #4ade80;        /* Light Green */
+        --cm-comment: #64748b;       /* Medium Slate */
+        --cm-variable: #e2e8f0;      /* Silver-White */
+        --cm-function: #60a5fa;      /* Light Blue */
+        --cm-operator: #94a3b8;      /* Soft Slate */
+        --cm-attribute: #fb923c;     /* Bright Orange */
       }
       h2 {
         font-family: var(--md-text-font-family, inherit);
@@ -76,6 +127,11 @@ export class WGSLTour extends HTMLElement {
         display: block;
         font-size: var(--md-code-font-size, 0.85em);
       }
+      .editor-container {
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+      }
       .editor-container.short-code .cm-editor {
         height: auto !important;
       }
@@ -86,8 +142,11 @@ export class WGSLTour extends HTMLElement {
       }
       .cm-editor {
         border: 1px solid var(--md-default-fg-color--lite, #e2e8f0);
-        height: 350px;
-        border-radius: 4px;
+        height: 260px;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
         font-size: var(--md-code-font-size, 0.85em);
       }
       .wgsl-tooltip {
@@ -103,24 +162,29 @@ export class WGSLTour extends HTMLElement {
       .controls-container {
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin-top: 8px;
-        margin-bottom: 6px;
-        padding: 4px 8px;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 0;
+        padding: 6px 12px;
         background-color: var(--md-code-bg-color, #f8fafc);
         border: 1px solid var(--md-default-fg-color--lite, #e2e8f0);
-        border-radius: 6px;
+        border-top: none;
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+        box-sizing: border-box;
       }
       .run-button {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        background-color: #64748b;
+        gap: 6px;
+        background-color: #3b82f6;
         color: #ffffff;
         border: none;
         border-radius: 4px;
         padding: 4px 12px;
+        height: 28px;
+        box-sizing: border-box;
         font-family: var(--md-text-font-family, inherit);
         font-size: 0.8em;
         font-weight: 600;
@@ -128,37 +192,70 @@ export class WGSLTour extends HTMLElement {
         letter-spacing: 0.05em;
         cursor: pointer;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 2px 4px rgba(100, 116, 139, 0.25);
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
       }
       .run-button:hover {
-        background-color: #475569;
-        box-shadow: 0 4px 12px rgba(100, 116, 139, 0.4);
+        background-color: #2563eb;
+        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.35);
         transform: translateY(-1px);
       }
       .run-button:active {
         transform: translateY(1px);
-        box-shadow: 0 1px 2px rgba(100, 116, 139, 0.2);
-      }
-      .run-button.paused {
-        background-color: #0ea5e9;
-        box-shadow: 0 2px 4px rgba(14, 165, 233, 0.25);
-      }
-      .run-button.paused:hover {
-        background-color: #0284c7;
-        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
-      }
-      .run-button.paused:active {
-        transform: translateY(1px);
-        box-shadow: 0 1px 2px rgba(14, 165, 233, 0.2);
+        box-shadow: 0 1px 2px rgba(59, 130, 246, 0.15);
       }
       .run-icon {
-        width: 14px;
-        height: 14px;
+        width: 12px;
+        height: 12px;
         fill: currentColor;
         transition: transform 0.2s ease;
       }
       .run-button:hover .run-icon {
         transform: scale(1.1);
+      }
+      .switch-container {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        user-select: none;
+        font-family: var(--md-text-font-family, inherit);
+        font-size: 0.8em;
+        font-weight: 500;
+        color: var(--md-default-fg-color--light, #64748b);
+      }
+      .switch-container input {
+        display: none;
+      }
+      .switch-slider {
+        position: relative;
+        width: 32px;
+        height: 18px;
+        background-color: var(--md-default-fg-color--lightest, #cbd5e1);
+        border-radius: 9px;
+        transition: background-color 0.2s ease;
+      }
+      .switch-slider::before {
+        content: '';
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        left: 2px;
+        bottom: 2px;
+        background-color: #ffffff;
+        border-radius: 50%;
+        transition: transform 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      }
+      .switch-container input:checked + .switch-slider {
+        background-color: #10b981;
+      }
+      .switch-container input:checked + .switch-slider::before {
+        transform: translateX(14px);
+      }
+      .control-divider {
+        width: 1px;
+        height: 18px;
+        background-color: var(--md-default-fg-color--lightest, #cbd5e1);
       }
       .status-indicator {
         display: inline-flex;
@@ -245,8 +342,8 @@ export class WGSLTour extends HTMLElement {
         min-height: 0;
       }
 
-      .expando-button {
-        display: none;
+      .desktop-only {
+        display: none !important;
       }
 
       @media (min-width: 1200px) {
@@ -257,6 +354,51 @@ export class WGSLTour extends HTMLElement {
           box-sizing: border-box;
           gap: 0;
         }
+        .desktop-only {
+          display: block !important;
+        }
+        .desktop-only.control-divider {
+          display: block !important;
+          margin-left: auto;
+        }
+        .layout-toggle-group.desktop-only {
+          display: inline-flex !important;
+        }
+        .layout-toggle-group {
+          border: 1px solid var(--md-default-fg-color--lite, #e2e8f0);
+          border-radius: 6px;
+          overflow: hidden;
+          background-color: var(--md-default-bg-color, #ffffff);
+          padding: 2px;
+          align-items: center;
+        }
+        .layout-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 28px;
+          height: 24px;
+          background: transparent;
+          border: none;
+          border-radius: 4px;
+          color: var(--md-default-fg-color--light, #64748b);
+          cursor: pointer;
+          transition: all 0.15s ease;
+          padding: 0;
+        }
+        .layout-btn:hover {
+          color: var(--md-default-fg-color, #0f172a);
+          background-color: var(--md-default-fg-color--lightest, #f1f5f9);
+        }
+        .layout-btn.active {
+          color: #0ea5e9;
+          background-color: rgba(14, 165, 233, 0.1);
+        }
+        .layout-icon {
+          width: 14px;
+          height: 14px;
+        }
+
         .editor-container {
           flex: 1 1 0%;
           display: flex;
@@ -285,7 +427,8 @@ export class WGSLTour extends HTMLElement {
         :host(.has-output) .editor-container.short-code .cm-editor {
           height: auto !important;
         }
-        :host(.has-output) .editor-container.short-code .expando-button {
+        :host(.has-output) .editor-container.short-code .layout-toggle-group,
+        :host(.has-output) .editor-container.short-code .desktop-only {
           display: none !important;
         }
         .cm-editor {
@@ -300,10 +443,7 @@ export class WGSLTour extends HTMLElement {
           height: 100% !important;
         }
         .controls-container {
-          height: 46px;
           box-sizing: border-box;
-          margin-top: 4px !important;
-          margin-bottom: 4px !important;
           flex: none;
         }
         #output {
@@ -358,39 +498,6 @@ export class WGSLTour extends HTMLElement {
           margin-top: 0 !important;
           flex-shrink: 0 !important;
         }
-        .expando-button {
-          display: none;
-        }
-        :host(.has-output) .expando-button {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          position: absolute;
-          bottom: -10px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 36px;
-          height: 20px;
-          background-color: var(--md-code-bg-color, #f8fafc);
-          border: 1px solid var(--md-default-fg-color--lite, #e2e8f0);
-          border-radius: 10px;
-          cursor: pointer;
-          z-index: 100;
-          font-size: 10px;
-          line-height: 1;
-          color: var(--md-default-fg-color--light, #64748b);
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .expando-button:hover {
-          background-color: var(--md-default-fg-color--lightest, #e2e8f0);
-          color: var(--md-default-fg-color, #0f172a);
-          transform: translateX(-50%) scale(1.1);
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .expando-button:active {
-          transform: translateX(-50%) scale(0.95);
-        }
       }
     `;
     shadow.appendChild(style);
@@ -399,94 +506,25 @@ export class WGSLTour extends HTMLElement {
     editorContainer.className = 'editor-container';
     shadow.appendChild(editorContainer);
 
-    const expandoButton = document.createElement('button');
-    expandoButton.className = 'expando-button';
-    expandoButton.setAttribute('aria-label', 'Expand editor');
-    expandoButton.setAttribute('title', 'Expand editor to full height');
-    expandoButton.textContent = '▾';
-    editorContainer.appendChild(expandoButton);
-
-    expandoButton.addEventListener('click', () => {
-      if (editorContainer.classList.contains('expanded')) {
-        // From Expanded -> Collapsed
-        editorContainer.classList.remove('expanded');
-        editorContainer.classList.add('collapsed');
-        expandoButton.textContent = '▾';
-        const tooltip = 'Show editor split view';
-        expandoButton.setAttribute('title', tooltip);
-        expandoButton.setAttribute('aria-label', tooltip);
-      } else if (editorContainer.classList.contains('collapsed')) {
-        // From Collapsed -> Split
-        editorContainer.classList.remove('collapsed');
-        expandoButton.textContent = '▾';
-        const tooltip = 'Expand editor to full height';
-        expandoButton.setAttribute('title', tooltip);
-        expandoButton.setAttribute('aria-label', tooltip);
+    // Theme synchronization with body[data-md-color-scheme]
+    const updateTheme = () => {
+      const isDark = document.body.getAttribute('data-md-color-scheme') === 'slate';
+      if (isDark) {
+        editorContainer.classList.add('dark');
       } else {
-        // From Split -> Expanded
-        editorContainer.classList.add('expanded');
-        expandoButton.textContent = '▴';
-        const tooltip = 'Collapse editor to compact height';
-        expandoButton.setAttribute('title', tooltip);
-        expandoButton.setAttribute('aria-label', tooltip);
-      }
-      this.editor.requestMeasure();
-    });
-
-    const controlsContainer = document.createElement('div');
-    controlsContainer.className = 'controls-container';
-
-    const runButton = document.createElement('button');
-    runButton.className = 'run-button';
-
-    const updateButton = () => {
-      localStorage.setItem('wgsl-tour-autorun', String(this.autorun));
-      if (this.autorun) {
-        runButton.innerHTML = `
-          <svg class="run-icon" viewBox="0 0 24 24">
-            <rect x="6" y="4" width="4" height="16"></rect>
-            <rect x="14" y="4" width="4" height="16"></rect>
-          </svg>
-          <span>Pause</span>
-        `;
-        runButton.classList.remove('paused');
-        runButton.setAttribute('title', 'Pause live updates');
-      } else {
-        runButton.innerHTML = `
-          <svg class="run-icon" viewBox="0 0 24 24">
-            <polygon points="5,3 19,12 5,21"></polygon>
-          </svg>
-          <span>Run</span>
-        `;
-        runButton.classList.add('paused');
-        runButton.setAttribute('title', 'Run example and enable live updates');
+        editorContainer.classList.remove('dark');
       }
     };
-    updateButton();
+    updateTheme();
 
-    const statusIndicator = document.createElement('span');
-    statusIndicator.className = 'status-indicator';
-    statusIndicator.innerHTML =
-      '<span class="status-dot ready"></span><span class="status-label">Ready</span>';
-    this.statusIndicator = statusIndicator;
-
-    controlsContainer.appendChild(runButton);
-    controlsContainer.appendChild(statusIndicator);
-    shadow.appendChild(controlsContainer);
-
-    this.output = document.createElement('div');
-    this.output.setAttribute('id', 'output');
-    shadow.appendChild(this.output);
-
-    this.innerOutput = document.createElement('div');
-    this.innerOutput.setAttribute('id', 'inner-output');
-    this.innerOutput.style.display = 'block';
-    this.output.appendChild(this.innerOutput);
-
-    this.errorOutput = document.createElement('div');
-    this.errorOutput.setAttribute('id', 'error-output');
-    this.errorOutput.style.display = 'none';
-    this.output.appendChild(this.errorOutput);
+    this.themeObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'data-md-color-scheme') {
+          updateTheme();
+        }
+      });
+    });
+    this.themeObserver.observe(document.body, { attributes: true });
 
     const pre = this.querySelector('#tour-content');
     const code = (pre ? pre.textContent : this.textContent) || '';
@@ -498,40 +536,163 @@ export class WGSLTour extends HTMLElement {
       }
     };
 
+    const controlsContainer = document.createElement('div');
+    controlsContainer.className = 'controls-container';
+
+    const runButton = document.createElement('button');
+    runButton.className = 'run-button';
+    runButton.setAttribute('title', 'Manually run and compile code');
+    runButton.innerHTML = `
+      <svg class="run-icon" viewBox="0 0 24 24">
+        <polygon points="5,3 19,12 5,21"></polygon>
+      </svg>
+      <span>Run</span>
+    `;
+
+    const liveUpdatesLabel = document.createElement('label');
+    liveUpdatesLabel.className = 'switch-container';
+    liveUpdatesLabel.setAttribute('title', 'Compile and run code automatically as you type');
+    liveUpdatesLabel.innerHTML = `
+      <input type="checkbox" id="live-updates-toggle">
+      <span class="switch-slider"></span>
+      <span class="switch-label">Live Updates</span>
+    `;
+    const liveUpdatesToggle = liveUpdatesLabel.querySelector('input') as HTMLInputElement;
+    liveUpdatesToggle.checked = this.autorun;
+
+    const controlDivider1 = document.createElement('div');
+    controlDivider1.className = 'control-divider';
+
+    const statusIndicator = document.createElement('span');
+    statusIndicator.className = 'status-indicator';
+    statusIndicator.innerHTML =
+      '<span class="status-dot ready"></span><span class="status-label">Ready</span>';
+    this.statusIndicator = statusIndicator;
+
+    const layoutDivider = document.createElement('div');
+    layoutDivider.className = 'control-divider desktop-only';
+
+    const layoutGroup = document.createElement('div');
+    layoutGroup.className = 'layout-toggle-group desktop-only';
+    layoutGroup.innerHTML = `
+      <button class="layout-btn layout-btn-minimize" title="Minimize Editor (Maximize Output)" aria-label="Minimize Editor">
+        <svg class="layout-icon" viewBox="0 0 24 24">
+          <rect x="3" y="14" width="18" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="2"></rect>
+          <rect x="3" y="4" width="18" height="8" rx="1" fill="currentColor" opacity="0.3"></rect>
+        </svg>
+      </button>
+      <button class="layout-btn layout-btn-split active" title="Split View" aria-label="Split View">
+        <svg class="layout-icon" viewBox="0 0 24 24">
+          <rect x="3" y="4" width="18" height="7" rx="1" fill="currentColor" opacity="0.3"></rect>
+          <rect x="3" y="13" width="18" height="7" rx="1" fill="currentColor" opacity="0.3"></rect>
+          <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"></line>
+        </svg>
+      </button>
+      <button class="layout-btn layout-btn-maximize" title="Maximize Editor" aria-label="Maximize Editor">
+        <svg class="layout-icon" viewBox="0 0 24 24">
+          <rect x="3" y="4" width="18" height="12" rx="1" fill="currentColor"></rect>
+          <rect x="3" y="18" width="18" height="2" rx="0.5" fill="none" stroke="currentColor" stroke-width="2" opacity="0.4"></rect>
+        </svg>
+      </button>
+    `;
+
+    const btnMinimize = layoutGroup.querySelector('.layout-btn-minimize') as HTMLButtonElement;
+    const btnSplit = layoutGroup.querySelector('.layout-btn-split') as HTMLButtonElement;
+    const btnMaximize = layoutGroup.querySelector('.layout-btn-maximize') as HTMLButtonElement;
+
+    const updateActiveLayoutButton = (activeBtn: HTMLButtonElement) => {
+      [btnMinimize, btnSplit, btnMaximize].forEach((btn) => btn.classList.remove('active'));
+      activeBtn.classList.add('active');
+    };
+
+    btnMinimize.addEventListener('click', () => {
+      editorContainer.classList.remove('expanded');
+      editorContainer.classList.add('collapsed');
+      updateActiveLayoutButton(btnMinimize);
+      this.editor.requestMeasure();
+    });
+
+    btnSplit.addEventListener('click', () => {
+      editorContainer.classList.remove('expanded', 'collapsed');
+      updateActiveLayoutButton(btnSplit);
+      this.editor.requestMeasure();
+    });
+
+    btnMaximize.addEventListener('click', () => {
+      editorContainer.classList.add('expanded');
+      editorContainer.classList.remove('collapsed');
+      updateActiveLayoutButton(btnMaximize);
+      this.editor.requestMeasure();
+    });
+
+    controlsContainer.appendChild(runButton);
+    controlsContainer.appendChild(liveUpdatesLabel);
+    controlsContainer.appendChild(controlDivider1);
+    controlsContainer.appendChild(statusIndicator);
+    controlsContainer.appendChild(layoutDivider);
+    controlsContainer.appendChild(layoutGroup);
+
+    editorContainer.appendChild(controlsContainer);
+
     runButton.addEventListener('click', () => {
+      rebuild();
+    });
+
+    liveUpdatesToggle.addEventListener('change', () => {
+      this.autorun = liveUpdatesToggle.checked;
+      localStorage.setItem('wgsl-tour-autorun', String(this.autorun));
       if (this.autorun) {
-        this.autorun = false;
+        rebuild();
+      } else {
         if (this.key_timer !== undefined) {
           clearTimeout(this.key_timer);
           this.key_timer = undefined;
         }
-        updateButton();
         this.updateStatus('paused', 'Paused');
-      } else {
-        rebuild();
-        this.autorun = true;
-        updateButton();
       }
     });
 
-    const docsTooltip = hoverTooltip((view, pos, side) => {
-      const tree = syntaxTree(view.state);
-      const token = tree.resolveInner(pos, side);
-      const text = view.state.sliceDoc(token.from, token.to);
-      const docs = WGSLDocs.getDocsFor(text, token.name);
-      if (!docs) return null;
-      return {
-        pos: token.from,
-        end: token.to,
-        above: true,
-        create() {
-          const dom = document.createElement('div');
-          dom.className = 'wgsl-tooltip';
-          dom.innerHTML = `<pre>${docs}</pre>`;
-          return { dom };
-        },
-      };
-    });
+    const docsTooltip = hoverTooltip(
+      (view, pos, side) => {
+        const tree = syntaxTree(view.state);
+
+        // Try resolving with the provided side
+        let token = tree.resolveInner(pos, side);
+        let text = view.state.sliceDoc(token.from, token.to);
+        let docs = WGSLDocs.getDocsFor(text, token.name);
+
+        // Fallback for keyboard activation when the cursor is at word boundaries (try opposite side)
+        if (!docs) {
+          token = tree.resolveInner(pos, -side as -1 | 1);
+          text = view.state.sliceDoc(token.from, token.to);
+          docs = WGSLDocs.getDocsFor(text, token.name);
+        }
+
+        // Additional fallback if cursor is immediately after a word (try pos - 1)
+        if (!docs && pos > 0) {
+          token = tree.resolveInner(pos - 1, -1);
+          text = view.state.sliceDoc(token.from, token.to);
+          docs = WGSLDocs.getDocsFor(text, token.name);
+        }
+
+        if (!docs) return null;
+
+        return {
+          pos: token.from,
+          end: token.to,
+          above: true,
+          create() {
+            const dom = document.createElement('div');
+            dom.className = 'wgsl-tooltip';
+            dom.innerHTML = `<pre>${docs}</pre>`;
+            return { dom };
+          },
+        };
+      },
+      {
+        hideOnChange: true,
+      }
+    );
 
     const updateListener = EditorView.updateListener.of((update) => {
       if (update.docChanged) {
@@ -563,6 +724,7 @@ export class WGSLTour extends HTMLElement {
           activateHover(view, pos, 1);
           return true;
         },
+        preventDefault: true,
       },
       {
         key: 'Cmd-o',
@@ -571,12 +733,85 @@ export class WGSLTour extends HTMLElement {
           activateHover(view, pos, 1);
           return true;
         },
+        preventDefault: true,
       },
+    ]);
+
+    const domHandlers = EditorView.domEventHandlers({
+      blur: (event, view) => {
+        view.dispatch({
+          effects: closeHoverTooltip(docsTooltip),
+        });
+      },
+      keydown: (event, view) => {
+        if (event.key === 'Escape') {
+          view.dispatch({
+            effects: closeHoverTooltip(docsTooltip),
+          });
+        }
+      },
+    });
+
+    const customTheme = EditorView.theme({
+      '&': {
+        backgroundColor: 'var(--cm-bg)',
+        color: 'var(--cm-fg)',
+      },
+      '.cm-content': {
+        caretColor: 'var(--cm-cursor)',
+      },
+      '.cm-cursor, .cm-dropCursor': {
+        borderLeftColor: 'var(--cm-cursor)',
+      },
+      '.cm-scroller': {
+        fontFamily: 'var(--md-code-font-family), monospace',
+        fontSize: 'inherit',
+      },
+      '.cm-gutters': {
+        backgroundColor: 'var(--cm-gutter-bg)',
+        color: 'var(--cm-gutter-fg)',
+        borderRight: '1px solid var(--md-default-fg-color--lite, #e2e8f0)',
+      },
+      '.cm-activeLine': {
+        backgroundColor: 'var(--cm-active-line-bg)',
+      },
+      '.cm-activeLineGutter': {
+        backgroundColor: 'var(--cm-active-line-gutter-bg)',
+      },
+      '&.cm-focused .cm-matchingBracket': {
+        backgroundColor: 'var(--cm-matching-bracket)',
+      },
+      '.cm-selectionBackground, ::selection': {
+        backgroundColor: 'var(--cm-selection) !important',
+      },
+    });
+
+    const customHighlight = HighlightStyle.define([
+      { tag: t.keyword, color: 'var(--cm-keyword)', fontWeight: 'bold' },
+      { tag: t.typeName, color: 'var(--cm-type)' },
+      { tag: t.number, color: 'var(--cm-number)' },
+      { tag: t.string, color: 'var(--cm-string)' },
+      { tag: t.comment, color: 'var(--cm-comment)', fontStyle: 'italic' },
+      { tag: t.variableName, color: 'var(--cm-variable)' },
+      { tag: t.function(t.variableName), color: 'var(--cm-function)' },
+      { tag: t.operator, color: 'var(--cm-operator)' },
+      { tag: t.punctuation, color: 'var(--cm-operator)' },
+      { tag: t.attributeName, color: 'var(--cm-attribute)', fontWeight: '500' },
     ]);
 
     this.editor = new EditorView({
       doc: code,
-      extensions: [basicSetup, wgsl(), lintGutter(), docsTooltip, updateListener, docsKeymap],
+      extensions: [
+        basicSetup,
+        wgsl(),
+        lintGutter(),
+        docsTooltip,
+        updateListener,
+        docsKeymap,
+        domHandlers,
+        customTheme,
+        syntaxHighlighting(customHighlight),
+      ],
       parent: editorContainer,
     });
 

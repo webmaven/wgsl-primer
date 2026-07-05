@@ -59,25 +59,34 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Enable arrow key navigation between pages (if not focusing an input or code editor, and no modifier keys are pressed)
+// Enable arrow key navigation between pages (if not focusing an input, code editor, or visualizer component, and no modifier keys are pressed)
 document.addEventListener('keydown', (event: KeyboardEvent) => {
   // Ignore arrow navigation if modifier keys (Cmd, Ctrl, Alt, Shift) are pressed
   if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
     return;
   }
 
-  const active = document.activeElement;
-  if (active) {
-    const tagName = active.tagName.toLowerCase();
-    if (
-      tagName === 'input' ||
-      tagName === 'textarea' ||
-      active.hasAttribute('contenteditable') ||
-      active.closest('.cm-editor') ||
-      active.closest('.cm-content')
-    ) {
-      return;
+  // Use event.composedPath() to robustly check all traversed elements, crossing Shadow DOM boundaries.
+  const path = event.composedPath();
+  const isEditingOrTour = path.some((target) => {
+    if (target instanceof HTMLElement || target instanceof Element) {
+      const tagName = target.tagName.toLowerCase();
+      if (
+        tagName === 'input' ||
+        tagName === 'textarea' ||
+        target.hasAttribute('contenteditable') ||
+        target.classList.contains('cm-editor') ||
+        target.classList.contains('cm-content') ||
+        tagName === 'wgsl-tour'
+      ) {
+        return true;
+      }
     }
+    return false;
+  });
+
+  if (isEditingOrTour) {
+    return;
   }
 
   if (event.key === 'ArrowLeft') {
