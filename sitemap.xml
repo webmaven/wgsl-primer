@@ -2,362 +2,362 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/about/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/about/changelog/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/about/colophon/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/about/copyright/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/binding-points/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/binding-points/attributes/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/binding-points/storage-buffers/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/binding-points/textures/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/binding-points/uniform-buffers/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/control-flow/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/control-flow/for-statements/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/control-flow/if-statements/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/control-flow/loop-statements/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/control-flow/switch-statements/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/control-flow/while-statements/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/expressions/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/expressions/strict-typing/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/expressions/evaluation-stage/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/expressions/evaluation-stage/constant/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/expressions/evaluation-stage/constant/numeric-literals/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/expressions/evaluation-stage/override/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/expressions/evaluation-stage/runtime/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/expressions/operators/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/expressions/operators/bitwise-packing/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/functions/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/functions/calls/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/functions/entry-points/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/functions/must-use/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/functions/syntax/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/abstract-numerics/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/basic-scalars/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/arrays/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/arrays/fixed-size-arrays/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/arrays/runtime-sized-arrays/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/atomics/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/atomics/atomic-operations/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/atomics/atomic-types/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/atomics/overview/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/matrices/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/matrices/constructors/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/matrices/multiplication/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/pointers/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/pointers/no_aliasing/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/pointers/no_aliasing_nested_calls/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/pointers/passing_pointers/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/pointers/pointers_as_short_names/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/pointers/specifying/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/pointers/using/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/structures/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/structures/alignment/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/vectors/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/vectors/components/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/types/vectors/constructors/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/uniformity-analysis/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/uniformity-analysis/fragment-derivative-builtins/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/uniformity-analysis/invocations/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/uniformity-analysis/subgroups/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/variables/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/variables/const/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/variables/let/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/variables/memory-barriers/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/variables/override/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/variables/shadowing/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/variables/thread-coordinates/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/variables/var-function/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/variables/var-handle/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/variables/var-private/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/variables/var-storage/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/variables/var-uniform/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://webmaven.github.io/wgsl-primer/variables/var-workgroup/</loc>
-        <lastmod>2026-07-05</lastmod>
+        <lastmod>2026-07-06</lastmod>
         <changefreq>daily</changefreq>
     </url>
 </urlset>

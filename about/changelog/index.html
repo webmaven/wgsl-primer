@@ -3074,15 +3074,76 @@
     <ul class="md-nav__list" data-md-component="toc">
       
         <li class="md-nav__item">
-  <a href="#200-alpha1-this-fork" class="md-nav__link">
+  <a href="#200-alpha2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.0.0-alpha.1 (this fork)
+        2.0.0-alpha.2
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="2.0.0-alpha.1 (this fork)">
+    <nav class="md-nav" aria-label="2.0.0-alpha.2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#interactive-code-editor-status-bar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Code Editor &amp; Status Bar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvas-playback-controls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Canvas Playback Controls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#platform-architecture-cleanup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Platform Architecture &amp; Cleanup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#200-alpha1-the-initial-fork" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.0.0-alpha.1 (the initial fork)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.0-alpha.1 (the initial fork)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -3233,15 +3294,76 @@
     <ul class="md-nav__list" data-md-component="toc">
       
         <li class="md-nav__item">
-  <a href="#200-alpha1-this-fork" class="md-nav__link">
+  <a href="#200-alpha2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.0.0-alpha.1 (this fork)
+        2.0.0-alpha.2
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="2.0.0-alpha.1 (this fork)">
+    <nav class="md-nav" aria-label="2.0.0-alpha.2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#interactive-code-editor-status-bar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Code Editor &amp; Status Bar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canvas-playback-controls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Canvas Playback Controls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#platform-architecture-cleanup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Platform Architecture &amp; Cleanup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bug Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#200-alpha1-the-initial-fork" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.0.0-alpha.1 (the initial fork)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.0-alpha.1 (the initial fork)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -3346,8 +3468,35 @@ See root README.md for global project-wide upstream attributions.
 
 <h1 id="changelog">Changelog</h1>
 <p>All notable changes to <strong>WGSL: A Primer</strong> (forked from the original 2023 <em>Tour of WGSL</em>) are documented here.</p>
+<h2 id="200-alpha2">2.0.0-alpha.2</h2>
+<p>This version introduces significant enhancements to the interactive code editor, status bar controls, compilation pipelines, syntax legibility, keyboard focus, and canvas playback interactions.</p>
+<h3 id="interactive-code-editor-status-bar">Interactive Code Editor &amp; Status Bar</h3>
+<ul>
+<li><strong>Unified Docked Bottom Status Bar</strong>: Moved compilation and layout controls into a docked bar attached directly to the base of the code editor container, creating a beautiful, unified visual block on desktop.</li>
+<li><strong>Flexible Compilation Pipeline</strong>: Decoupled compilation from the animation rendering loop, adding a dedicated play-icon <strong>Run</strong> button to compile on demand, alongside a <strong>Live Updates</strong> slide toggle to enable or disable automatic debounced compile-on-type behavior.</li>
+<li><strong>Segmented Layout Button Group</strong>: Integrated three distinct layout buttons (<strong>Minimize</strong>, <strong>Split</strong>, and <strong>Maximize</strong>) on the far right of the status bar, allowing instant vertical resizing of the workspace panel.</li>
+<li><strong>Theme-Adaptive High-Legibility Syntax Themes</strong>: Implemented an active <code>MutationObserver</code> that monitors the site's <code>data-md-color-scheme</code> to automatically toggle editor syntax highlighting and backgrounds, hand-optimizing readability across light (Default) and dark (Slate) modes.</li>
+<li><strong>Enhanced Tooltip Management</strong>: Added robust <code>Escape</code> key, blur, and outer-click handlers to cleanly dismiss definition popups triggered with <code>ctrl-o</code> or <code>cmd-o</code>.</li>
+<li><strong>Keyboard Focus Protection</strong>: Intercepted page-level Prev/Next navigation shortcuts when keyboard focus is inside the active editor or interactive visualizers to prevent accidental page switching.</li>
+</ul>
+<h3 id="canvas-playback-controls">Canvas Playback Controls</h3>
+<ul>
+<li><strong>Interactive Canvas Overlay</strong>: Implemented an absolute glassmorphic hover/touch overlay directly on the animated shader rendering canvas, housing a custom animated play/pause button to cleanly toggle frame loops.</li>
+</ul>
+<h3 id="platform-architecture-cleanup">Platform Architecture &amp; Cleanup</h3>
+<ul>
+<li><strong>TypeScript Renaming</strong>: Renamed <code>wgsl-tour.ts</code> to <code>wgsl-primer.ts</code> to align with the modernized codebase, updating all bundler and script entry points.</li>
+<li><strong>Shadow DOM Core Restorations</strong>: Repaired and restored missing shadow DOM nodes for output and compiler error messaging, ensuring robust interactive diagnostics.</li>
+</ul>
+<h3 id="bug-fixes">Bug Fixes</h3>
+<ul>
+<li><strong>Global Tooltip Escape Key</strong>: Fixed a bug where hover/definition tooltips remained visible on the page when pressing the <code>Escape</code> key if the keyboard focus was outside the editor container.</li>
+<li><strong>Run Button Disabled State</strong>: Fixed a UI inconsistency where the play-icon <strong>Run</strong> button remained active even when <strong>Live Updates</strong> was toggled on (the button is now correctly disabled when live updates are enabled, preventing redundant compilation runs).</li>
+<li><strong>Status Bar Layout Attachment</strong>: Fixed an element placement issue where the docked controls status bar container was mistakenly appended above the CodeMirror text area, ensuring it always attaches seamlessly at the base of the code editor container.</li>
+<li><strong>Diagnostics Output Restoration</strong>: Restored missing dynamic Shadow DOM diagnostic containers, fixing a rendering bug where compiler error messages and outputs failed to display correctly after pipeline execution.</li>
+</ul>
 <hr />
-<h2 id="200-alpha1-this-fork">2.0.0-alpha.1 (this fork)</h2>
+<h2 id="200-alpha1-the-initial-fork">2.0.0-alpha.1 (the initial fork)</h2>
 <p>This version represents a modernization of the platform, transitioning from Hugo to a ProperDocs-based interactive workspace with GPGPU topics and custom visualizers.</p>
 <h3 id="infrastructure-toolchain">Infrastructure &amp; Toolchain</h3>
 <ul>

@@ -277,6 +277,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Welcome
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="." class="md-nav__link md-nav__link--active">
         
   
@@ -293,6 +311,47 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc">
+      
+        <li class="md-nav__item">
+  <a href="#welcome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Welcome
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interactive-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Features
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -3096,6 +3155,36 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc">
+      
+        <li class="md-nav__item">
+  <a href="#welcome" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Welcome
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interactive-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Features
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -3117,23 +3206,35 @@
 <h1 id="wgsl-a-primer">WGSL: A Primer</h1>
 <p class="primer-subtitle">An introductory tour of the WebGPU Shader Language</p>
 
-<p>This site is a quick introduction to the <a href="https://w3.org/TR/WGSL">WebGPU Shading
-Language</a>. The primer provides an overview
-of the syntax and features of WGSL, but assumes a familiarity with
-programming.</p>
+<h2 id="welcome">Welcome</h2>
+<p>Welcome to <strong>WGSL: A Primer</strong>—a condensed technical reference and interactive playground for the <a href="https://w3.org/TR/WGSL">WebGPU Shading Language</a>. Designed for developers with an interest in GPGPU (General-Purpose computing on GPUs), this resource assumes standard programming experience and serves as an entry point to a broader learning path.</p>
+<p>This Primer focuses on how WebGPU's execution model maps directly to physical GPU hardware, explaining how its compilation constraints arise from that hardware design. Rather than viewing these constraints as obstacles, understanding and embracing them enables you to unlock maximum parallel performance directly inside the browser.</p>
+<p>By bridging the gap between web development and hardware architectures, the primer empowers web and front-end developers to transition into GPGPU programming and unlock high-performance client-side web application development.</p>
+<h2 id="interactive-features">Interactive Features</h2>
 <p>The primer provides the WGSL shaders for each example. The shaders can be
-edited in the text view on the right (or below), and the resulting output is displayed
-below the editor.</p>
-<p>The editor provides:</p>
-<ul>
-<li>Automatic execution of the entered shader.</li>
-<li>Inline error messages for shader compilation errors.
-  Errors also appear in the developer console, so it may be handy
-  to keep that open too.</li>
-<li>Pressing <code>ctrl-o</code> when the cursor is on an attribute (e.g. <code>@builtin</code>)
-  a builtin value (e.g. <code>vertex_index</code>) or many of the builtin functions
-  (e.g. <code>sin</code>) to show documentation on selected element.</li>
-</ul>
+edited in the text view, with compiling output displayed immediately.</p>
+<p>Interactive and editor capabilities include:</p>
+<details class="info">
+<summary>Compilation &amp; Live Execution</summary>
+<p>Modifications are automatically compiled and executed within the graphics or compute pipeline. When you make changes, the status bar instantly reflects compilation states, while error diagnostics are rendered directly inline within the code editor.</p>
+<p><img alt="Compilation Status" src="images/status-bar-compilation.png" /></p>
+</details>
+<details class="tip">
+<summary>Interactive Workspace &amp; Layouts</summary>
+<p>An integrated, premium status bar is docked directly to the base of the code editor. It features interactive controls to toggle responsive, split, or maximized layouts, giving you complete flexibility to maximize your code view or canvas area.</p>
+<p><img alt="Workspace Layout Controls" src="images/status-bar-layout.png" /></p>
+</details>
+<details class="note">
+<summary>Canvas Animation Play/Pause</summary>
+<p>Hovering or tapping an active graphics shader canvas displays a glassmorphic overlay containing a play/pause button. This allows you to toggle execution, freeze rendering frames to inspect complex pixel behaviors, or save local CPU/GPU resources.</p>
+<p><img alt="Canvas Animation Controls" src="images/canvas-overlay.png" /></p>
+</details>
+<details class="important">
+<summary>Keyboard Shortcuts &amp; Definition Tooltips</summary>
+<p>Position the text cursor over attributes (e.g. <code>@builtin</code>), built-in values (e.g. <code>vertex_index</code>), or intrinsic functions (e.g. <code>sin</code>) and press <code>ctrl-o</code> to display inline documentation and type definitions. You can dismiss the tooltip by pressing <code>Escape</code> or clicking outside of it.</p>
+<p>Page-level keyboard shortcuts for Prev/Next navigation are automatically protected and bypassed when focus is inside the code editor to prevent accidental page switching.</p>
+<p><img alt="Definition Tooltip Preview" src="images/definition-tooltip.png" /></p>
+</details>
 <p>Each of these shaders can serve as the starting point for your own
 exploration.</p>
 <div class="admonition question">
