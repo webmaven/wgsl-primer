@@ -69,7 +69,7 @@ jobs:
           git commit --allow-empty -m "deploy needs a HEAD"
 
       - name: Deploy preview GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@4.1.3
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: .
