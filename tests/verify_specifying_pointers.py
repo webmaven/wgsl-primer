@@ -30,7 +30,7 @@ async def run():
     subprocess.run(["npm", "run", "build"], cwd=repo_dir, stdout=subprocess.DEVNULL)
         
     os.makedirs(test_serve_dir, exist_ok=True)
-    symlink_path = os.path.join(test_serve_dir, "tour-of-wgsl")
+    symlink_path = os.path.join(test_serve_dir, "wgsl-primer")
     if os.path.exists(symlink_path):
         os.unlink(symlink_path)
     os.symlink(site_dir, symlink_path)

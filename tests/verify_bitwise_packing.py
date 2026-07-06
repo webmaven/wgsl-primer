@@ -34,7 +34,7 @@ async def run():
             shutil.rmtree(test_serve_dir)
             
     os.makedirs(test_serve_dir, exist_ok=True)
-    symlink_path = os.path.join(test_serve_dir, "tour-of-wgsl")
+    symlink_path = os.path.join(test_serve_dir, "wgsl-primer")
     os.symlink(site_dir, symlink_path)
     
     port = find_free_port()

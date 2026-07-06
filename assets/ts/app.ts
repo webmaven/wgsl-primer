@@ -16,7 +16,7 @@
  * @module app
  */
 
-import './wgsl-tour';
+import './wgsl-primer';
 import '../sass/style.scss';
 
 // Wrap left-column elements for responsive two-column scrolling layout

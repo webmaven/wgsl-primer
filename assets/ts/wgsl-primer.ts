@@ -33,6 +33,10 @@ export class WGSLTour extends HTMLElement {
   key_timer: ReturnType<typeof setTimeout> | undefined = undefined;
   autorun: boolean = true;
   themeObserver: MutationObserver | undefined = undefined;
+  animationPaused: boolean = false;
+  mobileRevealTimeout: ReturnType<typeof setTimeout> | undefined = undefined;
+  animationFrameId: number | undefined = undefined;
+  globalKeyDownHandler: ((event: KeyboardEvent) => void) | undefined = undefined;
 
   constructor() {
     super();
@@ -41,6 +45,9 @@ export class WGSLTour extends HTMLElement {
   disconnectedCallback() {
     if (this.themeObserver) {
       this.themeObserver.disconnect();
+    }
+    if (this.globalKeyDownHandler) {
+      window.removeEventListener('keydown', this.globalKeyDownHandler);
     }
   }
 
@@ -139,6 +146,7 @@ export class WGSLTour extends HTMLElement {
         display: flex;
         justify-content: center;
         align-items: start;
+        position: relative;
       }
       .cm-editor {
         border: 1px solid var(--md-default-fg-color--lite, #e2e8f0);
@@ -202,6 +210,15 @@ export class WGSLTour extends HTMLElement {
       .run-button:active {
         transform: translateY(1px);
         box-shadow: 0 1px 2px rgba(59, 130, 246, 0.15);
+      }
+      .run-button:disabled {
+        background-color: var(--md-default-fg-color--lite, #cbd5e1);
+        color: var(--md-default-fg-color--light, #94a3b8);
+        opacity: 0.6;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+        pointer-events: none;
       }
       .run-icon {
         width: 12px;
@@ -346,6 +363,98 @@ export class WGSLTour extends HTMLElement {
         display: none !important;
       }
 
+      /* Play/Pause Control Overlay on Canvas */
+      .animation-control-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0);
+        cursor: pointer;
+        transition: background-color 0.25s ease;
+        z-index: 10;
+        -webkit-tap-highlight-color: transparent;
+      }
+      
+      .animation-control-overlay:hover,
+      .animation-control-overlay.user-revealed {
+        background: rgba(0, 0, 0, 0.2);
+      }
+      
+      .animation-play-pause-btn {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transform: scale(0.9);
+        transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, border-color 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        pointer-events: none; /* Let overlay handle clicks */
+        padding: 0;
+        margin: 0;
+        outline: none;
+        cursor: pointer;
+      }
+      
+      /* On hover or user revealed (for touch devices), show the button */
+      .animation-control-overlay:hover .animation-play-pause-btn,
+      .animation-control-overlay.user-revealed .animation-play-pause-btn {
+        opacity: 1;
+        transform: scale(1);
+      }
+      
+      .animation-play-pause-btn:hover {
+        background: rgba(15, 23, 42, 0.85);
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+      
+      .animation-play-pause-btn svg {
+        width: 24px;
+        height: 24px;
+        fill: currentColor;
+        transition: transform 0.2s ease;
+      }
+      
+      /* When animation is paused, overlay keeps a slight dim and always displays play button */
+      #canvas.paused .animation-control-overlay {
+        background: rgba(0, 0, 0, 0.25);
+      }
+      
+      #canvas.paused .animation-play-pause-btn {
+        opacity: 1;
+        transform: scale(1);
+        background: rgba(15, 23, 42, 0.8);
+      }
+
+      /* By default, we are playing, so show the pause icon, hide the play icon */
+      .animation-play-pause-btn .icon-play {
+        display: none;
+      }
+      .animation-play-pause-btn .icon-pause {
+        display: block;
+      }
+
+      /* When paused, show play, hide pause */
+      #canvas.paused .animation-play-pause-btn .icon-play {
+        display: block;
+        margin-left: 2px; /* Offset asymmetric play triangle visually */
+      }
+      #canvas.paused .animation-play-pause-btn .icon-pause {
+        display: none;
+      }
+
       @media (min-width: 1200px) {
         :host {
           display: flex;
@@ -470,6 +579,7 @@ export class WGSLTour extends HTMLElement {
           align-items: center;
           min-height: 0;
           margin-top: 0;
+          position: relative;
         }
         canvas,
         #wgsl-tour-output-canvas {
@@ -505,6 +615,20 @@ export class WGSLTour extends HTMLElement {
     const editorContainer = document.createElement('div');
     editorContainer.className = 'editor-container';
     shadow.appendChild(editorContainer);
+
+    this.output = document.createElement('div');
+    this.output.setAttribute('id', 'output');
+    shadow.appendChild(this.output);
+
+    this.innerOutput = document.createElement('div');
+    this.innerOutput.setAttribute('id', 'inner-output');
+    this.innerOutput.style.display = 'block';
+    this.output.appendChild(this.innerOutput);
+
+    this.errorOutput = document.createElement('div');
+    this.errorOutput.setAttribute('id', 'error-output');
+    this.errorOutput.style.display = 'none';
+    this.output.appendChild(this.errorOutput);
 
     // Theme synchronization with body[data-md-color-scheme]
     const updateTheme = () => {
@@ -559,6 +683,7 @@ export class WGSLTour extends HTMLElement {
     `;
     const liveUpdatesToggle = liveUpdatesLabel.querySelector('input') as HTMLInputElement;
     liveUpdatesToggle.checked = this.autorun;
+    runButton.disabled = this.autorun;
 
     const controlDivider1 = document.createElement('div');
     controlDivider1.className = 'control-divider';
@@ -632,14 +757,13 @@ export class WGSLTour extends HTMLElement {
     controlsContainer.appendChild(layoutDivider);
     controlsContainer.appendChild(layoutGroup);
 
-    editorContainer.appendChild(controlsContainer);
-
     runButton.addEventListener('click', () => {
       rebuild();
     });
 
     liveUpdatesToggle.addEventListener('change', () => {
       this.autorun = liveUpdatesToggle.checked;
+      runButton.disabled = this.autorun;
       localStorage.setItem('wgsl-tour-autorun', String(this.autorun));
       if (this.autorun) {
         rebuild();
@@ -752,6 +876,15 @@ export class WGSLTour extends HTMLElement {
       },
     });
 
+    this.globalKeyDownHandler = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        this.editor.dispatch({
+          effects: closeHoverTooltip(docsTooltip),
+        });
+      }
+    };
+    window.addEventListener('keydown', this.globalKeyDownHandler);
+
     const customTheme = EditorView.theme({
       '&': {
         backgroundColor: 'var(--cm-bg)',
@@ -815,6 +948,8 @@ export class WGSLTour extends HTMLElement {
       parent: editorContainer,
     });
 
+    editorContainer.appendChild(controlsContainer);
+
     // Initial short-code class assignment based on line count
     if (this.editor.state.doc.lines <= 10) {
       editorContainer.classList.add('short-code');
@@ -833,6 +968,7 @@ export class WGSLTour extends HTMLElement {
       }
       this.innerOutput.innerHTML = '';
       await this.visualizationBuilder.configure(this.innerOutput);
+      this.setupPlayPauseOverlay();
     } catch (e: any) {
       this.onPipelineFailure({ message: e.message || e.toString() } as VisualizerError);
       return false;
@@ -846,6 +982,78 @@ export class WGSLTour extends HTMLElement {
 
     this.buildVisualization();
     return true;
+  }
+
+  setupPlayPauseOverlay() {
+    const canvasWrapper = this.innerOutput.querySelector('#canvas');
+    if (!canvasWrapper) return;
+
+    if (canvasWrapper.querySelector('.animation-control-overlay')) return;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'animation-control-overlay';
+    overlay.innerHTML = `
+      <button class="animation-play-pause-btn" aria-label="Play/Pause Animation">
+        <svg class="icon-play" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"></polygon></svg>
+        <svg class="icon-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+      </button>
+    `;
+
+    canvasWrapper.appendChild(overlay);
+
+    const toggle = (e: Event) => {
+      e.stopPropagation();
+      this.togglePlayPause();
+    };
+
+    canvasWrapper.addEventListener('click', toggle);
+
+    const btn = overlay.querySelector('.animation-play-pause-btn');
+    if (btn) {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.togglePlayPause();
+      });
+    }
+  }
+
+  togglePlayPause() {
+    if (this.visualization === undefined || this.visualization.executeFrequency !== 'repeat')
+      return;
+
+    const canvasWrapper = this.innerOutput.querySelector('#canvas');
+    const overlay = canvasWrapper?.querySelector('.animation-control-overlay');
+    if (!canvasWrapper || !overlay) return;
+
+    this.animationPaused = !this.animationPaused;
+
+    if (this.animationPaused) {
+      canvasWrapper.classList.add('paused');
+      overlay.classList.remove('user-revealed');
+      if (this.mobileRevealTimeout) {
+        clearTimeout(this.mobileRevealTimeout);
+        this.mobileRevealTimeout = undefined;
+      }
+      if (this.animationFrameId) {
+        cancelAnimationFrame(this.animationFrameId);
+        this.animationFrameId = undefined;
+      }
+    } else {
+      canvasWrapper.classList.remove('paused');
+      overlay.classList.add('user-revealed');
+      if (this.mobileRevealTimeout) {
+        clearTimeout(this.mobileRevealTimeout);
+      }
+      this.mobileRevealTimeout = setTimeout(() => {
+        overlay.classList.remove('user-revealed');
+        this.mobileRevealTimeout = undefined;
+      }, 1500);
+
+      if (this.animationFrameId) {
+        cancelAnimationFrame(this.animationFrameId);
+      }
+      this.animationFrameId = requestAnimationFrame(() => this.frame());
+    }
   }
 
   updateStatus(state: 'compiling' | 'success' | 'error' | 'ready' | 'paused', text: string) {
@@ -880,13 +1088,27 @@ export class WGSLTour extends HTMLElement {
         this.errorOutput.innerHTML = '';
         this.innerOutput.style.display = '';
 
+        // Reset play/pause state for a fresh compile
+        this.animationPaused = false;
+        const canvasWrapper = this.innerOutput.querySelector('#canvas');
+        if (canvasWrapper) {
+          canvasWrapper.classList.remove('paused');
+          const overlay = canvasWrapper.querySelector('.animation-control-overlay');
+          if (overlay) {
+            overlay.classList.remove('user-revealed');
+          }
+        }
+
         if (this.innerOutput.children.length > 0) {
           this.classList.add('has-output');
         } else {
           this.classList.remove('has-output');
         }
 
-        requestAnimationFrame(() => this.frame());
+        if (this.animationFrameId) {
+          cancelAnimationFrame(this.animationFrameId);
+        }
+        this.animationFrameId = requestAnimationFrame(() => this.frame());
       })
       .catch((err: any) => {
         // Hide inner visualization output and expose error diagnostics container
@@ -921,12 +1143,13 @@ export class WGSLTour extends HTMLElement {
 
   frame() {
     if (this.visualization === undefined) return;
+    if (this.animationPaused) return;
 
     this.frame_number++;
     this.visualization.execute(this.frame_number);
 
     if (this.visualization.executeFrequency === 'repeat') {
-      requestAnimationFrame(() => this.frame());
+      this.animationFrameId = requestAnimationFrame(() => this.frame());
     }
   }
 
