@@ -7,9 +7,38 @@ See root README.md for global project-wide upstream attributions.
 
 All notable changes to **WGSL: A Primer** (forked from the original 2023 *Tour of WGSL*) are documented here.
 
+## 2.0.0-alpha.2
+
+This version introduces significant enhancements to the interactive code editor, status bar controls, compilation pipelines, syntax legibility, keyboard focus, and canvas playback interactions.
+
+### Interactive Code Editor & Status Bar
+
+- **Unified Docked Bottom Status Bar**: Moved compilation and layout controls into a docked bar attached directly to the base of the code editor container, creating a beautiful, unified visual block on desktop.
+- **Flexible Compilation Pipeline**: Decoupled compilation from the animation rendering loop, adding a dedicated play-icon **Run** button to compile on demand, alongside a **Live Updates** slide toggle to enable or disable automatic debounced compile-on-type behavior.
+- **Segmented Layout Button Group**: Integrated three distinct layout buttons (**Minimize**, **Split**, and **Maximize**) on the far right of the status bar, allowing instant vertical resizing of the workspace panel.
+- **Theme-Adaptive High-Legibility Syntax Themes**: Implemented an active `MutationObserver` that monitors the site's `data-md-color-scheme` to automatically toggle editor syntax highlighting and backgrounds, hand-optimizing readability across light (Default) and dark (Slate) modes.
+- **Enhanced Tooltip Management**: Added robust `Escape` key, blur, and outer-click handlers to cleanly dismiss definition popups triggered with `ctrl-o` or `cmd-o`.
+- **Keyboard Focus Protection**: Intercepted page-level Prev/Next navigation shortcuts when keyboard focus is inside the active editor or interactive visualizers to prevent accidental page switching.
+
+### Canvas Playback Controls
+
+- **Interactive Canvas Overlay**: Implemented an absolute glassmorphic hover/touch overlay directly on the animated shader rendering canvas, housing a custom animated play/pause button to cleanly toggle frame loops.
+
+### Platform Architecture & Cleanup
+
+- **TypeScript Renaming**: Renamed `wgsl-tour.ts` to `wgsl-primer.ts` to align with the modernized codebase, updating all bundler and script entry points.
+- **Shadow DOM Core Restorations**: Repaired and restored missing shadow DOM nodes for output and compiler error messaging, ensuring robust interactive diagnostics.
+
+### Bug Fixes
+
+- **Global Tooltip Escape Key**: Fixed a bug where hover/definition tooltips remained visible on the page when pressing the `Escape` key if the keyboard focus was outside the editor container.
+- **Run Button Disabled State**: Fixed a UI inconsistency where the play-icon **Run** button remained active even when **Live Updates** was toggled on (the button is now correctly disabled when live updates are enabled, preventing redundant compilation runs).
+- **Status Bar Layout Attachment**: Fixed an element placement issue where the docked controls status bar container was mistakenly appended above the CodeMirror text area, ensuring it always attaches seamlessly at the base of the code editor container.
+- **Diagnostics Output Restoration**: Restored missing dynamic Shadow DOM diagnostic containers, fixing a rendering bug where compiler error messages and outputs failed to display correctly after pipeline execution.
+
 ---
 
-## 2.0.0-alpha.1 (this fork)
+## 2.0.0-alpha.1 (the initial fork)
 
 This version represents a modernization of the platform, transitioning from Hugo to a ProperDocs-based interactive workspace with GPGPU topics and custom visualizers.
 

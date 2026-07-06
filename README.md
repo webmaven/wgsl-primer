@@ -7,6 +7,18 @@ This repository contains the source code for the **WGSL: A Primer** (WebGPU Shad
 
 The purpose of this project is to provide a highly interactive introduction to WGSL through examples that can be modified and run directly by the user in their browser.
 
+## Key Features
+
+**WGSL: A Primer 2.0** comes packed with powerful, premium interactive editor and workspace upgrades:
+
+- **Integrated Docked Status Bar**: A premium compilation and workspace control bar attached directly to the base of the code editor.
+- **On-Demand & Live Execution**: Run/Compile on demand via the **Run** button, or toggle **Live Updates** for automatic, debounced compilation as you type.
+- **Responsive Workspace Layouts**: Choose between **Minimize**, **Split**, and **Maximize** editor modes using segmented layout button groups to optimize your reading and rendering space.
+- **Theme-Adaptive High-Legibility Code Themes**: Automatic, observer-driven toggling of the CodeMirror 6 theme (editor background, syntax highlighting, and selection matching) when switching the main site between light and dark modes.
+- **Dismissible Definition Tooltips**: Position your text cursor over attributes (e.g., `@builtin`), types, or functions (e.g., `sin`) and press `ctrl-o` to trigger context-aware documentation. Easily dismiss tooltips using `Escape`, clicking away, or focusing out.
+- **Canvas Animation Play/Pause**: Hover or tap the rendering canvas to overlay a glassmorphic button to play or pause the shader animation loop, saving system resources.
+- **Keyboard Shortcuts Bypass**: Prevents accidental page navigation from standard keyboard bindings when focusing inside the code editor or playground workspace.
+
 ## Development
 
 ### Prerequisites
